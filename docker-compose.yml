@@ -1,0 +1,51 @@
+# docker-compose.yml — Elune Labs storefront (EverShop 2.2.1 + Postgres 16)
+services:
+  app:
+    image: evershop/evershop:2.2.1        # hard pin; latest == next == 2.2.1 today, pin anyway
+    restart: unless-stopped
+    env_file: .env                         # DB_*, PORT, DB_SSLMODE into the container
+    environment:
+      DB_HOST: database                    # belt-and-suspenders: service name wins over .env
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"      # container listens on $PORT (default 3000)
+    volumes:
+      - media-data:/app/media              # product images            (state → named)
+      - public-data:/app/public            # built static assets       (state → named)
+      - evershop-build:/app/.evershop      # build artifacts, sessions (state → named)
+      - log-data:/app/.log                 # logs                      (state → named)
+      - ./themes:/app/themes               # theme source              (code → bind, rw for scaffold)
+      - ./scripts:/app/scripts:ro          # seed script               (code → bind, ro)
+      - ./config:/app/config:ro            # persists system.theme (repo-committed config/default.json)
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:$$PORT/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s                    # first start runs migrations
+
+  database:
+    image: postgres:16                     # pinned major
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    # no ports: — DB is reachable only on the compose network (exec psql to reach it)
+
+volumes:
+  postgres-data:
+  media-data:
+  public-data:
+  evershop-build:
+  log-data:
