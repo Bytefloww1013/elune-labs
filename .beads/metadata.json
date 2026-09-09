@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "elune_labs",
+  "project_id": "7301431e-6d5b-442d-8d84-f067a3f8595a"
+}
