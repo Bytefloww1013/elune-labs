@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Elune Labs catalog seeder — auth + category upsert.
+// Elune Labs catalog seeder — auth, category/product upsert, attach, asserts.
 // Spec: docs/design/8-3-catalog-orders.md §1. Node ESM, zero dependencies (built-in fetch).
-// Product upsert + attach + asserts land in b04.16; importing this module has no side effects.
+// Importing this module has no side effects.
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
@@ -75,14 +75,114 @@ export async function upsertCategory({ name, url_key }) {
   return json?.data ?? null;
 }
 
+// Filters (including sku) are SILENTLY IGNORED by this fork's products query —
+// empirically, a nonexistent sku returned unrelated products. Same fallback as
+// categories: fetch the list and match client-side.
+async function findProduct(sku) {
+  const data = await graphql(`query { products { items { uuid sku } } }`);
+  return (data.products?.items ?? []).find((p) => p.sku === sku) ?? null;
+}
+
+// Query first, then create-or-update (8-3 §1): found -> PATCH so the data file
+// stays the single source of truth for price/qty; missing -> POST with explicit
+// NOT-NULL defaults (2.2.1 has no schema defaults, same as categories).
+export async function upsertProduct({ name, sku, price, qty }) {
+  const existing = await findProduct(sku);
+  if (existing) {
+    const res = await apiFetch(`/api/products/${existing.uuid}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ price, qty, status: 1 })
+    });
+    const json = await res.json().catch(() => null);
+    if (!res.ok) throw new Error(`patch '${sku}' failed: HTTP ${res.status} ${JSON.stringify(json)}`);
+    console.log(`product '${sku}': patched ${existing.uuid}`);
+    return existing;
+  }
+  const res = await apiFetch('/api/products', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      sku,
+      price,
+      qty,
+      status: 1,
+      // Fork-enforced NOT NULLs beyond design 8-3's payload sketch (verified in
+      // dist/modules/catalog/services/product/createProduct.js + DB: single
+      // "Default" attribute group, single "Standard Box" package).
+      group_id: 1,
+      package_id: 1,
+      visibility: 1,
+      manage_stock: 1,
+      stock_availability: 1,
+      images: [],
+      // 2.2.1 createProduct does NOT auto-generate url_key from name (design 8-3
+      // §2 assumed it) — the middleware rejects the payload without it. Slug:
+      // lowered, non-alphanumerics -> dashes.
+      url_key: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    })
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(`create '${sku}' failed: HTTP ${res.status} ${JSON.stringify(json)}`);
+  console.log(`product '${sku}': created`);
+  return json?.data ?? null;
+}
+
+// Attach EVERY run — 2.2.1 addProductToCategory returns 200 on duplicates too,
+// and category_id in the create payload is ignored by createProduct (8-3 §1),
+// so this endpoint is the only wiring.
+export async function attachProduct(category, product) {
+  const res = await apiFetch(`/api/categories/${category.uuid}/products`, {
+    method: 'POST',
+    body: JSON.stringify({ product_id: product.uuid })
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(`attach '${product.sku}' to '${category.url_key}' failed: HTTP ${res.status} ${JSON.stringify(json)}`);
+  }
+  console.log(`product '${product.sku}': attached to '${category.url_key}'`);
+  return json?.data ?? null;
+}
+// Post-run asserts (8-3 §1): categories resolve by url_key; every SKU resolves;
+// each product's category is the declared one (Product.category — singular, no
+// 'categories' field in 2.2.1). Any failure: one stderr line each, exit 1.
+export async function assertSeed(data) {
+  const failures = [];
+  for (const { url_key } of data.categories) {
+    if (!(await findCategory(url_key))) failures.push(`category '${url_key}': not found`);
+  }
+  // One read; sku matched client-side (filters ignored — see findProduct).
+  const result = await graphql(`query { products { items { sku category { urlKey } } } }`);
+  const bySku = new Map((result.products?.items ?? []).map((p) => [p.sku, p]));
+  for (const { sku, category } of data.products) {
+    const item = bySku.get(sku);
+    if (!item) {
+      failures.push(`SKU ${sku}: not found after create`);
+      continue;
+    }
+    const attached = item.category?.urlKey ?? 'none';
+    if (attached !== category) failures.push(`SKU ${sku}: expected category '${category}', got '${attached}'`);
+  }
+  if (failures.length) {
+    console.error(`SEED FAILURE - ${failures.length} issues`);
+    for (const failure of failures) console.error(`  ✗ ${failure}`);
+    process.exit(1);
+  }
+  console.log(`asserts: ${data.categories.length} categories, ${data.products.length} products, all attached`);
+}
+
 export async function run() {
   const data = JSON.parse(await readFile(new URL('./catalog-data.json', import.meta.url), 'utf8'));
   await login();
-  for (const category of data.categories) await upsertCategory(category);
-  // Products are b04.16's scope. Do not crash on them.
-  if (data.products?.length) {
-    console.log(`products: not yet implemented (${data.products.length} in catalog-data.json, skipped)`);
+  const categories = {};
+  for (const category of data.categories) {
+    const upserted = await upsertCategory(category);
+    categories[category.url_key] = { uuid: upserted?.uuid, url_key: category.url_key };
   }
+  for (const product of data.products) {
+    const upserted = await upsertProduct(product);
+    await attachProduct(categories[product.category], upserted);
+  }
+  await assertSeed(data);
 }
 
 // Execute only when run directly; importing (b04.16) must not seed.
