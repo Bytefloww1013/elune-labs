@@ -8,4 +8,5 @@
 # Elune Labs runtime / local
 .env
 backups/
+themes/*/dist/
 themes/*/node_modules/
