@@ -1,0 +1,114 @@
+{
+  "categories": [
+    { "name": "Peptides", "url_key": "peptides" },
+    { "name": "SARMs", "url_key": "sarms" },
+    { "name": "Nootropics", "url_key": "nootropics" }
+  ],
+  "products": [
+    {
+      "name": "BPC-157 5mg",
+      "sku": "BPC157-5MG",
+      "price": 39.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "BPC-157 10mg",
+      "sku": "BPC157-10MG",
+      "price": 59.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "TB-500 5mg",
+      "sku": "TB500-5MG",
+      "price": 49.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "TB-500 10mg",
+      "sku": "TB500-10MG",
+      "price": 79.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "CJC-1295 (No DAC) 5mg",
+      "sku": "CJC1295-5MG",
+      "price": 44.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "Ipamorelin 5mg",
+      "sku": "IPAMORELIN-5MG",
+      "price": 42.99,
+      "category": "peptides",
+      "qty": 100
+    },
+    {
+      "name": "Ostarine (MK-2866) 10mg",
+      "sku": "OSTARINE-10MG",
+      "price": 34.99,
+      "category": "sarms",
+      "qty": 100
+    },
+    {
+      "name": "LGD-4033 5mg",
+      "sku": "LGD4033-5MG",
+      "price": 39.99,
+      "category": "sarms",
+      "qty": 100
+    },
+    {
+      "name": "RAD-140 10mg",
+      "sku": "RAD140-10MG",
+      "price": 44.99,
+      "category": "sarms",
+      "qty": 100
+    },
+    {
+      "name": "Cardarine (GW-501516) 10mg",
+      "sku": "CARDARINE-10MG",
+      "price": 39.99,
+      "category": "sarms",
+      "qty": 100
+    },
+    {
+      "name": "MK-677 15mg",
+      "sku": "MK677-15MG",
+      "price": 44.99,
+      "category": "sarms",
+      "qty": 100
+    },
+    {
+      "name": "Alpha-GPC 300mg",
+      "sku": "ALPHA-GPC-300MG",
+      "price": 29.99,
+      "category": "nootropics",
+      "qty": 100
+    },
+    {
+      "name": "L-Theanine 200mg",
+      "sku": "L-THEANINE-200MG",
+      "price": 19.99,
+      "category": "nootropics",
+      "qty": 100
+    },
+    {
+      "name": "Phenylpiracetam 100mg",
+      "sku": "PHENYLPIRACETAM-100MG",
+      "price": 34.99,
+      "category": "nootropics",
+      "qty": 100
+    },
+    {
+      "name": "Citicoline 500mg",
+      "sku": "CITICOLINE-500MG",
+      "price": 27.99,
+      "category": "nootropics",
+      "qty": 100
+    }
+  ]
+}
