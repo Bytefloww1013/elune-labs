@@ -1,0 +1,119 @@
+@theme inline {
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(
+        --radix-accordion-content-height,
+        var(--accordion-panel-height, auto)
+      );
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(
+        --radix-accordion-content-height,
+        var(--accordion-panel-height, auto)
+      );
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* Custom variants */
+@custom-variant data-open {
+  &:where([data-state='open']),
+  &:where([data-open]:not([data-open='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state='closed']),
+  &:where([data-closed]:not([data-closed='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+  &:where([data-state='checked']),
+  &:where([data-checked]:not([data-checked='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state='unchecked']),
+  &:where([data-unchecked]:not([data-unchecked='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-selected {
+  &:where([data-selected='true']) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+  &:where([data-disabled='true']),
+  &:where([data-disabled]:not([data-disabled='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state='active']),
+  &:where([data-active]:not([data-active='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-horizontal {
+  &:where([data-orientation='horizontal']) {
+    @slot;
+  }
+}
+
+@custom-variant data-vertical {
+  &:where([data-orientation='vertical']) {
+    @slot;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Elune Labs palette — design 8-2 §1.4 (placeholder values, designer-swappable).
+ * Single token home; tailwind.css imports this file first, so its own :root
+ * block no longer redefines these names (later definitions would win). */
+:root {
+  --background: oklch(0.16 0.02 300);         /* near-black violet page bg */
+  --foreground: oklch(0.93 0.01 300);         /* off-white text */
+  --primary: oklch(0.55 0.20 295);            /* dark violet — buttons, links, prices */
+  --primary-foreground: oklch(0.98 0 0);
+  --accent: oklch(0.78 0.09 305);             /* lavender — badges, category accents, hover */
+  --accent-foreground: oklch(0.18 0.03 300);
+  --card: oklch(0.20 0.02 300);               /* card surfaces */
+  --card-foreground: oklch(0.93 0.01 300);    /* off-white text on dark cards */
+  --border: oklch(0.30 0.02 300);
+  --radius: 0.5rem;
+
+  /* Category accents — keyed by category url_key (Peptides / SARMs / Nootropics) */
+  --accent-peptides: oklch(0.75 0.12 195);    /* teal */
+  --accent-sarms: oklch(0.75 0.14 40);       /* amber */
+  --accent-nootropics: oklch(0.75 0.12 130); /* green */
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
