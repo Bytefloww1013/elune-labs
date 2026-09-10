@@ -1,18 +1,18 @@
 {
   "sessions": {
     "default": {
-      "persona": "unknown",
+      "persona": "implementer",
       "parent": "elune-labs-b04",
       "claimedId": "",
-      "claimedAt": "2026-09-10T01:46:26.462Z",
+      "claimedAt": "2026-09-10T02:06:35.760Z",
       "mode": "afk",
-      "claimsThisSession": 29,
+      "claimsThisSession": 30,
       "lastClaimedNonResearch": false,
       "frontierEmpty": false,
-      "mutatingTools": 79,
-      "lastRefreshAt": 1789004859236,
-      "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store: .beads/ (hidden). Query with bd show/list --json.\nLive destinations (open + in_progress):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\nLive slices (open + in_progress):\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\nIn progress:\n- elune-labs-b04.12 [in_progress] ShippingNote override: TXID re-label\nReady work (bd ready):\n- elune-labs-b04.9 [open] elune-payments extension: Setting GraphQL fields + resolvers\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\n- elune-labs-b04.7 [open] RUO disclaimers + category accent components",
-      "lastSnapshotHash": "7f94539d",
+      "mutatingTools": 84,
+      "lastRefreshAt": 1789006251538,
+      "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store: .beads/ (hidden). Query with bd show/list --json.\nLive destinations (open + in_progress):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\nLive slices (open + in_progress):\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\nIn progress:\n- elune-labs-b04.10 [in_progress] elune-payments admin Settings card\nReady work (bd ready):\n- elune-labs-b04.11 [open] COD payment-step override with crypto wallet blocks\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\n- elune-labs-b04.19 [open] Docs: project documentation (how to run, architecture, extensions, field config)\n- elune-labs-b04.8 [open] Theme stage verification: build + compliance smoke",
+      "lastSnapshotHash": "e84fca06",
       "seenClosed": {
         "elune-labs-tvg.4": "2026-09-09T01:47:26.299Z",
         "elune-labs-tvg.2": "2026-09-09T01:47:51.831Z",

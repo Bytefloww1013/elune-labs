@@ -11,5 +11,8 @@
   },
   "themeConfig": {
     "copyRight": "© 2026 Elune Labs. All rights reserved."
+  },
+  "checkout": {
+    "showShippingNote": true
   }
 }
