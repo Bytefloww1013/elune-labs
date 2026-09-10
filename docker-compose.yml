@@ -5,7 +5,8 @@ services:
     restart: unless-stopped
     env_file: .env                         # DB_*, PORT, DB_SSLMODE into the container
     environment:
-      DB_HOST: database                    # belt-and-suspenders: service name wins over .env
+      DB_HOST: database                # belt-and-suspenders: service name wins over .env
+      NODE_ENV: production             # extension loader requires this for dist/ branch
     ports:
       - "${PORT:-3000}:${PORT:-3000}"      # container listens on $PORT (default 3000)
     volumes:
@@ -14,6 +15,7 @@ services:
       - evershop-build:/app/.evershop      # build artifacts, sessions (state → named)
       - log-data:/app/.log                 # logs                      (state → named)
       - ./themes:/app/themes               # theme source              (code → bind, rw for scaffold)
+      - ./extensions:/app/extensions:ro  # extension source           (code → bind, ro)
       - ./scripts:/app/scripts:ro          # seed script               (code → bind, ro)
       - ./config:/app/config:ro            # persists system.theme (repo-committed config/default.json)
     depends_on:

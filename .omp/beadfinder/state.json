@@ -2,16 +2,17 @@
   "sessions": {
     "default": {
       "persona": "unknown",
-      "parent": "",
+      "parent": "elune-labs-b04",
       "claimedId": "",
-      "claimedAt": "2026-09-09T03:39:37.615Z",
+      "claimedAt": "2026-09-10T01:46:26.462Z",
       "mode": "afk",
-      "claimsThisSession": 12,
+      "claimsThisSession": 29,
       "lastClaimedNonResearch": false,
       "frontierEmpty": false,
-      "mutatingTools": 46,
-      "lastRefreshAt": 1788927171564,
-      "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store is `.beads/` (hidden). Do not glob `beads/`. Use bd show/list --json.\nLive destinations (open + in_progress):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\nLive slices (open + in_progress, any type):\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\nIn progress (any label):\n- elune-labs-b04.2 [in_progress] Verify bring-up: up --wait, curls, persistence cycle\nReady work (bd ready):\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)",
+      "mutatingTools": 79,
+      "lastRefreshAt": 1789004859236,
+      "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store: .beads/ (hidden). Query with bd show/list --json.\nLive destinations (open + in_progress):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\nLive slices (open + in_progress):\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\nIn progress:\n- elune-labs-b04.12 [in_progress] ShippingNote override: TXID re-label\nReady work (bd ready):\n- elune-labs-b04.9 [open] elune-payments extension: Setting GraphQL fields + resolvers\n- elune-labs-b04 [open] Implement: Elune Labs — EverShop storefront\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\n- elune-labs-b04.7 [open] RUO disclaimers + category accent components",
+      "lastSnapshotHash": "7f94539d",
       "seenClosed": {
         "elune-labs-tvg.4": "2026-09-09T01:47:26.299Z",
         "elune-labs-tvg.2": "2026-09-09T01:47:51.831Z",
@@ -20,9 +21,16 @@
         "elune-labs-tvg.7.1": "2026-09-09T01:58:45.879Z",
         "elune-labs-tvg.7.2": "2026-09-09T02:00:26.434Z",
         "elune-labs-tvg.7": "2026-09-09T02:17:23.193Z",
-        "elune-labs-tvg.8": "2026-09-09T02:58:15.345Z"
+        "elune-labs-tvg.8": "2026-09-09T02:58:15.345Z",
+        "elune-labs-b04.2": "2026-09-09T18:05:51.031Z",
+        "elune-labs-b04.3": "2026-09-09T18:34:09.717Z",
+        "elune-labs-b04.4": "2026-09-09T19:04:26.877Z",
+        "elune-labs-b04.15": "2026-09-09T19:26:49.844Z",
+        "elune-labs-b04.5": "2026-09-09T19:27:03.836Z",
+        "elune-labs-b04.6": "2026-09-09T19:46:02.220Z",
+        "elune-labs-b04.16": "2026-09-09T19:46:05.573Z"
       },
-      "booted": false
+      "booted": true
     }
   }
 }

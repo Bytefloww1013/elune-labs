@@ -1,8 +1,15 @@
 {
   "system": {
-    "theme": "elune"
+    "theme": "elune",
+    "extensions": [
+      {
+        "name": "elune-payments",
+        "resolve": "extensions/elune-payments",
+        "enabled": true
+      }
+    ]
   },
   "themeConfig": {
     "copyRight": "© 2026 Elune Labs. All rights reserved."
-}
+  }
 }

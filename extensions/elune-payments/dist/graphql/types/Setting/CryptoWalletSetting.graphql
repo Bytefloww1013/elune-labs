@@ -1,0 +1,6 @@
+extend type Setting {
+  cryptoWalletBtc: String
+  cryptoWalletUsdt: String
+  cryptoWalletEth: String
+  cryptoWalletInstructions: String
+}
