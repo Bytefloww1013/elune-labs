@@ -15,7 +15,7 @@ services:
       - evershop-build:/app/.evershop      # build artifacts, sessions (state → named)
       - log-data:/app/.log                 # logs                      (state → named)
       - ./themes:/app/themes               # theme source              (code → bind, rw for scaffold)
-      - ./extensions:/app/extensions:ro  # extension source           (code → bind, ro)
+      - ./extensions:/app/extensions      # extension source           (code → bind, rw for SWC dist/)
       - ./scripts:/app/scripts:ro          # seed script               (code → bind, ro)
       - ./config:/app/config:ro            # persists system.theme (repo-committed config/default.json)
     depends_on:

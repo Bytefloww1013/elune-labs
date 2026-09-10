@@ -2,5 +2,8 @@
   "name": "elune-payments",
   "version": "1.0.0",
   "type": "module",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "swc ./src -d dist --copy-files --strip-leading-paths"
+  }
 }

@@ -8,7 +8,7 @@ Derived from `SPEC.md` (requirements epic `elune-labs-tvg.7`) and the design-sta
 ┌────────────────────────────── docker compose ──────────────────────────────┐
 │  app  (evershop/evershop:2.2.1, node:20-alpine, root, CMD npm run start)   │
 │    ├─ themes/elune/      bind rw   ← custom storefront theme (8.2)         │
-│    ├─ extensions/elune-payments/  bind ro  ← wallet-settings GraphQL ext   │
+│    ├─ extensions/elune-payments/  bind rw  ← wallet-settings GraphQL ext   │
 │    ├─ scripts/           bind ro   ← seed script (8.3)                     │
 │    ├─ config/            bind ro   ← system.theme, extensions registration │
 │    └─ media/public/.evershop/.log → named volumes (copy-up is load-bearing)│
@@ -21,7 +21,7 @@ http://localhost:3000  (storefront)   /admin  (admin panel)
 ## Subsystems (detail in linked design docs)
 
 ### 1. Deployment & Operations — [docs/design/8-1-deployment.md](docs/design/8-1-deployment.md)
-Single `docker-compose.yml`: pinned images, `.env`-driven config with fail-fast `${DB_PASSWORD:?}`, app state in **named volumes** (binds would collect root-owned files and shadow baked build output), source dirs bind-mounted (`themes` rw, `scripts`/`config` ro), dual healthchecks, `restart: unless-stopped`, Postgres port not published. Bootstrap runbook: up --wait → user:create → admin settings walkthrough → seed → curl smokes. Ops: theme rebuild via `npm run build` + restart, `pg_dump` backup (exec -T mandatory), restore, upgrade = tag bump + backup first (migrations irreversible).
+Single `docker-compose.yml`: pinned images, `.env`-driven config with fail-fast `${DB_PASSWORD:?}`, app state in **named volumes** (binds would collect root-owned files and shadow baked build output), source dirs bind-mounted (`themes` rw, `extensions` rw for SWC `dist/`, `scripts`/`config` ro), dual healthchecks, `restart: unless-stopped`, Postgres port not published. Bootstrap runbook: up --wait → user:create → admin settings walkthrough → seed → curl smokes. Ops: theme/extension rebuild via `npm --prefix <dir> run build` (SWC) + `npm run build` (webpack) + restart, `pg_dump` backup (exec -T mandatory), restore, upgrade = tag bump + backup first (migrations irreversible).
 
 ### 2. Storefront theme + compliance — [docs/design/8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md)
 `theme:create` scaffold `themes/elune` (swc build, not tsc — CSS survives). Presentation-only; `system.theme: "elune"` committed in `config/default.json` (theme survives recreation; no theme:active). Tokens as CSS `:root` vars (Tailwind v4 config-in-CSS): dark-violet/lavender palette, category accent trio, sans-serif wordmark ELUNE LABS. **Age gate**: `pages/all/AgeGate.tsx` master component — every storefront page, structurally excludes `/admin` + `/api` (themes are frontStore-only); cookie `elune_age_ok=1; path=/; max-age=2592000; SameSite=Lax`. **RUO string** "For research use only. Not for human consumption." in footer + product page. Exact copy in doc §2.3/2.4.

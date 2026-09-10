@@ -35,7 +35,7 @@ common fields.
                     |  | (custom theme)||
                     |  +---------------+|
                     |  +---------------+|
-                    |  | extensions/    ||-- bind mount (ro)
+                    |  | extensions/    ||-- bind mount (rw)
                     |  | elune-payments||
                     |  +---------------+|
                     |  +---------------+|
@@ -60,22 +60,27 @@ common fields.
 
 ```
 themes/elune/src/**.tsx  --(SWC)-->  themes/elune/dist/**.js
+extensions/elune-payments/src/**  --(SWC)-->  extensions/elune-payments/dist/**
                                               |
-EverShop core + dist/  --(webpack)-->  .evershop/build/frontStore/
+EverShop core + theme dist/ + extension dist/  --(webpack)-->  .evershop/build/frontStore/
                                               |
                                      served by Node SSR + client hydration
 ```
 
-1. `npm run build --workspace=themes/elune` — SWC compiles `src/` to `dist/` (preserving `export const layout` via `.swcrc` jsc.target es2022).
-2. `npm run build` — EverShop webpack bundles core + theme `dist/` into `.evershop/build/` (client chunks + server entry).
-3. Restart the app to serve the new build.
+1. `npm --prefix themes/elune run build` — SWC compiles `src/` to `dist/` (preserving `export const layout` via `.swcrc` jsc.target es2022).
+2. `npm --prefix extensions/elune-payments run build` — same SWC pass for the payments extension's `src/` → `dist/`. (NODE_ENV=production makes the extension loader read `dist/`.)
+3. `npm run build` — EverShop webpack bundles core + theme `dist/` into `.evershop/build/` (client chunks + server entry).
+4. Restart the app to serve the new build.
 
-### Two build steps — why?
+Use `npm --prefix <dir> run build`, **not** `npm run build --workspace=<dir>`: `/app/package.json` is the image manifest, it is not bind-mounted and declares no `workspaces`, so `--workspace=` fails with `No workspaces found` on a fresh container. `--prefix` resolves `swc` from `/app/node_modules/.bin` and needs no image mutation.
+
+### Why three build steps?
 
 EverShop's theme system works via component override: the theme's `dist/` files are
 picked up by EverShop's webpack build and merged into the client/server bundles.
-SWC handles the TypeScript/JSX compilation; webpack handles the bundling and
-code-splitting. Both steps are needed.
+SWC handles the TypeScript/JSX compilation (theme *and* extension — the extension
+loader reads its `dist/` under `NODE_ENV=production`); webpack handles the bundling
+and code-splitting. All three steps are needed.
 
 ---
 
@@ -91,7 +96,7 @@ code-splitting. Both steps are needed.
 | Host path       | Container path       | Mode | Purpose                          |
 |-----------------|----------------------|------|----------------------------------|
 | `./themes`      | `/app/themes`        | rw   | Theme source (SWC compiles in dist/) |
-| `./extensions`  | `/app/extensions`    | ro   | Extension source                  |
+| `./extensions`  | `/app/extensions`    | rw   | Extension source (SWC compiles in dist/) |
 | `./scripts`     | `/app/scripts`       | ro   | Seed catalog script               |
 | `./config`      | `/app/config`        | ro   | `config/default.json`             |
 | —               | `/app/.evershop`     | named| Build artifacts, sessions         |
@@ -217,14 +222,15 @@ maps to a `crypto_wallet_*` setting key with a placeholder fallback:
 1. Add the field to `CryptoWalletSetting.graphql`.
 2. Add a resolver in `CryptoWalletSetting.resolvers.js` that reads the matching `crypto_wallet_*` key.
 3. Register in `config/default.json` under `system.extensions` (already done for elune-payments).
-4. Rebuild: `docker compose exec app npm run build`.
+4. Rebuild the extension plus the app:
+   `docker compose exec app npm --prefix extensions/elune-payments run build && docker compose exec app npm run build`.
 5. Set the value via admin Settings or `POST /api/settings`.
 
 ### How extensions load
 
 EverShop discovers extensions from `config/default.json` → `system.extensions[]`.
 Each entry has `{ name, resolve, enabled }`. The `resolve` path is relative to the
-app root. Extensions mount read-only in the container (`:ro`).
+app root. Extensions mount read-write in the container so the SWC build can write `dist/`.
 
 ---
 
