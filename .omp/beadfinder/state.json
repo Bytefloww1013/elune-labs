@@ -1,0 +1,20 @@
+{
+  "sessions": {
+    "default": {
+      "persona": "unknown",
+      "parent": "",
+      "claimedId": "",
+      "claimedAt": "",
+      "mode": "",
+      "claimsThisSession": 0,
+      "lastClaimedNonResearch": false,
+      "frontierEmpty": false,
+      "mutatingTools": 17,
+      "lastRefreshAt": 1789054777396,
+      "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store: .beads/ (hidden). Query with bd show/list --json.\nLive destinations (open + in_progress):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)\nLive slices (open + in_progress): none\nIn progress: none\nReady work (bd ready):\n- elune-labs-tvg [open] Wayfinder Map: Elune Labs — EverShop storefront (peptides, SARMs, nootropics)",
+      "lastSnapshotHash": "cd9aae9b",
+      "seenClosed": {},
+      "booted": true
+    }
+  }
+}

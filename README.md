@@ -39,6 +39,64 @@ curl -sL -o /dev/null -w 'admin %{http_code}\n' "http://localhost:$PORT/admin"
 # (/admin 302-redirects to /admin/login when unauthenticated; -L follows to the 200 login page)
 ```
 
+## Remote access (tailnet)
+
+Compose publishes the storefront on **every host interface** by default
+(`${BIND_HOST:-0.0.0.0}` in `docker-compose.yml`), so a machine on the same
+tailnet opens it at the host's tailnet address -- on this host:
+
+```
+http://100.123.49.43:3010          # storefront
+http://100.123.49.43:3010/admin    # admin console
+```
+
+(`3010` is this host's `PORT`; use whatever `PORT` resolves to.) To publish on the
+tailnet only -- nothing on the LAN, nothing on `localhost`:
+
+```bash
+# .env
+BIND_HOST=100.123.49.43
+```
+
+then `docker compose up -d` to republish. `BIND_HOST` is compose interpolation
+only: the container still listens on `PORT`, and the healthcheck stays on
+`127.0.0.1:$PORT` inside the container. No host firewall is involved (ufw is
+disabled on this host); if one is ever enabled, allow the port on `tailscale0`.
+
+> Tailnet-only means `localhost:$PORT` and the LAN address stop answering: every
+> URL becomes the tailnet one -- the runbook's smoke curls, `EVERSHOP_BASE_URL`
+> for the seed/smoke scripts, and `HOME_URL`. With the default `BIND_HOST=0.0.0.0`
+> both work side by side.
+
+### Base URL (`HOME_URL`)
+
+Publishing the port is only half of it. EverShop bakes an **absolute** base URL
+into every link, form action and email. Unset, it falls back to
+`http://localhost:$PORT` (`getBaseUrl.js`), so a remote browser resolves every
+link back to *itself* -- the page loads, nothing else works.
+
+`docker-compose.yml` therefore passes:
+
+```yaml
+EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
+```
+
+so the default base URL is this host's tailnet address and port. Override it in
+`.env` when the browse address differs (different tailnet host, LAN IP, tunnel,
+reverse proxy):
+
+```bash
+# .env
+HOME_URL=https://store.example.com
+```
+
+Verify the store emits the address you browse from:
+
+```bash
+PORT="$(sed -n 's/^PORT=//p' .env)"; PORT="${PORT:-3000}"
+curl -s "http://100.123.49.43:$PORT/" | grep -c 'localhost'   # must print 0
+```
+
 ## Payment settings (crypto wallets)
 
 Admin console: **Settings → Payment** at `/admin/setting/payments`. The page

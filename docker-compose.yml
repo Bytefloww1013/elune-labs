@@ -7,8 +7,17 @@ services:
     environment:
       DB_HOST: database                # belt-and-suspenders: service name wins over .env
       NODE_ENV: production             # extension loader requires this for dist/ branch
+      # Absolute base URL the store bakes into links/forms/emails. Without it
+      # EverShop falls back to http://localhost:$PORT, so a browser on another
+      # machine resolves every link to itself and the store is unusable. Default
+      # is this host's tailnet address; override with HOME_URL in .env.
+      EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"      # container listens on $PORT (default 3000)
+      # host-addr : host-port : container-port (container listens on $PORT).
+      # BIND_HOST is the address Docker publishes on: 0.0.0.0 = every interface
+      # (LAN + tailnet); set the tailnet IP, e.g. 100.123.49.43, to expose the
+      # storefront on the tailnet only. Interpolation-only, not app config.
+      - "${BIND_HOST:-0.0.0.0}:${PORT:-3000}:${PORT:-3000}"
     volumes:
       - media-data:/app/media              # product images            (state → named)
       - public-data:/app/public            # built static assets       (state → named)

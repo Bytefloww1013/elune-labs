@@ -55,6 +55,11 @@ Single `.env` at repo root (gitignored, `.env.example` committed):
 ```dotenv
 # .env.example — copy to .env, then set DB_PASSWORD
 PORT=3000
+# Published host address: 0.0.0.0 = LAN + tailnet, or one address only
+# (e.g. the tailnet IP 100.123.49.43)
+BIND_HOST=0.0.0.0
+# Browse address baked into absolute links (maps to EVERSHOP_HOME_URL)
+HOME_URL=http://100.123.49.43:3010
 DB_HOST=database
 DB_PORT=5432
 DB_NAME=evershop
@@ -95,8 +100,13 @@ services:
     env_file: .env                         # DB_*, PORT, DB_SSLMODE into the container
     environment:
       DB_HOST: database                    # belt-and-suspenders: service name wins over .env
+      # Absolute base URL for links/forms/emails; defaults to this host's
+      # tailnet address, override with HOME_URL (see operation notes)
+      EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"      # container listens on $PORT (default 3000)
+      # BIND_HOST = published host address (0.0.0.0 = every interface, i.e.
+      # LAN + tailnet); container listens on $PORT (default 3000)
+      - "${BIND_HOST:-0.0.0.0}:${PORT:-3000}:${PORT:-3000}"
     volumes:
       - media-data:/app/media              # product images            (state → named)
       - public-data:/app/public            # built static assets       (state → named)

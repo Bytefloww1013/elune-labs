@@ -114,7 +114,9 @@ and code-splitting. All three steps are needed.
 | `DB_NAME`             | no       | `evershop`  |                                          |
 | `DB_USER`             | no       | `evershop`  |                                          |
 | `DB_SSLMODE`          | no       | `disable`   |                                          |
-| `PORT`                | no       | `3000`      | Set to `3010` if host :3000 is taken     |
+| `PORT`                | no       | `3000`      | Container + published host port (`3010` on this host) |
+| `BIND_HOST`           | no       | `0.0.0.0`   | Published host address; `100.123.49.43` = tailnet only |
+| `HOME_URL`            | no       | `http://100.123.49.43:$PORT` | Absolute base URL baked into links/forms/emails (`EVERSHOP_HOME_URL`); unset ⇒ EverShop falls back to `http://localhost:$PORT` |
 | `JWT_ADMIN_SECRET`    | yes*     | —           | Admin JWT signing (needed for seed auth) |
 | `JWT_ADMIN_REFRESH_SECRET` | yes* | —          | Admin JWT refresh                        |
 
@@ -278,6 +280,8 @@ app root. Extensions mount read-write in the container so the SWC build can writ
 | Key                      | Example                              | Notes                                    |
 |--------------------------|--------------------------------------|------------------------------------------|
 | `PORT`                   | `3010`                               | Container + host port (must match)        |
+| `BIND_HOST`              | `0.0.0.0`                            | Published host address (`0.0.0.0` = LAN + tailnet; tailnet-only: `100.123.49.43`) |
+| `HOME_URL`               | `http://100.123.49.43:3010`          | Browse address; compose maps it to `EVERSHOP_HOME_URL` (absolute links) |
 | `DB_PASSWORD`            | `EluneLabs-Store-3010`               | Postgres password                         |
 | `DB_HOST`                | `database`                           | Compose service name (auto-set)           |
 | `DB_PORT`                | `5432`                               |                                          |
@@ -425,6 +429,18 @@ The script asserts success and exits 1 on failure.
 
 - **Port**: stack runs on 3010 on this host (host :3000 is OpenChamber).
   Replace `localhost:3000` in any docs/scripts with the live port.
+- **Remote access**: `docker-compose.yml` publishes on `${BIND_HOST:-0.0.0.0}`,
+  so the storefront is already reachable from the tailnet at
+  `http://100.123.49.43:3010` (or whatever `PORT` is). Set `BIND_HOST=100.123.49.43`
+  in `.env` to publish on the tailnet only. The app also needs the tailnet
+  address as its absolute base URL (`EVERSHOP_HOME_URL`, fed from `HOME_URL`,
+  default `http://100.123.49.43:$PORT`) — without it every link points at
+  `http://localhost:$PORT` and a remote browser loops back to itself. Scripts
+  (`seed-catalog.mjs`, `smoke-checkout.mjs`) keep working on `localhost` when run
+  on this host **as long as `BIND_HOST` is the default `0.0.0.0`** — a
+  tailnet-only bind takes `localhost` away, so use the tailnet URL everywhere
+  (runbook curls included); from another machine set
+  `EVERSHOP_BASE_URL=http://100.123.49.43:3010`.
 - **No host sudo**: reclaim root-owned files in themes/ via
   `docker compose exec app chown -R $(id -u):$(id -g) /app/themes`.
 - **Restart**: `docker compose restart app` may fail. Use

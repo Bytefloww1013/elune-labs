@@ -11,3 +11,5 @@ backups/
 themes/*/dist/
 themes/*/node_modules/
 
+# Treehouse work tree storage dir
+.treehouse/
