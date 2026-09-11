@@ -1,0 +1,14 @@
+{
+  "comp": ".impeccable/mocks/decision/canon.png",
+  "approved": true,
+  "approvedNote": "User locked the canon 2026-09-11 after rejecting The Specimen Archive: 'I do not like that design, please just use the standard one you mentioned earlier.' This was the pre-saved second choice; convention is now the commitment and is executed at full craft, without irony.",
+  "direction": "CANON — the category standard, played straight (standing exit)",
+  "seedKey": "12a9eaca",
+  "kind": "canon",
+  "viewport": "desktop 16:9, 1536x1024",
+  "prompt": "A desktop website homepage design for 'ELUNE LABS', a research-peptide supplier, rendered as a full-bleed desktop browser viewport with NO browser chrome — a conventional modern direct-to-consumer supplement store, executed cleanly and without irony. Regions: white header with wordmark, five category links, search, account, cart; a wide light-grey hero banner with a centred headline 'Research-Grade Peptides, Verified', supporting sentence, a filled dark 'SHOP ALL PEPTIDES' button and one product photograph of a glass vial; a row of four trust badges (THIRD-PARTY TESTED, TRACKED SHIPPING, RESEARCH USE ONLY, SECURE CHECKOUT); a 'Shop by Category' row of five equal rounded shadowed cards with thumbnails; a 'Featured Products' row of four product cards each with photo, name, price and ADD TO CART; a newsletter strip with email field and SUBSCRIBE; a dark charcoal footer with link columns and the RUO line. Style: clean conventional web design — white ground, light grey section fills, one dark button colour, rounded cards with soft shadows, a single sans-serif typeface, comfortable ordinary spacing. No neon, no glow, no dark page background, no photographic people.",
+  "provenance": "generated via harness image tool (xd://generate_image, provider xai/grok-imagine-image)",
+  "notes": [
+    "This card is the user's door, not a recommendation. It is offered quietly and never weighed against the dealt directions."
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "title": "Choose the visual world",
+  "question": "The roll assigned grounded candidate 4 of 7 — the cold-storage specimen archive. Keep it, take an alternate, or re-roll. Comps are in .impeccable/mocks/decision/ (assigned.png, pick.png, canon.png).",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Specimen Archive",
+      "kicker": "THE ROLL",
+      "lineage": "cold-storage cryogenic specimen archives and cryobox rack inventories",
+      "thesis": "The catalog is an addressable archive: every compound is a labelled specimen with a rack coordinate and a full specification record.",
+      "palette": ["#f7f7f8", "#ffffff", "#111417", "#5b6472", "#2b3038"],
+      "materials": ["frosted polycarbonate", "borosilicate glass", "hairline rules", "printed label stock"],
+      "viewport": "A rack index band addresses the board; the hero pairs one photographed vial with its spec record; below, the whole catalog is a cryobox grid where every cell is a real, differently-named compound with its own lot.",
+      "raised": [
+        {
+          "from": "challenger-tensegrity",
+          "raise": "Specification values are annotated to the specimen they describe, pinned by leader lines to the record, rather than parked in a table beside it."
+        },
+        {
+          "from": "challenger-phosphor",
+          "raise": "Availability prints inside the cell that owns it — the grid itself carries state, with no floating badge layer over the composition."
+        },
+        {
+          "from": "challenger-cape",
+          "raise": "One rack control re-addresses the entire board: a single selection changes the whole surface, not a section of it."
+        }
+      ],
+      "risk": "A rack grid can read as inventory software if the type and rules are not held tightly, and 'archive' language drifts toward implying a facility Elune does not operate. The coordinates are the catalog's own addressing scheme, never a claim of custody.",
+      "comp": ".impeccable/mocks/decision/assigned.png"
+    },
+    {
+      "id": "model-pick",
+      "label": "The Regulated Label",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "regulated reagent bottle labels and pharmaceutical label standards",
+      "thesis": "The interface is the product's own printed label, blown up: dense ruled fields, lot block, net contents and storage line.",
+      "palette": ["#ffffff", "#111111", "#6b7280"],
+      "materials": ["label stock", "heavy keylines", "reversed-out bars", "barcode blocks"],
+      "viewport": "An oversized white label panel dominates the first viewport, its ruled field rows carrying the full specification, with smaller label cards and a ruled index table below.",
+      "risk": "This is the direction most runs in this category would also reach for. It wins on product clarity and recognition, not on distinctiveness.",
+      "comp": ".impeccable/mocks/decision/pick.png"
+    },
+    {
+      "id": "challenger-tensegrity",
+      "label": "The Tension Network",
+      "verdict": "competitive",
+      "lineage": "kinetic tensegrity sculpture — carbon rods and tension cord",
+      "thesis": "The catalog as a load network: expose the tension and compression paths between products and let a visitor trace any value to its counterforce.",
+      "palette": ["#e8e6e1", "#1b1d20", "#c0392b", "#9aa0a6"],
+      "materials": ["pale concrete", "carbon rod", "red tension cord"],
+      "viewport": "An engineering diagram spine — monospaced force labels pinned to nodes on leader lines, layout obeying the strut network rather than a page grid.",
+      "case": "Fuses cleanly onto specification data and genuinely aids comparison, but its identification is civil engineering: a peptide buyer does not see themselves in it, and the breathing motion implies a live process the product does not have. Loses narrowly on identification, holds clarity.",
+      "hero": "https://impeccable.style/worlds/cards/kinetic-sculpture-automata-tensegrity-breathing-column-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/kinetic-sculpture-automata-tensegrity-breathing-column.webp",
+      "comp": ".impeccable/mocks/decision/challenger-tensegrity.png"
+    },
+    {
+      "id": "challenger-dumbar",
+      "label": "The Modular Block System",
+      "verdict": "competitive",
+      "lineage": "Studio Dumbar modular identity systems",
+      "thesis": "Photographed reality and hard vector bars snapping together under one loud grammar of coloured blocks, moving by band, by module cell and by scene.",
+      "palette": ["#00a0e3", "#e5007d", "#ffd500", "#3aaa35", "#4a4f57"],
+      "materials": ["flat vector fills", "photographic panels", "multiply blends"],
+      "viewport": "Coloured bars and photo panels as grid layers, overlaps producing secondary colours; category colour-coding as structure rather than decoration.",
+      "case": "Fuses well: colour bands map naturally onto the five categories and the photographic panels suit vials, and it is a genuinely light-ground, printed-systems world. Loses narrowly on clarity — saturated cyan, magenta and yellow fidget against analytical sobriety and sit close to the neon register the brand bans. Would need systematic muting to survive the commitment.",
+      "hero": "https://impeccable.style/worlds/cards/studio-dumbar-identity-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/studio-dumbar-identity.webp",
+      "comp": ".impeccable/mocks/decision/challenger-dumbar.png"
+    },
+    {
+      "id": "challenger-angura",
+      "label": "The Letterpress Bill",
+      "verdict": "declined",
+      "lineage": "underground theatre posters, flat silkscreen",
+      "thesis": "A flat screened bill whose ray burst radiates from one off-centre origin, navigation following a ray outward to its billing.",
+      "palette": ["#d8402a", "#1f7a5c", "#f2c500", "#f5f1e6"],
+      "materials": ["flat screened ink", "hand-drawn lettering", "ruled border cells"],
+      "kept": "The ruled border-cell device, where navigation state is a filled cell in a printed frame — the assigned direction took this as its rack index band.",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-angura-theatre-poster-hero.webp"
+    },
+    {
+      "id": "challenger-cape",
+      "label": "The Drawcord Structure",
+      "verdict": "declined",
+      "lineage": "fashion textiles — drawcord-channel transforming garment",
+      "thesis": "One pull transforms a flat plane into a structured volume, with cord channel, gathered region and anchor as the topology.",
+      "palette": ["#141414", "#c9a227", "#3a3a3a", "#8a8f98"],
+      "materials": ["matte silk", "gold drawcord", "channel stitching"],
+      "kept": "The single-control transformation — one interaction reconfigures the entire surface, which the assigned direction adopted as its rack selector.",
+      "hero": "https://impeccable.style/worlds/cards/textiles-weave-drape-fashion-drawcord-transforming-cape-hero.webp"
+    },
+    {
+      "id": "challenger-phosphor",
+      "label": "The Phosphor Terminal",
+      "verdict": "declined",
+      "lineage": "green-phosphor terminal in a midnight machine room",
+      "thesis": "One continuous scrolling transcript where every system state prints itself rather than appearing as chrome.",
+      "palette": ["#04120a", "#3bff8f", "#0d2a18"],
+      "materials": ["P1 phosphor", "curved glass", "scanline glow"],
+      "kept": "State that prints itself in place instead of floating as chrome — the assigned direction took this for in-cell availability.",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-phosphor-terminal-midnight-hero.webp"
+    },
+    {
+      "id": "challenger-ebru",
+      "label": "The Floated Pigment Bath",
+      "verdict": "declined",
+      "lineage": "Ebru marbling — floated pigment on a thickened bath",
+      "thesis": "Every mark is made by moving liquid: each drop displaces the last into rings, combed into figures and lifted once onto paper.",
+      "palette": ["#2a2320", "#1d4e89", "#c8963e", "#f0ece3"],
+      "materials": ["floated pigment", "sized paper", "fluid displacement"],
+      "kept": "The idea that a value's position is displaced by the values around it — a useful instinct for showing relative purity across a lot batch.",
+      "hero": "https://impeccable.style/worlds/cards/medium-native-ebru-floated-pigment-hero.webp"
+    }
+  ],
+  "reroll": {
+    "registers": ["safer", "bolder"]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "What this category ships, executed impeccably — hero banner, trust badges, category cards, featured products, newsletter, footer.",
+    "palette": ["#ffffff", "#f3f4f6", "#111827"],
+    "materials": ["clean grid", "soft card shadows", "product photography"],
+    "viewport": "The arrangement a visitor expects, at full craft.",
+    "risk": "Indistinguishable from the competition by design.",
+    "comp": ".impeccable/mocks/decision/canon.png"
+  },
+  "steer": true
+}

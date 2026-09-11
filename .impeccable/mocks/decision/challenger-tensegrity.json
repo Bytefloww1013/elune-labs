@@ -1,0 +1,16 @@
+{
+  "comp": ".impeccable/mocks/decision/challenger-tensegrity.png",
+  "approved": false,
+  "direction": "COMPETITIVE — the tension network",
+  "kind": "challenger",
+  "id": "challenger-tensegrity",
+  "sourceId": "kinetic-sculpture-automata-tensegrity-breathing-column",
+  "viewport": "desktop 16:9, 1536x1024",
+  "prompt": "A desktop website homepage design for 'ELUNE LABS', a research-peptide supplier, rendered as a full-bleed desktop browser viewport with NO browser chrome. The organising world is a tensegrity sculpture: matte carbon rods held apart by tensioned red cord, where the page's layout obeys a strut network rather than a page grid, and every specification value is annotated to the specimen it describes. Regions: slim header on a pale concrete-toned ground with wordmark and five category links; a large engineering force diagram across the first viewport built from thin straight black struts meeting at circular nodes, taut red cord under tension, two slack members in ash grey, each node pinned by leader line to a prominent engineering monospaced annotation block (BPC-157 LOT EL-2411-A MW 1419.5; SEMAGLUTIDE LOT EL-2412-B MW 4113.6; TIRZEPATIDE LOT EL-2412-C MW 4813) with small outlined tags for PURITY 99.2 PCT and STORE -20 C and a monospaced price line under each; a lower comparison structure where five compound rows are strung between the same struts with monospaced CAS, FORMULA, MW and PURITY values separated by thin rules; a slim footer with the RUO line. Style: technical engineering drawing translated to screen — matte carbon-black struts, one red tension accent, ash-grey slack, pale concrete-neutral ground, hairline rules, small neutral grotesque labels with engineering monospaced data. No neon, no glow, no gradient, no dark page background, no rounded pills, no photographic people.",
+  "verdict": "competitive",
+  "case": "Fuses cleanly onto specification data and genuinely aids comparison, but its identification is civil engineering: a peptide buyer does not see themselves in it, and the breathing motion implies a live process the product does not have. Loses narrowly on identification, holds clarity.",
+  "hero": "https://impeccable.style/worlds/cards/kinetic-sculpture-automata-tensegrity-breathing-column-hero.webp",
+  "board": "https://impeccable.style/worlds/cards/kinetic-sculpture-automata-tensegrity-breathing-column.webp",
+  "provenance": "generated via harness image tool (xd://generate_image, provider xai/grok-imagine-image)",
+  "notes": ["Screen test: light concrete-neutral ground, red accent is matte not luminescent, no neon, no glow, no dark background."]
+}

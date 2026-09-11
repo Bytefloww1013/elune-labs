@@ -30,6 +30,7 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-brand-ochre: var(--brand-ochre);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -50,11 +51,11 @@
 }
 
 :root {
-  --chart-1: oklch(0.88 0.180 205);           /* Cyan */
-  --chart-2: oklch(0.65 0.240 295);           /* Violet */
-  --chart-3: oklch(0.88 0.220 150);           /* Mint */
-  --chart-4: oklch(0.80 0.180 75);            /* Amber */
-  --chart-5: oklch(0.62 0.220 25);            /* Crimson */
+  --chart-1: #14604a;                          /* Evergreen */
+  --chart-2: #1c5f96;                          /* Deep blue */
+  --chart-3: #6b4f9e;                          /* Muted violet */
+  --chart-4: #9a6414;                          /* Warm ochre */
+  --chart-5: #a32a1f;                          /* Deep red */
   --sidebar: var(--card);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -66,8 +67,7 @@
 }
 
 /*
- * Light-only (re-skin decision 2026-07-10). The `.dark` palette was removed to
- * match the design reference; `@custom-variant dark` above is kept class-based,
- * so the inert `dark:` utilities in ui/* never match (no `.dark` is ever added
- * to the storefront DOM) rather than being stripped from every component.
+ * Light only (2026-09-11). There is no dark palette in this storefront and no
+ * `.dark` class is ever added to the DOM; the class-based `dark:` variant above
+ * stays inert rather than being stripped from every core component.
  */

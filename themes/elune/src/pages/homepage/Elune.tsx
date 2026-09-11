@@ -1,135 +1,160 @@
+import { ProductListItemRender } from '@components/frontStore/catalog/ProductListItemRender.js';
+import { CATEGORY_URL_KEYS } from '../../data/categories.js';
 import React from 'react';
 
-const Elune: React.FC = () => {
+interface CategorySummary {
+  name: string;
+  urlKey: string;
+  url: string;
+  products?: { total: number; items: ProductListItemData[] };
+}
+
+interface ProductListItemData {
+  productId: number;
+  name: string;
+  sku: string;
+  url?: string;
+  price: {
+    regular: { value: number; text: string };
+    special?: { value: number; text: string };
+  };
+  inventory: { isInStock: boolean };
+  image?: { url: string; alt?: string };
+}
+
+// The four statements, all checkable, none of them a claim about testing.
+const TRUST_STATEMENTS = [
+  'Tracked & discreet shipping',
+  'Crypto payment — BTC, USDT and ETH',
+  'Form, storage and purity on every product',
+  'Research use only — not for human consumption'
+];
+
+const Elune: React.FC<{ categories?: { items?: CategorySummary[] } }> = ({ categories }) => {
+  const items = categories?.items ?? [];
+  const canonical = CATEGORY_URL_KEYS.map((urlKey) =>
+    items.find((category) => category.urlKey === urlKey)
+  ).filter((category): category is CategorySummary => Boolean(category));
+
+  // One product from each of the first four categories — the featured row.
+  const featured = canonical
+    .slice(0, 4)
+    .map((category) => category.products?.items?.[0])
+    .filter((product): product is ProductListItemData => Boolean(product));
+
+  const primary = canonical.find((category) => category.urlKey === 'recovery') ?? canonical[0];
+
   return (
-    <section className="relative overflow-hidden py-10 md:py-16">
-      {/* Ambient background glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="page-width relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-mono uppercase tracking-widest mb-6">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span>High-Purity Bio-Intelligence Reference Compounds</span>
+    <>
+      {/* Offer band: one plain statement, one supporting sentence, one action,
+          and the vial photograph bleeding to the band's right edge. */}
+      <section className="border-b border-border bg-secondary">
+        <div className="grid items-center gap-8 py-12 lg:grid-cols-[1.1fr_1fr] lg:gap-10 lg:py-0">
+          {/* `main` already carries .page-width, so the grid's first column
+           * starts at the page gutter. ml-6 matches that gutter's 1.5rem and
+           * pl-0 cancels the mobile px-4 so the headline lines up with the
+           * wordmark, the trust row and every section heading. The column keeps
+           * its own pr-10 measure instead of the mobile gutter. */}
+          <div className="px-4 lg:ml-6 lg:mr-auto lg:max-w-[600px] lg:py-16 lg:pl-0 lg:pr-10">
+            <h1 className="text-3xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl">
+              Research peptides, with the specification on record for every product.
+            </h1>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+              Five categories of reference compounds. Each product page carries its own
+              specification — form, storage, and a purity declaration of &#8805;99%.
+            </p>
+            {primary && (
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <a
+                  href={primary.url || `/${primary.urlKey}`}
+                  className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground no-underline transition-colors duration-150 hover:bg-primary/90"
+                >
+                  Shop {primary.name}
+                </a>
+                {/* The headline promises the whole catalog; the filled button can
+                 * only enter one category, so the catalog-level path is this
+                 * quiet link to the category row rather than a second button
+                 * competing with the primary action. */}
+                <a
+                  href="#categories"
+                  className="text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                >
+                  or browse all {canonical.length} categories
+                </a>
+              </div>
+            )}
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
-            PRECISION SYNTHESIS FOR <br className="hidden md:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-300 to-accent">
-              BIOHACKER RESEARCH
-            </span>
-          </h1>
+          <img
+            src="/assets/plates/hero-photo.webp"
+            alt="A single clear glass vial with a metal crimp seal on a plain light surface."
+            width={1400}
+            height={933}
+            className="w-full px-4 lg:h-full lg:min-h-[420px] lg:self-stretch lg:object-cover lg:px-0"
+          />
+        </div>
+      </section>
 
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
-            Analytical-grade peptides, SARMs, and nootropic compounds verified by HPLC and mass spectrometry. Packaged in sterile borosilicate vials for laboratory research.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="/peptides"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-primary text-primary-foreground font-semibold text-sm shadow-[0_0_20px_rgba(0,240,255,0.35)] hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-200 cursor-pointer no-underline"
+      {/* Four honest statements on a hairline-ruled band. */}
+      <section className="page-width" aria-label="How orders are handled">
+        <ul className="grid gap-4 border-b border-border py-6 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-border">
+          {TRUST_STATEMENTS.map((statement) => (
+            <li
+              key={statement}
+              className="text-sm text-muted-foreground lg:px-6 lg:first:pl-0"
             >
-              Explore Peptides Catalog
-            </a>
-            <a
-              href="/nootropics"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-md border border-border bg-card/60 backdrop-blur-sm text-foreground hover:bg-card hover:border-muted-foreground/40 font-medium text-sm transition-all duration-150 cursor-pointer no-underline"
-            >
-              View Nootropics
-            </a>
-          </div>
-        </div>
+              {statement}
+            </li>
+          ))}
+        </ul>
+      </section>
 
-        {/* Category Tri-Accent Showcase Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Peptides Card */}
-          <a
-            href="/peptides"
-            className="group block p-6 rounded-lg border border-border/80 bg-card hover:border-cyan-500/60 hover:shadow-[0_0_25px_-5px_rgba(0,240,255,0.25)] transition-all duration-200 no-underline"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-semibold uppercase tracking-widest text-cyan-400">
-                Category 01
-              </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00F0FF]" />
-            </div>
-            <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-cyan-400 transition-colors">
-              Peptides
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              Lyophilized peptide vials (BPC-157, TB-500, CJC-1295, Ipamorelin) with pure crystalline cakes.
-            </p>
-            <div className="text-xs font-mono text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Browse Peptides &rarr;
-            </div>
-          </a>
+      <section id="categories" className="page-width pt-8 pb-12 scroll-mt-4">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+          Shop by category
+        </h2>
+        <ul className="mt-6 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-5">
+          {canonical.map((category) => (
+            <li key={category.urlKey}>
+              <a
+                href={category.url || `/${category.urlKey}`}
+                className="flex h-full flex-col justify-between rounded-lg border border-border bg-card p-5 no-underline transition-colors duration-150 hover:border-muted-foreground/40"
+              >
+                <span
+                  className="text-base font-semibold"
+                  style={{
+                    color: `var(--accent-${category.urlKey.replace(/[^\w-]/g, '')}, var(--foreground))`
+                  }}
+                >
+                  {category.name}
+                </span>
+                <span className="mt-8 font-mono text-xs text-muted-foreground">
+                  {category.products?.total ?? 0}{' '}
+                  {category.products?.total === 1 ? 'product' : 'products'}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-          {/* SARMs Card */}
-          <a
-            href="/sarms"
-            className="group block p-6 rounded-lg border border-border/80 bg-card hover:border-amber-500/60 hover:shadow-[0_0_25px_-5px_rgba(255,179,0,0.25)] transition-all duration-200 no-underline"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-semibold uppercase tracking-widest text-amber-400">
-                Category 02
-              </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#FFB300]" />
-            </div>
-            <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-amber-400 transition-colors">
-              SARMs
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              Selective androgen receptor modulators (RAD-140, Ostarine, LGD-4033, Cardarine, MK-677).
-            </p>
-            <div className="text-xs font-mono text-amber-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Browse SARMs &rarr;
-            </div>
-          </a>
-
-          {/* Nootropics Card */}
-          <a
-            href="/nootropics"
-            className="group block p-6 rounded-lg border border-border/80 bg-card hover:border-emerald-500/60 hover:shadow-[0_0_25px_-5px_rgba(0,255,157,0.25)] transition-all duration-200 no-underline"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-semibold uppercase tracking-widest text-emerald-400">
-                Category 03
-              </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#00FF9D]" />
-            </div>
-            <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-emerald-400 transition-colors">
-              Nootropics
-            </h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              High-affinity cognitive substrates (Phenylpiracetam, Alpha-GPC, Citicoline, L-Theanine).
-            </p>
-            <div className="text-xs font-mono text-emerald-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Browse Nootropics &rarr;
-            </div>
-          </a>
-        </div>
-
-        {/* Quality & Trust Bar */}
-        <div className="rounded-lg border border-border/60 bg-card/40 p-4 md:p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div>
-            <div className="text-lg md:text-xl font-bold font-mono text-cyan-400">≥99.2%</div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">HPLC Purity Tested</div>
+      {featured.length > 0 && (
+        <section className="page-width pb-16">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+            Featured products
+          </h2>
+          <div className="reveal mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((product) => (
+              <ProductListItemRender
+                key={product.productId}
+                product={product}
+                showAddToCart
+              />
+            ))}
           </div>
-          <div>
-            <div className="text-lg md:text-xl font-bold font-mono text-foreground">Borosilicate</div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Type I Sealed Vials</div>
-          </div>
-          <div>
-            <div className="text-lg md:text-xl font-bold font-mono text-emerald-400">BTC · USDT · ETH</div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Crypto on Delivery</div>
-          </div>
-          <div>
-            <div className="text-lg md:text-xl font-bold font-mono text-amber-400">RUO Certified</div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Research Use Only</div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      )}
+    </>
   );
 };
 
@@ -137,5 +162,43 @@ export const layout = {
   areaId: 'content',
   sortOrder: 10
 };
+
+export const query = `
+  query Query {
+    categories {
+      items {
+        name
+        urlKey
+        url
+        products {
+          total
+          items {
+            productId
+            name
+            sku
+            url
+            price {
+              regular {
+                value
+                text
+              }
+              special {
+                value
+                text
+              }
+            }
+            inventory {
+              isInStock
+            }
+            image {
+              url
+              alt
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 export default Elune;

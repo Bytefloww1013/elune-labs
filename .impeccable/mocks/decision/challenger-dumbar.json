@@ -1,0 +1,16 @@
+{
+  "comp": ".impeccable/mocks/decision/challenger-dumbar.png",
+  "approved": false,
+  "direction": "COMPETITIVE — the modular block system",
+  "kind": "challenger",
+  "id": "challenger-dumbar",
+  "sourceId": "studio-dumbar-identity",
+  "viewport": "desktop 16:9, 1536x1024",
+  "prompt": "A desktop website homepage design for 'ELUNE LABS', a research-peptide supplier, rendered as a full-bleed desktop browser viewport with NO browser chrome. The organising world is a modular identity system: photographed reality and hard vector bars snapping together under one loud grammar of coloured blocks, where overlapping bars produce secondary colours. Regions: white header with wordmark and five category links; a full-width horizontal stack of five large flat saturated bars, one per category, butted edge to edge at differing heights, each carrying its name reversed out (blue GLPs, magenta BIOREGULATORS, yellow RECOVERY with dark text, green GH RELEASING, neutral grey OTHER); a hero band pairing a large photographic panel of a clear borosilicate vial on plain grey with flat vector bars overlapping and tilting across its edge so overlap areas multiply into secondary colour, and to the right a row of small businesslike uppercase labels over white (BPC-157, LOT EL-2411-A, PURITY 99.2 PCT, MW 1419.5, STORE -20 C) with a magenta vector fragment scattered near them; a lower modular grid of photographic vial panels in mixed sizes separated by white gutters and overlapped at corners by flat blue, magenta, yellow and green bars, each with a compound name in uppercase grotesque, a monospaced lot code and a price; a slim footer with the RUO line. Style: flat saturated vector fills against photographic mid-tones, cool grey neutrals, white ground, small neutral grotesque labels, oversized colour bars, sharp square corners. No gradients, no glow, no neon, no blur, no dark page background, no rounded pills, no photographic people. Colour is printed and matte, never luminescent.",
+  "verdict": "competitive",
+  "case": "Fuses well: colour bands map naturally onto the five categories and photographic panels suit vials, and it is a genuinely light-ground printed-systems world. Loses narrowly on clarity — saturated cyan, magenta and yellow fidget against analytical sobriety and sit close to the neon register the brand bans. Would need systematic muting to survive the commitment.",
+  "hero": "https://impeccable.style/worlds/cards/studio-dumbar-identity-hero.webp",
+  "board": "https://impeccable.style/worlds/cards/studio-dumbar-identity.webp",
+  "provenance": "generated via harness image tool (xd://generate_image, provider xai/grok-imagine-image)",
+  "notes": ["Screen test: white ground, flat matte printed colour, no neon, no glow, no dark page background."]
+}

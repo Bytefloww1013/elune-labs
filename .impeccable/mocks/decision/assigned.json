@@ -1,0 +1,15 @@
+{
+  "comp": ".impeccable/mocks/decision/assigned.png",
+  "approved": false,
+  "rejectedNote": "User saw the comp and rejected it 2026-09-11: 'I do not like that design.' Do not revisit this world in this project unless the owner asks. Superseded by the canon (canon.json, approved true).",
+  "direction": "ASSIGNED — the cold-storage specimen archive (grounded candidate 4 of 7)",
+  "seedKey": "12a9eaca",
+  "kind": "assigned",
+  "viewport": "desktop 16:9, 1536x1024",
+  "prompt": "A desktop website homepage design for 'ELUNE LABS', a research-peptide supplier, rendered as a full-bleed desktop browser viewport with NO browser chrome. A UI design — a screenshot of a shipped web page, NOT a poster, NOT a photograph with text on it. The organising world is the cold-storage cryogenic peptide archive: an addressable inventory of labelled specimens in racked cryoboxes, photographed and typeset with laboratory rigour. The archive is a coordinate and specification system for the catalog, not a depiction of a warehouse. Regions: slim header with ELUNE LABS wordmark and five category links; a ruled rack index band of twelve bordered cells R01-R12 with one filled to mark selection; a two-column hero, left a still-life photograph of one borosilicate vial in a cryobox cell, right a flat spec record panel of hairline-ruled label/value rows (LOT, CAS, FORMULA, MW, SEQUENCE, PURITY, FORM, STORAGE, QTY) with product name and price at its top edge; a full-width cryobox rack grid of square cells, each holding a vial glyph and a distinct compound name over a unique lot code, a few cells empty, three tagged LOW; a footer with the RUO line. Style: precise printed-laboratory rigour — flat fills, hairline cool-grey rules, square corners, condensed uppercase labels paired with a monospaced data face, strict grid, generous white space. No gradients, no neon, no glow, no blur, no dark mode, no black background, no people.",
+  "provenance": "generated via harness image tool (xd://generate_image, provider xai/grok-imagine-image)",
+  "notes": [
+    "Generation retried once; generated lettering remains imperfect (one cell reads TIPALON, rack serials repeat). Composition, palette and structure are what this comp proves; real strings come from markup at build time.",
+    "Screen test passed: light/white ground, no neon, no glow, no dark background, no photographic people."
+  ]
+}
