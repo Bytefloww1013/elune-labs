@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Elune Labs mark — favicon. Same crescent geometry as the header wordmark
+  (themes/elune/src/pages/all/BrandMark.tsx) and the same brand ochre, so the
+  tab image and the logo are the same mark, which is what the brand asks for.
+
+  Geometry: a crescent is the difference of two circles. Outer circle r=9 about
+  (12,12); inner circle r=8.2 about (16.4,12). Their intersections land at
+  x=15.764, y=12±8.175. The two arc sweeps below are not guessed — all four SVG
+  arc-flag combinations were rendered and compared, and this one (large-arc 1,
+  sweep 0 on the outer; 0,1 on the inner) was the only family that produced a
+  crescent rather than a lens or a disc, and it held up best at 16px.
+
+  The translate recentres the crescent: its raw bounding box is x 3..15.764, so
+  it sits left of the box centre without it.
+
+  Served as-is by core's HeadTags (it passes .svg straight through rather than
+  routing it through the sharp image endpoint), and pointed at by the store's
+  `favicon` setting — so the owner can replace it from the admin console with no
+  rebuild.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Elune Labs">
+  <g transform="translate(2.62 0)">
+    <path d="M15.764 3.825 A9 9 0 1 0 15.764 20.175 A8.2 8.2 0 0 1 15.764 3.825 Z" fill="#8a5a1c"/>
+  </g>
+</svg>

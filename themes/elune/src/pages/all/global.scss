@@ -152,66 +152,67 @@ body {
   overflow: hidden;
 }
 
-/* Typefaces (2026-09-11). --font-sans/--font-mono named faces but nothing ever
- * loaded them, so every surface silently fell back to system-ui. Self-hosted
- * latin subsets served by the theme static middleware from
- * themes/elune/public/assets/fonts — no third-party request.
+/* Typefaces — rebuilt 2026-09-11 for the owner's font review. Sans is now Source
+ * Sans 3, replacing Titillium Web.
  *
- * Sans is Titillium Web (owner's call, 2026-09-11): a humanist grotesque with
- * some warmth, replacing Inter, which the overuse detector flags and which read
- * as the neutral default this brief explicitly rejects. Three static weights
- * cover the whole interface — 400 body, 600 headings, 700 wordmark. No
- * unicode-range, so a glyph the subset lacks (≥, for instance) falls through the
- * stack to the system face instead of rendering as a missing-glyph box. */
+ * The first reason is a real bug, not a taste call. The Google-style `latin`
+ * subsets the old faces shipped with carry only 212 codepoints and omit U+2265
+ * GREATER-THAN OR EQUAL. The storefront's most visible string is the purity
+ * declaration `≥99%`, so that glyph fell through the stack to a system fallback
+ * and rendered in a different face at a different weight next to its own digits
+ * — which is what read as jagged, inconsistent and "pixelated".
+ *
+ * The second is legibility. Source Sans 3 is an Adobe humanist drawn for small
+ * sizes: large x-height, open apertures, generous counters. The old interface
+ * leaned on 11-12px micro type to fit; this face reads cleanly there, so the
+ * scale could come up rather than being clipped around.
+ *
+ * Both faces are subset here from the full variable sources with an explicit
+ * unicodes list that includes U+2265 (and the `·`, `—`, `©`, `°` the storefront
+ * also renders), so every shipped face provably carries every glyph the store
+ * uses — 388 codepoints versus 212, ~30KB per file. Still self-hosted from the
+ * theme's static directory: no third-party request.
+ *
+ * Four real weights ship. The old build had no 500 cut and aliased `font-medium`
+ * onto the 600 file, and had no 800/900 cuts at all, so the wordmark's
+ * `font-extrabold` and `font-black` were synthesized by the browser — recorded as
+ * drift in DESIGN.md and a genuine source of uneven-looking type. The wordmark is
+ * now set from weights that actually exist. */
 @font-face {
-  font-family: 'Titillium Web';
+  font-family: 'Source Sans 3';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/assets/fonts/titillium-400.woff2') format('woff2');
+  src: url('/assets/fonts/source-sans-3-400.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Titillium Web';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/assets/fonts/titillium-600.woff2') format('woff2');
-}
-
-/* Titillium ships no 500 cut and core UI uses `font-medium` widely (Button
- * labels, nav, form text). Declaring 500 against the 600 file keeps those at a
- * medium-looking weight instead of silently resolving down to 400, which would
- * flatten button and label hierarchy across the storefront. */
-@font-face {
-  font-family: 'Titillium Web';
+  font-family: 'Source Sans 3';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/assets/fonts/titillium-600.woff2') format('woff2');
+  src: url('/assets/fonts/source-sans-3-500.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Titillium Web';
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/assets/fonts/source-sans-3-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/assets/fonts/titillium-700.woff2') format('woff2');
+  src: url('/assets/fonts/source-sans-3-700.woff2') format('woff2');
 }
 
-/* The wordmark is the one element that is purely brand, and it is set in two
- * weights (ELUNE extrabold, LABS black). Titillium's real family tops out at 900
- * and has no 800 cut, so 700 serves an extrabold request and 900 is loaded for
- * the black lockup half; without this file both halves resolve to 700 and the
- * wordmark collapses to a color-only distinction. */
-@font-face {
-  font-family: 'Titillium Web';
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url('/assets/fonts/titillium-900.woff2') format('woff2');
-}
-
+/* Mono is reserved for data — chemical values, prices, identifiers (see
+ * DESIGN.md, The Mono-Is-Data Rule). Its subset carries U+2265 for the purity
+ * string, which renders in mono on every product card. */
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
@@ -256,9 +257,47 @@ summary:focus-visible,
 }
 
 .footer__bottom {
-  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
   border-top: 0;
   padding-top: 0;
+  text-align: center;
+}
+
+/* Both compliance lines are centred (owner's review, 2026-09-11: "center
+ * justified horizontally"). This block has two stacked children — this theme's
+ * RUO line and core's card-icon/copyright grid. The inner grid is returned to
+ * normal flow so the display:none card-icon cell cannot leave a phantom first
+ * column pushing the copyright off-centre, and `.copyright` is what beats core's
+ * `md:text-right`. */
+.footer__bottom .page-width {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.footer__bottom .copyright {
+  text-align: center;
+}
+
+/* The footer's three middle areas are laid out `justify-between`. Only the
+ * centre one is filled (the page-link row), so it would sit hard left without
+ * this. */
+.footer__middle {
+  justify-content: center;
+}
+
+/* The Shop disclosure in the header nav is a link, not a list item: no native
+ * marker. */
+summary {
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
 }
 
 /* The one authored moment (FORM: "one authored moment on scroll-in; nothing
@@ -325,13 +364,13 @@ summary:focus-visible,
     margin-left: auto;
   }
 
-  nav[aria-label='Categories'] {
+  nav[aria-label='Main'] {
     order: 3;
     flex: 1 1 100%;
-    /* Wrap to a second line rather than scroll horizontally: the store has
-     * exactly five categories and a scroll strip hides the last one behind an
-     * affordance nobody reads. Links stay nowrap so a two-word label wraps
-     * whole instead of breaking mid-name. */
+    /* Wrap to a second line rather than scroll horizontally: the store's
+     * top-level destinations are few and a scroll strip hides the last one
+     * behind an affordance nobody reads. Links stay nowrap so a two-word label
+     * wraps whole instead of breaking mid-name. */
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
   }
@@ -339,11 +378,10 @@ summary:focus-visible,
 
 /* Product page: the two blocks core renders for content this store does not
  * have. The catalog ships no product imagery (scripts/catalog-data.json carries
- * empty image arrays) and no descriptions (`product_description.description` is
- * `[]` on all 15 seeded SKUs), so core drew its ProductNoThumbnail placeholder
- * in a 562x384 frame and a "Product Description" heading above an empty editor
- * body. The product card already drops its empty thumbnail frame; the detail
- * page was still showing one.
+ * empty image arrays) and no descriptions (the seeded rows have no description
+ * body), so core drew its ProductNoThumbnail placeholder in a 562x384 frame and
+ * a "Product Description" heading above an empty editor body. The product card
+ * already drops its empty thumbnail frame; the detail page was still showing one.
  *
  * The left column is collapsed whole rather than just the placeholder box: it is
  * a fixed track in core's `grid md:grid-cols-2`, so hiding only the box leaves a

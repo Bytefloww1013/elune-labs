@@ -73,18 +73,41 @@ const Elune: React.FC<{ categories?: { items?: CategorySummary[] } }> = ({ categ
                 </a>
                 {/* The headline promises the whole catalog; the filled button can
                  * only enter one category, so the catalog-level path is this
-                 * quiet link to the category row rather than a second button
-                 * competing with the primary action. */}
+                 * quiet link to the full listing rather than a second button
+                 * competing with the primary action. It pointed at the
+                 * `#categories` anchor on this page, which is not the listing it
+                 * promises — now it reaches /all, which lists every product. */}
                 <a
-                  href="#categories"
+                  href="/all"
                   className="text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground"
                 >
-                  or browse all {canonical.length} categories
+                  or browse the full catalog
                 </a>
               </div>
             )}
           </div>
 
+          {/* Full-bleed at the band edge, as the direction contract asks.
+           *
+           * This stretched to the band height before (`lg:h-full
+           * lg:self-stretch`), so `object-cover` had to crop 26% of the frame
+           * width at 1280px and 44% at 1024px, where the box aspect runs 1.104
+           * and 0.837 against a 1.50 asset.
+           *
+           * That crop was never the cause of the "squashed vial" the owner
+           * reported, and the container was not either: `object-cover` scales
+           * uniformly and can only ever crop. Measured from the asset, the vial
+           * sits between 39.9% and 54% of the frame width and is fully inside
+           * the cropped window at every breakpoint, so the crop only removed
+           * empty ground. The real cause was the plate itself — its vial had an
+           * aspect of 0.245, roughly 1:4.1, against 1:2.5-3 for a real vial, and
+           * a cylinder that slim reads as pinched. The plate was regenerated at
+           * 0.332 (1:3.0); see the provenance beside the asset.
+           *
+           * So the stretch behaviour stays as it was: it gives the band a
+           * full-bleed plate with no dead space and no tonal seam between the
+           * plate's near-white ground and the band's warm sand. Pinning the
+           * ratio instead would letterbox the band above and below. */}
           <img
             src="/assets/plates/hero-photo.webp"
             alt="A single clear glass vial with a metal crimp seal on a plain light surface."

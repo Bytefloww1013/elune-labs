@@ -17,7 +17,7 @@ Seed key: `12a9eaca` · kind: `canon` · approved comp: `.impeccable/mocks/decis
 **THESIS.** A conventional storefront, executed properly for a non-scientist buyer: clean, warm and trustworthy, where the confidence comes from precise products and honest statements rather than from decoration or performance. It refuses the category's two habits — the hype-and-countdown supplement page and the neon biohacker terminal — and equally refuses the lab-cold institutional register, which reads as intimidating or fake to the people who actually buy here.
 **OWN-WORLD.** Warm near-white paper ground, white panels, warm graphite ink, soft warm-grey hairline rules, one confident accent carried by the primary action and by category. One sans face for voice, one monospaced face for numbers only. Square corners at small radius, single soft-offset card shadows, comfortable density, generous white space on a strict grid.
 **STORY.** A visitor lands, reads one line telling them plainly what is sold and what is documented about it, sees four statements that are all checkable, then opens a category or a product. Nothing asks to be believed; the product page is where confidence is earned.
-**FIRST VIEWPORT.** Slim header (wordmark left, five category links, cart right). A wide band beneath: the offer in one line at display scale, one supporting sentence, one filled accent button, and a single vial photograph to the right bleeding to the band edge. Then a hairline-ruled row of four honest trust statements. No kicker above the headline, no gradient, no glow, no badge cluster.
+**FIRST VIEWPORT.** Slim header (wordmark left, six top-level destinations — Home, New Releases, Shop, FAQs, Shipping and Contact Us, with Shop a disclosure holding the five categories — cart right). A wide band beneath: the offer in one line at display scale, one supporting sentence, one filled accent button, and a single vial photograph to the right bleeding to the band edge. Then a hairline-ruled row of four honest trust statements. No kicker above the headline, no gradient, no glow, no badge cluster.
 **FORM.** Category-standard commerce at full craft. The comp supplies arrangement, scale and rhythm only — never its words. Density comfortable; specification detail available on the product page without dominating the homepage. Motion is one authored moment on scroll-in; nothing loops, nothing pulses.
 **RAISES / BORROWED DISCIPLINE.** Batch/lot identity appears as a plain product attribute on product surfaces, never as a verification badge. State lives with the thing it describes, never as a floating overlay. Specifications are real tabular data with proper semantics, not a decorative panel.
 
@@ -30,7 +30,16 @@ The canon comp is a **direction card, not a content-approved artifact**. Its pai
 - **Compound names painted in any comp are not the catalog.** The catalog is the five categories and the compounds listed in the data contract below.
 
 ### Photography stance
-The hero still life is a **produced raster** with recorded provenance. Catalog products ship with no images, so **no surface may render an empty image box**: product cards are complete on name, size, lot, form and price alone. Build a text-led product card, not a photo-led card with a missing photo.
+The hero still life is a **produced raster** with recorded provenance, regenerated in the
+2026-09-11 pass and still placeholder material, still not a photograph of real stock. The shipped
+plate measures 1400×933 with the vial at roughly 14% of the frame width and an aspect of 0.332
+(about 1:3.0); the plate it replaced measured 0.245 (about 1:4.1) against the 1:2.5–3 a real vial
+reads as, and that over-slim cylinder was the actual cause of the "squashed" reading — diagnosed by
+measuring the rendered asset, not by guessing, since `object-cover` can only crop and the crop
+window never touched the vial. Full-bleed behaviour is unchanged. Real photography should replace it
+when real photography exists. Catalog products ship with no images, so **no surface may render an
+empty image box**: product cards are complete on name, size, lot, form and price alone. Build a
+text-led product card, not a photo-led card with a missing photo.
 
 ## Hard constraints
 - **Research-use-only is absolute, and approachability does not relax it.** The audience buys to research on themselves, so plain language is required — and dosing, protocols, cycle advice, medical or weight-loss claims, before/after and body imagery remain forbidden on every surface. No weight-loss framing anywhere near the GLP category; it is presented as a research reference compound like any other.
@@ -42,6 +51,7 @@ The hero still life is a **produced raster** with recorded provenance. Catalog p
 **Categories (five, keyed by `url_key`):** `glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`. Currently the database holds the old trio, so `scripts/catalog-data.json` is reseeded to these five and the seeder creates them.
 **Category accents:** five muted deep keys in `shadcn.css` — `--accent-glps`, `--accent-bioregulators`, `--accent-recovery`, `--accent-gh-releasing`, `--accent-other` — each readable at AA on the light ground. `CategoryAccent.tsx` already keys `var(--accent-<url_key>, var(--accent))`; the fallback must never be what a real category renders as.
 **Products:** the seeder carries only `name, sku, price, qty, category`. Product specification data (CAS, formula, molecular weight, sequence, purity, form, storage) lives in **one** theme-side map keyed by SKU — `themes/elune/src/data/productSpecs.ts` — and the product page renders it. One source of truth; do not duplicate spec values into the seed file. Values must come from the sourced chemistry table in the shape brief; a value that is not sourced is omitted from the record entirely.
+**Product narrative and literature:** the product page's plain-language description and its published-research references live in **one** theme-side map keyed by SKU — `themes/elune/src/data/productLiterature.ts` — beside the specification map and under the same one-source-of-truth rule as `productSpecs.ts`; the product page renders it between the price and the specification table. The compliance rule that governs it: a quoted study title that asserts an effect is itself a claim and is not carried, so three SKUs hold no references at all and their literature section is omitted outright.
 
 ## Scope and boundaries
 In scope: homepage; header/nav/footer; wordmark; age gate; category listing; product detail; cart; checkout (contact → shipping → crypto payment step); order confirmation; RUO notices.
@@ -84,4 +94,77 @@ no claim about a real product. It is placeholder material to be replaced with re
 when real photography exists. The plate is cropped by the offer band's edge rather than masked,
 and it is the only image on the homepage: the catalog ships no product images, so product cards
 remain text-led and complete without one.
+
+**Recorded 2026-09-11, second pass — the shipped surface itself.** A later session changed the
+build, not only the documents. Everything above still stands: the comp's role, the void painted
+copy, the trust-statement divergence and the plate's placeholder status are unchanged, and these
+notes record what the build did on top of them.
+
+**Typography.** The sans face is now **Source Sans 3**, self-hosted with no third-party request,
+replacing Titillium Web. Both faces were re-subset from their full variable sources with an
+explicit unicodes list: the sans carries 388 codepoints and the mono 379, up from 212. The old
+subsets omitted U+2265 (`≥`), so that glyph fell through to a system fallback inside the `≥99%`
+purity declaration — a different face at a different weight beside its own digits. That was the
+visible type artifact, and it is gone: every glyph the storefront renders is present in the shipped
+files. Four static sans weights ship (400/500/600/700); JetBrains Mono stays a variable font
+(100–800).
+
+**Type scale.** The two small steps moved: `--text-xs` 12px → **13px** and `--text-sm` 14px →
+**15px**, declared as Tailwind v4 theme tokens in `themes/elune/src/pages/all/tailwind.css` so they
+lift the theme and core's own components together from one place. Body stays 16px.
+
+**Identity.** A crescent mark (`themes/elune/src/pages/all/BrandMark.tsx`) now sits in brand ochre
+beside the wordmark. It is deliberately **not** evergreen, because the Evergreen-Is-Action Rule
+reserves `--primary` for the action, the focus ring, selection and the caret. Its geometry was
+chosen empirically — all four SVG arc-flag combinations were rendered and the one legible at 16px
+was picked. A matching favicon ships at `themes/elune/public/assets/favicon.svg`, wired through the
+store's `favicon` setting so `<link rel="icon" href="/assets/favicon.svg">` is emitted and the owner
+can replace it from the admin console with no rebuild. The wordmark itself was rebuilt: it
+previously asked for `font-extrabold`/`font-black` — weights that were not in the loaded set, so the
+browser synthesized them. It now uses a real 700 on both halves with 0.18em tracking, narrowed from
+0.28em, and a compensating negative right margin.
+
+**Navigation and footer.** The header's top-level destinations are now **Home, New Releases, Shop,
+FAQs, Shipping and Contact Us**, with Shop a native `<details>`/`<summary>` disclosure holding the
+five categories. The disclosure is keyboard-operable natively, with outside-click and Escape
+dismissal added; its panel is a hairline card on `--card` with no shadow. The nav's accessible name
+is now **`Main`**, which is what the mobile rule keys on. In the footer, both compliance lines — the
+RUO line and the copyright — are horizontally centred, and a centred page-link row in area
+`footerMiddleCenter` lists every page: Home, New Releases, All Products, the five categories, FAQs,
+Shipping and Contact Us, eleven links.
+
+**Hero plate.** The synthetic plate was regenerated and is now 1400×933 with the vial at roughly
+14% of frame width and an aspect of 0.332 (about 1:3.0). The plate it replaced measured 0.245 (about
+1:4.1) against the 1:2.5–3 a real vial reads as — an over-slim cylinder, and the actual cause of the
+squashed or side-compressed reading. That was diagnosed by measuring the rendered asset rather than
+guessing: `object-cover` can only crop, and the crop window never touched the vial. Full-bleed
+behaviour is unchanged, and provenance is still recorded beside the asset in `hero-photo.webp.json`.
+
+**Routes and pages.** Two routes were added — `/all`, every product alphabetical by name, and
+`/new-releases`, the newest six by catalog order. Both are served by a new extension,
+`extensions/elune-catalog/`, because themes cannot register routes in EverShop; the theme binds to
+those routes by folder name. 2.2.1's `products` collection exposes no creation-date sort, so the
+ordering is done in the component rather than through a `sort:` argument that would be silently
+ignored. Three CMS pages were added — `/faqs`, `/shipping` and `/contact` — admin-editable with no
+rebuild and created idempotently by the seeder, which only fills unset settings and so cannot revert
+an owner's edits. The contact page reads `storeEmail` from the store settings and says plainly that
+no address is configured when it is unset; it does not invent one.
+
+**Product page.** An "About this compound" section
+(`themes/elune/src/pages/productView/ProductDescription.tsx`) renders between the price and the
+specification table: one to two plain-language paragraphs on what the compound is, then a "Published
+research on this compound" block. Its heading is deliberately not "Product Description", because
+core renders its own heading by that name into the same area. The literature block is deliberately
+un-ruled — no borders, no table — so it cannot be mistaken for the specification record, and it
+carries its own sentence stating that it documents the external research literature and not this
+product, the batch supplied, or any analysis of it, and that no certificate of analysis is published
+for any product. Three SKUs ship with no literature at all (Epitalon, and both CJC-1295 entries) for
+compliance reasons; for those the entire literature section is omitted, never rendered as an empty
+heading. All 21 surviving references were retrieved from PubMed by machine and resolved to exact
+title, journal, year and DOI; several candidate citations were rejected because a quoted study title
+itself asserted an effect — a "Once-Weekly" dosing interval, "increases telomere length", "doping
+peptides", "Antioxidant … Properties".
+
+**Detector and regression state.** The design detector reports no findings on the shipped surfaces,
+and the repository's checkout regression (`scripts/smoke-checkout.mjs`) passes end to end.
 

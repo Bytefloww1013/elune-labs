@@ -35,9 +35,9 @@ export default function ProductSpecs({
 
   return (
     <section className="product__single__specification mt-8">
-      <h3 className="mb-3 text-xl font-semibold tracking-tight">
+      <h2 className="mb-3 text-xl font-semibold tracking-tight">
         Specification
-      </h3>
+      </h2>
       <table className="w-full text-sm">
         <caption className="sr-only">
           {product?.name

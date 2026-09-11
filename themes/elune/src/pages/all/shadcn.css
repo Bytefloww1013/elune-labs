@@ -144,6 +144,6 @@
   --accent-other: #5c6270;                     /* Slate */
 
   /* Typography */
-  --font-sans: 'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
 }

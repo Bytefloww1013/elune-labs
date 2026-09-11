@@ -9,7 +9,7 @@
       "claimsThisSession": 4,
       "lastClaimedNonResearch": false,
       "frontierEmpty": false,
-      "mutatingTools": 17,
+      "mutatingTools": 88,
       "lastRefreshAt": 1789151126119,
       "lastSnapshot": "Live Beads snapshot (do not trust earlier chat for ticket status):\nBeads store: .beads/ (hidden). Query with bd show/list --json.\nLive destinations (open + in_progress): none\nLive slices (open + in_progress): none\nIn progress: none\nReady work (bd ready): none",
       "lastSnapshotHash": "81c140cf",

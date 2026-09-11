@@ -35,62 +35,62 @@ colors:
   chart-5: "#a32a1f"
 typography:
   display:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "3rem"
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "-0.025em"
   headline:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "1.875rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.011em"
   headline-lg:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "2.25rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.011em"
   headline-sm:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "1.5rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.011em"
   title:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "1.25rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.011em"
   body:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
   body-large:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.625
     letterSpacing: "normal"
   label:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
-    fontSize: "0.875rem"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "normal"
   micro:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
-    fontSize: "0.75rem"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.8125rem"
     fontWeight: 400
     lineHeight: 1.3
     letterSpacing: "normal"
   caption:
-    fontFamily: "'Titillium Web', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
-    fontSize: "0.6875rem"
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.75rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "0.05em"
@@ -185,10 +185,11 @@ exactly one saturated color in the working interface: a deep evergreen (`#14604a
 primary action, the focus ring, text selection and the caret. Everything else is warm neutral or
 one of five deep, muted category accents that mark identity — never mood.
 
-Typography is two faces with strictly divided work. Titillium Web, a humanist grotesque with some
-warmth and slightly squared terminals, speaks for the brand; JetBrains Mono appears only where
-data must align, which means chemical values, prices and identifiers. Density is comfortable and
-generous: a 1200px measure, 1rem gutters, 1.25rem card padding, and a lot of white space left
+Typography is two faces with strictly divided work. Source Sans 3, an Adobe humanist designed for
+legibility at small sizes — large x-height, open apertures and generous counters, which is why the
+interface carries 13–15px micro type cleanly — speaks for the brand; JetBrains Mono appears only
+where data must align, which means chemical values, prices and identifiers. Density is comfortable
+and generous: a 1200px measure, 1rem gutters, 1.25rem card padding, and a lot of white space left
 alone.
 
 **Explicit rejection, on record.** This world refuses three registers: the hype-and-countdown
@@ -219,9 +220,9 @@ Every value is declared in `shadcn.css` `:root` and exposed to Tailwind through 
 - **Evergreen on White** (`#ffffff`): the text color inside an evergreen fill.
 
 ### Secondary
-- **Warm Ochre** (`#8a5a1c`): the brand's second color, used on the wordmark's "LABS" and on warm
-  detail only. It is deliberately *not* wired to Tailwind's `accent` slot (see The
-  Hover-Surface-Is-Not-The-Brand Rule below). It holds 5.61:1 on the ground.
+- **Warm Ochre** (`#8a5a1c`): the brand's second color, used on the wordmark's "LABS", the crescent
+  brand mark beside it, and warm detail only. It is deliberately *not* wired to Tailwind's `accent`
+  slot (see The Hover-Surface-Is-Not-The-Brand Rule below). It holds 5.61:1 on the ground.
 
 ### Tertiary
 Five muted, deep accents mark the five categories, keyed by the catalog's `url_key`. Each is dark
@@ -271,21 +272,33 @@ never be what a real category renders as.
 
 ## Typography
 
-**Display Font:** Titillium Web (with `system-ui`, `-apple-system`, `BlinkMacSystemFont`,
+**Display Font:** Source Sans 3 (with `system-ui`, `-apple-system`, `BlinkMacSystemFont`,
 `"Segoe UI"`, `sans-serif`)
-**Body Font:** Titillium Web (same stack)
+**Body Font:** Source Sans 3 (same stack)
 **Label/Mono Font:** JetBrains Mono (with `'SF Mono', Consolas, Menlo, monospace`)
 
-**Character:** One warm humanist grotesque for the brand's voice and one monospace for its data.
-Titillium Web replaces the Inter default that this brief explicitly rejects — the neutral default
-with no point of view — and its slightly squared terminals carry the technical register without
-going cold. JetBrains Mono is decisive at small sizes, which is where the specification lives.
+**Character:** One humanist sans for the brand's voice and one monospace for its data. Source Sans
+3 replaces the Inter default that this brief explicitly rejects — the neutral default with no point
+of view — and its open apertures and unadorned forms carry the technical register without going
+cold. It also replaces the previous face, whose shipped subsets omitted U+2265 (`≥`): the purity
+declaration's most important glyph rendered from a system fallback at a different weight, which is
+what read as jagged and inconsistent next to its own digits. JetBrains Mono is decisive at small
+sizes, which is where the specification lives.
 
 Both faces are self-hosted latin subsets served from the theme's static directory
 (`themes/elune/public/assets/fonts/`), declared with `@font-face` in `global.scss`. There is no
-third-party font request. Three static Titillium weights are loaded — 400, 600 and 700 — and no
-`unicode-range` is set, so a glyph the subset lacks (the `≥` in the purity declaration, for
-instance) falls through the stack to the system face rather than rendering as a missing-glyph box.
+third-party font request. Both are subset from the full variable sources with an explicit unicodes
+list, and the shipped files carry every glyph the storefront renders — 388 codepoints for the sans
+face and 379 for the mono face, verified including U+2265. That is what removed the fallback: no
+`unicode-range` is declared, so the guarantee comes from the subset's contents rather than from a
+range declaration. Four static sans weights ship — 400, 500, 600 and 700. JetBrains Mono stays a
+variable font (`wght` 100–800) because it renders at both 400 (specification labels) and 600 (the
+product-card price), and collapsing it to a single static instance would make the browser
+synthesize the 600. No italics are loaded or used anywhere.
+
+The scale was raised through Tailwind v4 theme tokens in `tailwind.css`: `--text-xs` is now
+0.8125rem (13px) and `--text-sm` is now 0.9375rem (15px), each with an explicit line-height; body
+stays 1rem.
 
 ### Hierarchy
 - **Display** (600, 1.875rem rising to 3rem from 768px, 1.1, -0.025em): the homepage offer line
@@ -295,11 +308,11 @@ instance) falls through the stack to the system face rather than rendering as a 
 - **Title** (600, 1.25rem, 1.2, -0.011em): the specification section heading and sub-sections.
 - **Body Large** (400, 1.125rem rising to 1.25rem, 1.625): the offer band's supporting sentence.
 - **Body** (400, 1rem, 1.5): product descriptions, notices, checkout copy, specification values.
-- **Label** (600, 0.875rem, 1.25): nav links, button labels, trust statements, form labels and
+- **Label** (600, 0.9375rem, 1.25): nav links, button labels, trust statements, form labels and
   inputs, the footer line.
-- **Micro** (400, 0.75rem, 1.3): category counts, the product card's spec and identity lines, and
-  notice body text. Notice *labels* are uppercase at 11px with wider tracking — a caption inside a
-  notice, never a standalone eyebrow above a headline.
+- **Micro** (400, 0.8125rem, 1.3): category counts, the product card's spec and identity lines, and
+  notice body text. Notice *labels* are uppercase at 0.75rem with wider tracking — a caption inside
+  a notice, never a standalone eyebrow above a headline.
 - **Mono** (400, 0.75rem–1.125rem): chemical values, prices and identifiers. Prices are mono at
   1.125rem with 600 weight; wallet addresses are mono at 0.875rem and break across lines.
 
@@ -310,11 +323,12 @@ molecular formula, molecular weight, sequence), prices, and identifiers (SKU, lo
 category product count). It never carries a label, a heading, a button or body prose. If a string
 is a word rather than a value, it is not mono.
 
-**The Three-Weights Rule.** The interface is built from 400, 600 and 700 only — the three static
-weights that are actually loaded. 600 is the emphasis weight for headings, buttons and prices. 700
-is the ceiling for interface emphasis and is reserved for the age-gate title and the wordmark. The
-wordmark asks for more weight than the loaded set provides, so the browser synthesizes it from 700;
-that gap is recorded drift, not a fourth weight, and no new surface should rely on it.
+**The Four-Weights Rule.** The interface is built from 400, 500, 600 and 700 — the four static sans
+weights that are actually loaded. 400 is body text. 500 is medium, for chrome that needs a touch
+more presence than body without becoming emphasis. 600 is the emphasis weight for headings, buttons
+and prices. 700 is the ceiling for interface emphasis and is reserved for the wordmark and the
+age-gate title. Every weight the interface asks for is a weight that is loaded; the wordmark uses a
+real 700, and no surface relies on browser synthesis.
 
 **The Declaration-Not-Measurement Rule.** The purity value is the literal string `≥99%` on every
 product. It is a placeholder declaration, never a measured figure, never a per-product number, and
@@ -339,11 +353,12 @@ Breakpoints are Tailwind's defaults, also unmodified: `sm` 640px, `md` 768px, `l
 the container gutter widens from 1024px.
 
 Density is comfortable but never airy for its own sake. Below 768px the header dissolves its
-wrapper so the wordmark and icons keep the first line and the five category links take a full-width
-second line that wraps whole labels rather than breaking them mid-name. The footer is tightened to
-its actual content: the core's five reserved widget areas stay in the DOM at zero height, but the
-reserved padding and margin are removed so no empty grey band separates the catalog from the
-compliance line.
+wrapper so the wordmark and icons keep the first line and the top-level nav — Home, New Releases,
+Shop, FAQs, Shipping, Contact Us — takes a full-width second line that wraps whole labels rather
+than breaking them mid-name; the theme targets it as `nav[aria-label='Main']` in `global.scss`. The
+footer is tightened to its actual content: the core's five reserved widget areas stay in the DOM at
+zero height, but the reserved padding and margin are removed so no empty grey band separates the
+catalog from the compliance line.
 
 ## Elevation & Depth
 
@@ -403,14 +418,26 @@ file.
   while disabled rather than greying out, so the pending state still reads as the action.
 
 ### Links & Navigation
-- **Header nav:** five category links in fixed domain order (`glps`, `bioregulators`, `recovery`,
-  `gh-releasing`, `other`), `text-sm font-medium` in warm grey, shifting to graphite ink on hover.
-  No underline, no active pill, no color change to evergreen.
+- **Header nav:** six top-level destinations — Home, New Releases, Shop, FAQs, Shipping, Contact Us
+  — as `text-sm font-medium` links in warm grey, shifting to graphite ink on hover. No underline, no
+  active pill, no color change to evergreen. Home, New Releases, FAQs, Shipping and Contact Us are
+  plain links; **Shop** is a native `<details>`/`<summary>` disclosure holding the five category
+  links in fixed domain order (`glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`), and it
+  dismisses on Escape and on a click outside it.
+- **Shop panel:** the disclosure's panel is a hairline card on `--card`, `rounded-lg`, with no
+  shadow — the card treatment, not a menu chrome.
 - **In-card links:** a product name in graphite ink that turns evergreen on hover
   (`hover:text-primary`); a category name in its own category accent.
-- **Wordmark:** `ELUNE` in graphite at the heavy end of the loaded range with a wide 0.28em
-  tracking, `LABS` in brand ochre — the only place brand ochre appears in the interface. The core
-  demo logo is suppressed so the wordmark is the sole mark in the header.
+- **Wordmark:** `ELUNE` in graphite at 700 — a real loaded weight — with a 0.18em tracking and a
+  compensating negative right margin, and `LABS` in brand ochre at the same weight. The core demo
+  logo is suppressed so the wordmark is the sole text mark in the header.
+- **Brand mark:** a crescent (`themes/elune/src/pages/all/BrandMark.tsx`) sits in brand ochre beside
+  the wordmark, so brand ochre now appears on both the `LABS` half and the mark itself. The mark is
+  deliberately *not* evergreen: the Evergreen-Is-Action Rule reserves `--primary` for the action,
+  the focus ring, selection and the caret.
+- **Favicon:** a matching mark ships at `themes/elune/public/assets/favicon.svg`, wired through the
+  store's `favicon` setting so `<link rel="icon" href="/assets/favicon.svg">` is emitted. The owner
+  can replace it from the admin console with no rebuild.
 
 ### Cards
 - **Product card:** white panel, 1px warm hairline, `rounded-lg` (8px), 1.25rem padding, no shadow.
@@ -424,6 +451,11 @@ file.
   in warm grey; used on the homepage's five-up category row.
 - **Notice / flush panel:** the checkout wallet panel is a white panel on a hairline with
   `rounded-md`; the sand surface appears only where a control is hovered or selected.
+
+### Footer
+- **Page-link row:** area `footerMiddleCenter` carries a row listing every page — Home, New
+  Releases, All Products, the five categories, FAQs, Shipping, Contact Us — centred as a group.
+- **Compliance lines:** both the RUO line and the copyright are horizontally centred.
 
 ### Inputs & Fields
 - **Style:** white fill (`--card`), 1px `--border` stroke, radius `var(--radius)` (8px, matching
@@ -446,6 +478,20 @@ documented exception, not a precedent to extend.
 
 Notice labels are captions. They sit inside the block they belong to and never float above a
 headline as a standalone eyebrow.
+
+### About This Compound
+The product page renders this section (`themes/elune/src/pages/productView/ProductDescription.tsx`)
+between the price and the specification table: one to two plain-language paragraphs on what the
+compound is, then a "Published research on this compound" block.
+- **Heading:** deliberately not "Product Description" — core renders its own heading by that name
+  into the same area and the two would collide.
+- **Literature block:** carries a sentence stating that it documents the external research
+  literature and not this product, the batch supplied, or any analysis of it, and that no
+  certificate of analysis is published for any product. It is deliberately un-ruled — no borders,
+  no table — so it cannot be mistaken for the specification record.
+- **Absent literature:** three SKUs ship with no literature at all (Epitalon, and both CJC-1295
+  entries) for compliance reasons; for those the entire literature section is omitted, never
+  rendered as an empty heading.
 
 ### Specification Table
 The product page renders the analytical record as a real `<table>` with an `sr-only` caption and a
@@ -478,6 +524,14 @@ SegWit, USDT TRC-20, ETH ERC-20), all inside one white panel with a hairline bor
 - **TXID capture:** a separate card with a 3-row text area, stored on the order's shipping note.
   The wallet addresses and instructions are edited in the admin console and take effect immediately.
 
+### Pages & Routes
+- **`/all`:** every product, alphabetical by name.
+- **`/new-releases`:** the newest 6 by catalog order.
+- **`elune-catalog` extension:** both routes are served by `extensions/elune-catalog/`, because
+  themes cannot register routes in EverShop; the theme binds to those routes by folder name.
+- **CMS pages:** `/faqs`, `/shipping` and `/contact` are CMS pages, editable in the admin console
+  with no rebuild.
+
 ### Browser Surfaces
 The palette reaches the places Tailwind does not paint, from the token home in `shadcn.css`:
 - **Text selection:** evergreen fill with white text.
@@ -493,7 +547,7 @@ The palette reaches the places Tailwind does not paint, from the token home in `
 - **Do** pull every color, radius and font from `shadcn.css`; a component that needs a value adds a
   token there and maps it in `tailwind.css`.
 - **Do** keep the ground warm paper and panels white; the tonal step is the depth.
-- **Do** keep mono to chemical data, prices and identifiers, and keep every word in Titillium Web.
+- **Do** keep mono to chemical data, prices and identifiers, and keep every word in Source Sans 3.
 - **Do** keep corners at 6px for buttons and small chrome and 8px for containers and form fields,
   and separate surfaces with a 1px warm hairline.
 - **Do** keep exactly one evergreen action per view, and let it be the only saturated chrome color.
@@ -530,7 +584,7 @@ The palette reaches the places Tailwind does not paint, from the token home in `
       figure, never a per-batch result.
 - [ ] **RUO framing is absolute.** No dosing, medical, weight-loss or body framing; the GLP category
       carries no weight-management language. Plain language does not relax this.
-- [ ] **Mono only for chemical data, prices and identifiers.** Everything else is Titillium Web.
+- [ ] **Mono only for chemical data, prices and identifiers.** Everything else is Source Sans 3.
 - [ ] **Tokens come from `shadcn.css`.** No hardcoded hex in a component; new values are declared in
       the token home and mapped in `tailwind.css`.
 - [ ] **Category accents mark identity only**, and a real category never renders the fallback color.

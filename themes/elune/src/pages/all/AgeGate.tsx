@@ -71,7 +71,7 @@ export default function AgeGate() {
           Are you 18 or older?
         </h2>
         <div className="mb-5 rounded border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950 leading-relaxed">
-          <strong className="text-amber-900 font-semibold block uppercase tracking-wider text-[11px] mb-1">
+          <strong className="text-amber-900 font-semibold block uppercase tracking-wider text-[0.75rem] mb-1">
             Research Chemical Notice
           </strong>
           Compounds offered by Elune Labs are supplied exclusively for <strong>in-vitro laboratory research and analytical evaluation</strong>. They are strictly not for human consumption, clinical application, or therapeutic use.

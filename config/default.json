@@ -6,6 +6,11 @@
         "name": "elune-payments",
         "resolve": "extensions/elune-payments",
         "enabled": true
+      },
+      {
+        "name": "elune-catalog",
+        "resolve": "extensions/elune-catalog",
+        "enabled": true
       }
     ]
   },

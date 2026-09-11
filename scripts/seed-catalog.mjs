@@ -342,19 +342,250 @@ export async function assertSeed(data) {
 // the name in the admin console. The bootstrap owns making a clean deployment
 // correct, so it sets them. No page-level derivation here: product and category
 // pages title themselves from their own name.
+//
+// `favicon` is checked by core's PageInfo resolver BEFORE its
+// public/favicon.ico fallback, and HeadTags passes a `.svg` straight through
+// rather than routing it through the sharp image endpoint — so pointing it at
+// the theme's own /assets/favicon.svg is what puts the brand mark in the tab.
+// It stays an editable setting: the owner can replace it in the admin console
+// with no rebuild.
 const STORE_SETTINGS = {
   storeName: 'Elune Labs',
   storeDescription:
-    'Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.'
+    'Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.',
+  favicon: '/assets/favicon.svg'
 };
 
 export async function applyStoreSettings() {
-  const res = await apiFetch('/api/settings', {
+  // Only fill in what is unset. POST /api/settings upserts EVERY key it is given,
+  // so writing unconditionally would silently revert a store name, description or
+  // favicon the owner had just changed in the admin console the next time this
+  // seeder ran — which directly contradicts the promise that admin edits take
+  // effect with no rebuild and no code change.
+  const res = await apiFetch('/api/graphql', {
     method: 'POST',
-    body: JSON.stringify(STORE_SETTINGS)
+    body: JSON.stringify({
+      query: '{ setting { storeName storeDescription favicon } }'
+    })
   });
-  if (!res.ok) throw new Error(`settings update failed: HTTP ${res.status} ${await res.text()}`);
-  console.log(`settings: ${Object.keys(STORE_SETTINGS).join(', ')} applied`);
+  const json = await res.json().catch(() => null);
+  const current = json?.data?.setting ?? {};
+
+  const missing = Object.entries(STORE_SETTINGS).filter(([key]) => !current[key]);
+  if (missing.length === 0) {
+    console.log('settings: already configured, left as-is');
+    return;
+  }
+
+  const update = await apiFetch('/api/settings', {
+    method: 'POST',
+    body: JSON.stringify(Object.fromEntries(missing))
+  });
+  if (!update.ok) {
+    throw new Error(`settings update failed: HTTP ${update.status} ${await update.text()}`);
+  }
+  console.log(`settings: set ${missing.map(([key]) => key).join(', ')}`);
+}
+
+// ---------------------------------------------------------------------------
+// Static pages (FAQs, Shipping, Contact)
+//
+// These live in the CMS, not in code, so the owner edits them in the admin
+// console with no rebuild — the same promise the wallet addresses and shipping
+// rates already keep. They exist because the header and footer both link to
+// them; a link to a page that does not exist is worse than no link.
+//
+// The stored shape is NOT free-form. Core's `Editor` reads
+// `content: [{ size, columns: [{ size, data: { blocks: [...] } }] }]`, where
+// `blocks` is an EditorJS block array — `{type:'paragraph', data:{text}}`,
+// `{type:'header', data:{text, level}}`, `{type:'list', data:{style, items}}`.
+// That was established empirically, not guessed: a page whose column `data`
+// held `{text: ...}` instead of `{blocks: [...]}` saved with HTTP 200 and
+// rendered completely blank, because createPage's payloadSchema validates only
+// the id/size/columns envelope and leaves `data` unvalidated.
+// ---------------------------------------------------------------------------
+
+// Core's Editor wraps each block in a grid row/column; size 12 of 12 is one
+// full-width column.
+function editorContent(blocks) {
+  return [
+    {
+      id: 'elune-content-row',
+      size: 12,
+      columns: [{ id: 'elune-content-column', size: 12, data: { blocks } }]
+    }
+  ];
+}
+
+const para = (text) => ({ type: 'paragraph', data: { text } });
+const heading = (text) => ({ type: 'header', data: { text, level: 2 } });
+
+// Every claim below is one this store can actually stand behind. No testing or
+// certification wording (there is no certificate of analysis in this project and
+// nothing may imply one), no dosing or administration guidance, no efficacy or
+// weight-loss framing, and no shipping promise a drop-shipper cannot honour.
+const FAQ_BLOCKS = [
+  para(
+    'These answers cover what Elune Labs sells, what is documented about it, and how an order is placed and paid for. If something here is still unclear, the Contact page is the place to ask.'
+  ),
+  heading('What am I buying?'),
+  para(
+    'Research reference compounds — peptides and related materials supplied for laboratory work. Every product is a reference material: something to be studied and characterised, not consumed. Nothing on this store is a medicine, a supplement or a therapeutic, and nothing here is intended for human or veterinary use.'
+  ),
+  heading('What is documented for every product?'),
+  para(
+    'Each product carries a batch or lot identifier, its supplied form, its storage condition, and a purity declaration of <strong>≥99%</strong>. Where a compound has identity data — CAS registry number, molecular formula, molecular weight, sequence — that is listed too. All of it sits together in one specification table on the product page.'
+  ),
+  heading('What does the ≥99% purity declaration mean?'),
+  para(
+    'It is the specification we supply to, declared the same way on every product. It is <em>not</em> a measured figure and not a per-batch result, and it is deliberately not written as one. If a specification value is not sourced, it is left out of the record entirely rather than filled with a placeholder.'
+  ),
+  heading('Do you publish certificates of analysis or test results?'),
+  para(
+    'No. There is no certificate of analysis, chromatogram or accreditation document for any product in this catalog, so none is offered or linked anywhere on this site. What you can rely on today is the batch identity and the specification carried on each product page. Nothing on this site should be read as a testing result.'
+  ),
+  heading('How do I pay?'),
+  para(
+    'Checkout shows the order total and wallet addresses for Bitcoin, USDT on TRC-20 and Ethereum. Send the total to one of them, then paste the transaction ID — the TXID — into the field provided at checkout. Payment is confirmed by hand: the transaction is checked on-chain, and the order is dispatched only after that confirmation.'
+  ),
+  heading('When does my order ship, and how?'),
+  para(
+    'After payment is confirmed on-chain. Orders ship at a flat rate per order, tracked and sent discreetly.'
+  ),
+  para(
+    'At launch orders are fulfilled by a supplier rather than packed by us, so what we stand behind is tracking and discretion — not cold-chain handling and not in-house packing.'
+  ),
+  heading('What does "for research use only" mean in practice?'),
+  para(
+    'It means the material is supplied strictly for in-vitro laboratory research and analytical evaluation. It is not for human or veterinary consumption, and no dosing, administration or protocol guidance is provided or implied anywhere on this site.'
+  )
+];
+
+const SHIPPING_BLOCKS = [
+  para(
+    'Everything below is what we can actually commit to, not a template. If a promise is not listed here, we are not making it.'
+  ),
+  heading('What it costs'),
+  para(
+    'A single flat rate per order. It is added at checkout and shown in the order total before you pay — no tiers, no weight-based pricing, no surprises at the end.'
+  ),
+  heading('When it ships'),
+  para(
+    'Orders are dispatched once payment is confirmed on-chain. That confirmation is done by hand rather than automatically, so please allow time for the transaction to be verified before dispatch.'
+  ),
+  heading('How it is sent'),
+  para(
+    'Tracked and sent discreetly, with no indication on the outside of the parcel beyond what a carrier requires.'
+  ),
+  heading('Who sends it'),
+  para(
+    'At launch, orders are fulfilled by a supplier rather than packed and shipped by us directly. That is deliberate — it keeps dispatch quick — but it does limit what we promise. Tracking and discretion are ours to stand behind. Cold-chain handling and in-house packing are not, so we do not claim them.'
+  ),
+  heading('Research use only'),
+  para(
+    'All orders are supplied for in-vitro laboratory research and analytical evaluation only, and are not for human or veterinary consumption.'
+  )
+];
+
+function contactBlocks(storeEmail) {
+  return [
+    para(
+      'For a question about a product, an order, or a payment, get in touch. If your message concerns an existing order, including the order number helps us find it quickly.'
+    ),
+    heading('Email'),
+    storeEmail
+      ? para(`Write to <a href="mailto:${storeEmail}">${storeEmail}</a>.`)
+      : para(
+          'A contact address has not been configured for this store yet. There is nothing to show here until one is set — we would rather leave this line honest than print an address that does not exist.'
+        ),
+    heading('Payment confirmation'),
+    para(
+      'If you have sent payment and would like it confirmed, include the transaction ID (TXID) from your wallet. It can then be checked on-chain directly.'
+    ),
+    heading('Research use only'),
+    para(
+      'All materials are supplied strictly for in-vitro laboratory research and analytical evaluation, and are not for human or veterinary consumption.'
+    )
+  ];
+}
+
+// Look up an existing page by url_key straight from the DB. The GraphQL surface
+// for CMS pages is admin-scoped and keyed by uuid, and this seeder already reads
+// the DB directly for the same reason elsewhere (see dbProducts/dbCategories).
+async function findCmsPage(urlKey) {
+  const pool = await db();
+  if (!pool) return null;
+  const { rows } = await pool.query(
+    `select p.uuid, d.url_key
+       from cms_page_description d
+       join cms_page p on p.cms_page_id = d.cms_page_description_cms_page_id
+      where d.url_key = $1
+      limit 1`,
+    [urlKey]
+  );
+  return rows[0] ?? null;
+}
+
+// Create the page if it is missing; leave it alone if it exists.
+//
+// Deliberately create-only. PATCHing an existing page on every seed run would
+// overwrite content the owner had edited in the admin console, which is exactly
+// the rebuild-free editing promise this store makes. Idempotent in the sense
+// that matters: running the seeder twice creates nothing twice.
+export async function upsertCmsPage({ name, urlKey, metaTitle, blocks }) {
+  const existing = await findCmsPage(urlKey);
+  if (existing) {
+    console.log(`page '${urlKey}': exists, left as-is`);
+    return existing;
+  }
+  const res = await apiFetch('/api/pages', {
+    method: 'POST',
+    body: JSON.stringify({
+      status: 1,
+      name,
+      url_key: urlKey,
+      meta_title: metaTitle,
+      content: editorContent(blocks)
+    })
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(`create page '${urlKey}' failed: HTTP ${res.status} ${JSON.stringify(json)}`);
+  }
+  console.log(`page '${urlKey}': created`);
+  return json?.data ?? null;
+}
+
+export async function applyCmsPages() {
+  // The contact address is read from the store's own settings rather than
+  // hardcoded, so it appears here the moment the owner sets it in the admin
+  // console. It is unset today, and the page says so plainly instead of
+  // inventing an address.
+  const res = await apiFetch('/api/graphql', {
+    method: 'POST',
+    body: JSON.stringify({ query: '{ setting { storeEmail } }' })
+  });
+  const json = await res.json().catch(() => null);
+  const storeEmail = json?.data?.setting?.storeEmail ?? null;
+
+  await upsertCmsPage({
+    name: 'FAQs',
+    urlKey: 'faqs',
+    metaTitle: 'FAQs',
+    blocks: FAQ_BLOCKS
+  });
+  await upsertCmsPage({
+    name: 'Shipping',
+    urlKey: 'shipping',
+    metaTitle: 'Shipping',
+    blocks: SHIPPING_BLOCKS
+  });
+  await upsertCmsPage({
+    name: 'Contact Us',
+    urlKey: 'contact',
+    metaTitle: 'Contact Us',
+    blocks: contactBlocks(storeEmail)
+  });
 }
 
 export async function run() {
@@ -372,6 +603,7 @@ export async function run() {
   }
   await prune(data);
   await assertSeed(data);
+  await applyCmsPages();
 }
 
 // Execute only when run directly; importing (b04.16) must not seed.
