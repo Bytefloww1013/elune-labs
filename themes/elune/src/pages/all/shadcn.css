@@ -94,41 +94,56 @@
   }
 }
 
-/* Elune Labs — Aegis-Dark Design System Tokens (formalized in DESIGN.md).
- * Single token home for dark obsidian canvas, luminescent accents, and surfaces. */
+/* Elune Labs — light storefront tokens (2026-09-11).
+ * Single token home: warm near-white paper ground, warm graphite ink, one
+ * confident evergreen accent, and five muted category accents.
+ * Light only — no dark surface exists anywhere in this storefront. */
 :root {
-  /* Foundation: Deep obsidian & void surfaces */
-  --background: oklch(0.14 0.015 250);         /* #090B0E Canvas */
-  --foreground: oklch(0.96 0.010 250);         /* #F1F5F9 Primary Text */
+  /* Ground and ink */
+  --background: #faf9f7;                       /* Warm paper near-white */
+  --foreground: #1f1d1a;                       /* Warm graphite ink */
 
-  /* Brand Accents */
-  --primary: oklch(0.88 0.180 205);            /* #00F0FF Electric Cyan */
-  --primary-foreground: oklch(0.10 0.010 250); /* #050608 Void Dark */
-  --accent: oklch(0.65 0.240 295);             /* #A855F7 Hyper-Violet */
-  --accent-foreground: oklch(0.96 0.010 250);
+  /* Primary action */
+  --primary: #14604a;                          /* Deep evergreen */
+  --primary-foreground: #ffffff;
 
-  /* Structural Surfaces & Layers */
-  --card: oklch(0.18 0.020 250);               /* #0E1217 Surface 1 */
-  --card-foreground: oklch(0.96 0.010 250);
-  --popover: oklch(0.22 0.025 250);            /* #141921 Surface 2 */
-  --popover-foreground: oklch(0.96 0.010 250);
-  --secondary: oklch(0.24 0.025 250);          /* #18202A Secondary Surface */
-  --secondary-foreground: oklch(0.96 0.010 250);
-  --muted: oklch(0.20 0.020 250);              /* #12171F Muted Surface */
-  --muted-foreground: oklch(0.62 0.035 250);   /* #7485A0 Slate Meta Text */
-  --border: oklch(0.26 0.025 250);             /* #1C232E Hairline Border */
-  --divider: oklch(0.26 0.025 250);
-  --input: oklch(0.24 0.025 250);
-  --ring: oklch(0.88 0.180 205);               /* Cyan Glow Ring */
-  --destructive: oklch(0.62 0.220 25);         /* #EF4444 Crimson Alert */
-  --radius: 0.375rem;                          /* 6px Precision Radius */
+  /* Secondary brand accent — named for the brand, NOT the shadcn `--accent`
+   * hover surface. tailwind.css maps `--color-accent: var(--accent)`, and core
+   * ui/* uses that as the hover/selected SURFACE for menus, selects and rows;
+   * painting it ochre would tint every hover state. Brand ochre is separate. */
+  --brand-ochre: #8a5a1c;                      /* Warm ochre — wordmark/details */
+  --accent: #f2efe9;                           /* shadcn hover surface (warm) */
+  --accent-foreground: #1f1d1a;
 
-  /* Category Tri-Accent Colors (keyed by category url_key) */
-  --accent-peptides: oklch(0.88 0.180 205);    /* Electric Cyan #00F0FF */
-  --accent-sarms: oklch(0.80 0.180 75);        /* Hyper Amber #FFB300 */
-  --accent-nootropics: oklch(0.88 0.220 150);  /* Synaptic Mint #00FF9D */
+  /* Surfaces */
+  --card: #ffffff;                             /* Panels sit above the ground */
+  --card-foreground: #1f1d1a;
+  --popover: #ffffff;
+  --popover-foreground: #1f1d1a;
+  --secondary: #f2efe9;                        /* Warm recessed surface */
+  --secondary-foreground: #1f1d1a;
+  --muted: #f2efe9;
+  --muted-foreground: #6b6558;                 /* Warm grey — AA on the ground */
+
+  /* Structure */
+  --border: #e5e0d8;                           /* Warm hairline */
+  --divider: #e5e0d8;
+  --input: #e5e0d8;
+  --ring: #14604a;
+  --destructive: #a32a1f;                      /* Deep red — AA with white text */
+  --destructive-foreground: #ffffff;
+  --radius: 0.5rem;
+
+  /* Category accents (keyed by the category url_key).
+   * Deep and muted so each is legible as text on the light ground and none
+   * falls back to the default accent. */
+  --accent-glps: #1c5f96;                      /* Deep blue */
+  --accent-bioregulators: #6b4f9e;             /* Muted violet */
+  --accent-recovery: #0f6b6b;                  /* Deep teal */
+  --accent-gh-releasing: #9a6414;              /* Warm ochre */
+  --accent-other: #5c6270;                     /* Slate */
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
 }

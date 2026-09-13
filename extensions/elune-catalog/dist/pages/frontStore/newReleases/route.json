@@ -1,0 +1,6 @@
+{
+  "methods": ["GET"],
+  "path": "/new-releases",
+  "name": "New releases",
+  "editable": true
+}

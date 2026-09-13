@@ -1,11 +1,37 @@
 import { Button } from '@components/common/ui/Button.js';
 import { toast } from '@components/common/ui/Sonner.js';
+import { useCartState } from '@components/frontStore/cart/CartContext.js';
 import {
   useCheckout,
   useCheckoutDispatch
 } from '@components/frontStore/checkout/CheckoutContext.js';
 import { _ } from '@evershop/evershop/lib/locale/translate/_';
+import { Copy } from 'lucide-react';
 import React, { useEffect } from 'react';
+
+// Clipboard copy with user feedback. The storefront is served over plain http
+// on a LAN/tailnet address, where `navigator.clipboard` does not exist, so the
+// textarea + execCommand path is the real one for most visitors.
+async function copyAddress(address: string) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(address);
+    } else {
+      const scratch = document.createElement('textarea');
+      scratch.value = address;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      document.execCommand('copy');
+      document.body.removeChild(scratch);
+    }
+    toast.success(_('Address copied to clipboard'));
+  } catch {
+    toast.error(_('Could not copy the address. Select it manually.'));
+  }
+}
 
 interface CashOnDeliveryMethodProps {
   setting: {
@@ -38,27 +64,69 @@ export default function CashOnDeliveryMethod({
           <span>{setting.codDisplayName}</span>
         </div>
       ),
-      formRenderer: () => (
-        <div className="flex justify-center text-muted-foreground">
-          <div className="w-2/3 py-3">
-            <p className="mb-4">{setting.cryptoWalletInstructions}</p>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>BTC — Bitcoin (native SegWit):</span>
-                <span className="font-mono">{setting.cryptoWalletBtc}</span>
+      formRenderer: () => {
+        const { data: cart } = useCartState();
+        const wallets: Array<{ label: string; address?: string }> = [
+          {
+            label: _('BTC — Bitcoin (native SegWit)'),
+            address: setting.cryptoWalletBtc
+          },
+          {
+            label: _('USDT — TRON (TRC-20)'),
+            address: setting.cryptoWalletUsdt
+          },
+          {
+            label: _('ETH — Ethereum (ERC-20)'),
+            address: setting.cryptoWalletEth
+          }
+        ];
+        return (
+          <div className="w-full space-y-4 py-3 text-left">
+            <div className="rounded-md border border-border bg-card p-4">
+              <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+                <span className="text-muted-foreground">{_('Order total')}</span>
+                <span className="text-lg font-semibold text-foreground">
+                  {cart?.grandTotal?.text}
+                </span>
               </div>
-              <div className="flex justify-between">
-                <span>USDT — TRON (TRC-20):</span>
-                <span className="font-mono">{setting.cryptoWalletUsdt}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>ETH — Ethereum (ERC-20):</span>
-                <span className="font-mono">{setting.cryptoWalletEth}</span>
-              </div>
+              <dl className="mt-4 space-y-4">
+                {wallets.map((wallet) => {
+                  const address = wallet.address;
+                  return address ? (
+                    <div key={wallet.label}>
+                      <dt className="flex items-center justify-between gap-3">
+                        <span className="text-sm font-medium text-foreground">
+                          {wallet.label}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onClick={() => copyAddress(address)}
+                          aria-label={_('Copy ${label} address', {
+                            label: wallet.label
+                          })}
+                        >
+                          <Copy className="size-4" />
+                          {_('Copy')}
+                        </Button>
+                      </dt>
+                      <dd className="mt-1 font-mono text-sm text-foreground break-all">
+                        {address}
+                      </dd>
+                    </div>
+                  ) : null;
+                })}
+              </dl>
             </div>
+            {setting.cryptoWalletInstructions && (
+              <p className="text-sm text-muted-foreground">
+                {setting.cryptoWalletInstructions}
+              </p>
+            )}
           </div>
-        </div>
-      ),
+        );
+      },
       checkoutButtonRenderer: () => {
         const { checkout } = useCheckoutDispatch();
         const { loadingStates, orderPlaced } = useCheckout();

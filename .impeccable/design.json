@@ -1,0 +1,713 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-11T18:30:00Z",
+  "title": "Design System: Elune Labs (Warm Paper)",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#faf9f7",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252524",
+          "#434240",
+          "#62615f",
+          "#838280",
+          "#a6a5a3",
+          "#cac9c7",
+          "#efeeed"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f1d1a",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423f",
+          "#63615d",
+          "#84827e",
+          "#a7a5a1",
+          "#cbc9c6",
+          "#f0eeeb"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Panel White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0d0d0d",
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#a6a6a6",
+          "#d9d9d9",
+          "#ffffff"
+        ]
+      },
+      "card-foreground": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f1d1a",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423f",
+          "#63615d",
+          "#84827e",
+          "#a7a5a1",
+          "#cbc9c6",
+          "#f0eeeb"
+        ]
+      },
+      "popover": {
+        "role": "neutral",
+        "displayName": "Panel White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0d0d0d",
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#a6a6a6",
+          "#d9d9d9",
+          "#ffffff"
+        ]
+      },
+      "popover-foreground": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f1d1a",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423f",
+          "#63615d",
+          "#84827e",
+          "#a7a5a1",
+          "#cbc9c6",
+          "#f0eeeb"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Evergreen",
+        "canonical": "#14604a",
+        "tonalRamp": [
+          "#001107",
+          "#002e20",
+          "#094e3b",
+          "#2a7059",
+          "#4e927a",
+          "#77b49d",
+          "#a4d6c2",
+          "#cffae9"
+        ]
+      },
+      "primary-foreground": {
+        "role": "primary",
+        "displayName": "Evergreen on White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0d0d0d",
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#a6a6a6",
+          "#d9d9d9",
+          "#ffffff"
+        ]
+      },
+      "brand-ochre": {
+        "role": "secondary",
+        "displayName": "Warm Ochre",
+        "canonical": "#8a5a1c",
+        "tonalRamp": [
+          "#1a0400",
+          "#3b1c00",
+          "#603700",
+          "#855618",
+          "#a8773d",
+          "#ca9b67",
+          "#e9c196",
+          "#ffe8c3"
+        ]
+      },
+      "accent": {
+        "role": "neutral",
+        "displayName": "Recessed Sand",
+        "canonical": "#f2efe9",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423d",
+          "#63615c",
+          "#85827d",
+          "#a7a5a0",
+          "#cbc9c4",
+          "#f0eeea"
+        ]
+      },
+      "accent-foreground": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f1d1a",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423f",
+          "#63615d",
+          "#84827e",
+          "#a7a5a1",
+          "#cbc9c6",
+          "#f0eeeb"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Recessed Sand",
+        "canonical": "#f2efe9",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423d",
+          "#63615c",
+          "#85827d",
+          "#a7a5a0",
+          "#cbc9c4",
+          "#f0eeea"
+        ]
+      },
+      "secondary-foreground": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1f1d1a",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423f",
+          "#63615d",
+          "#84827e",
+          "#a7a5a1",
+          "#cbc9c6",
+          "#f0eeeb"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Recessed Sand",
+        "canonical": "#f2efe9",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#44423d",
+          "#63615c",
+          "#85827d",
+          "#a7a5a0",
+          "#cbc9c4",
+          "#f0eeea"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Warm Grey",
+        "canonical": "#6b6558",
+        "tonalRamp": [
+          "#0e0b05",
+          "#28251c",
+          "#464137",
+          "#676154",
+          "#888274",
+          "#aaa498",
+          "#cec9be",
+          "#f2eee5"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Warm Hairline",
+        "canonical": "#e5e0d8",
+        "tonalRamp": [
+          "#0d0b08",
+          "#272520",
+          "#45413c",
+          "#65615a",
+          "#86827a",
+          "#a9a49e",
+          "#ccc9c3",
+          "#f1eee9"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Warm Hairline",
+        "canonical": "#e5e0d8",
+        "tonalRamp": [
+          "#0d0b08",
+          "#272520",
+          "#45413c",
+          "#65615a",
+          "#86827a",
+          "#a9a49e",
+          "#ccc9c3",
+          "#f1eee9"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Warm Hairline",
+        "canonical": "#e5e0d8",
+        "tonalRamp": [
+          "#0d0b08",
+          "#272520",
+          "#45413c",
+          "#65615a",
+          "#86827a",
+          "#a9a49e",
+          "#ccc9c3",
+          "#f1eee9"
+        ]
+      },
+      "ring": {
+        "role": "primary",
+        "displayName": "Deep Evergreen",
+        "canonical": "#14604a",
+        "tonalRamp": [
+          "#001107",
+          "#002e20",
+          "#094e3b",
+          "#2a7059",
+          "#4e927a",
+          "#77b49d",
+          "#a4d6c2",
+          "#cffae9"
+        ]
+      },
+      "destructive": {
+        "role": "functional",
+        "displayName": "Deep Red",
+        "canonical": "#a32a1f",
+        "tonalRamp": [
+          "#280000",
+          "#500000",
+          "#7d1009",
+          "#a83125",
+          "#d05647",
+          "#f17f6f",
+          "#ffab9c",
+          "#ffd6c8"
+        ]
+      },
+      "destructive-foreground": {
+        "role": "functional",
+        "displayName": "White on Red",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0d0d0d",
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#a6a6a6",
+          "#d9d9d9",
+          "#ffffff"
+        ]
+      },
+      "accent-glps": {
+        "role": "tertiary",
+        "displayName": "GLPs Deep Blue",
+        "canonical": "#1c5f96",
+        "tonalRamp": [
+          "#000a26",
+          "#00264a",
+          "#044473",
+          "#24659c",
+          "#4887c0",
+          "#71aae0",
+          "#9fcffc",
+          "#cbf4ff"
+        ]
+      },
+      "accent-bioregulators": {
+        "role": "tertiary",
+        "displayName": "Bioregulators Muted Violet",
+        "canonical": "#6b4f9e",
+        "tonalRamp": [
+          "#100126",
+          "#2c174b",
+          "#4a3175",
+          "#6b4f9d",
+          "#8c71c2",
+          "#ae95e2",
+          "#d0bdfe",
+          "#f4e4ff"
+        ]
+      },
+      "accent-recovery": {
+        "role": "tertiary",
+        "displayName": "Recovery Deep Teal",
+        "canonical": "#0f6b6b",
+        "tonalRamp": [
+          "#001111",
+          "#002d2e",
+          "#004d4d",
+          "#186f6f",
+          "#429190",
+          "#6eb3b2",
+          "#9dd6d5",
+          "#caf9f8"
+        ]
+      },
+      "accent-gh-releasing": {
+        "role": "tertiary",
+        "displayName": "GH Releasing Warm Ochre",
+        "canonical": "#9a6414",
+        "tonalRamp": [
+          "#1c0300",
+          "#3d1b00",
+          "#633600",
+          "#885400",
+          "#ac752d",
+          "#cd9a5c",
+          "#ecc08e",
+          "#ffe7bd"
+        ]
+      },
+      "accent-other": {
+        "role": "tertiary",
+        "displayName": "Other Slate",
+        "canonical": "#5c6270",
+        "tonalRamp": [
+          "#080b11",
+          "#21252e",
+          "#3d424e",
+          "#5b616f",
+          "#7c8291",
+          "#9fa5b3",
+          "#c4c9d5",
+          "#eaeef9"
+        ]
+      },
+      "chart-1": {
+        "role": "chart",
+        "displayName": "Chart Evergreen",
+        "canonical": "#14604a",
+        "tonalRamp": [
+          "#001107",
+          "#002e20",
+          "#094e3b",
+          "#2a7059",
+          "#4e927a",
+          "#77b49d",
+          "#a4d6c2",
+          "#cffae9"
+        ]
+      },
+      "chart-2": {
+        "role": "chart",
+        "displayName": "Chart Deep Blue",
+        "canonical": "#1c5f96",
+        "tonalRamp": [
+          "#000a26",
+          "#00264a",
+          "#044473",
+          "#24659c",
+          "#4887c0",
+          "#71aae0",
+          "#9fcffc",
+          "#cbf4ff"
+        ]
+      },
+      "chart-3": {
+        "role": "chart",
+        "displayName": "Chart Muted Violet",
+        "canonical": "#6b4f9e",
+        "tonalRamp": [
+          "#100126",
+          "#2c174b",
+          "#4a3175",
+          "#6b4f9d",
+          "#8c71c2",
+          "#ae95e2",
+          "#d0bdfe",
+          "#f4e4ff"
+        ]
+      },
+      "chart-4": {
+        "role": "chart",
+        "displayName": "Chart Warm Ochre",
+        "canonical": "#9a6414",
+        "tonalRamp": [
+          "#1c0300",
+          "#3d1b00",
+          "#633600",
+          "#885400",
+          "#ac752d",
+          "#cd9a5c",
+          "#ecc08e",
+          "#ffe7bd"
+        ]
+      },
+      "chart-5": {
+        "role": "chart",
+        "displayName": "Chart Deep Red",
+        "canonical": "#a32a1f",
+        "tonalRamp": [
+          "#280000",
+          "#500000",
+          "#7d1009",
+          "#a83125",
+          "#d05647",
+          "#f17f6f",
+          "#ffab9c",
+          "#ffd6c8"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The homepage offer line only. One per page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page and section titles (1.875rem, 2.25rem from 768px)."
+      },
+      "headline-lg": {
+        "displayName": "Headline Large",
+        "purpose": "The headline step from 768px on page titles."
+      },
+      "headline-sm": {
+        "displayName": "Headline Small",
+        "purpose": "Homepage section headings, stepped down from the headline."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Specification section heading and sub-sections."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Product descriptions, notices, checkout copy, specification values."
+      },
+      "body-large": {
+        "displayName": "Body Large",
+        "purpose": "The offer band's supporting sentence."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Nav links, button labels, trust statements, form labels."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Category counts, product card spec and identity lines, notice body."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Uppercase notice labels in the age gate and the RUO notice; a caption inside a notice, never a standalone eyebrow above a heading."
+      },
+      "mono": {
+        "displayName": "Mono (data)",
+        "purpose": "Chemical data, prices and identifiers only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "modal-panel",
+        "value": "shadow-lg tinted to rgba(31, 29, 26, 0.05) via shadow-foreground/5 (Tailwind utility; the theme does not override --shadow-lg)",
+        "purpose": "The age-gate panel only — the single shadow in the system."
+      },
+      {
+        "name": "none",
+        "value": "shadow-none ring-0",
+        "purpose": "Explicit resting state for panels that would otherwise inherit a core shadow, e.g. the checkout TXID card."
+      }
+    ],
+    "motion": [
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Default for color, border and opacity transitions on hover, focus and cards."
+      },
+      {
+        "name": "duration-medium",
+        "value": "200ms",
+        "purpose": "The checkout submit button's color transition."
+      },
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Tailwind's default timing function for transition-* utilities; the input focus transition uses 150ms ease."
+      },
+      {
+        "name": "spin-pending",
+        "value": "1s linear infinite",
+        "purpose": "The checkout submit spinner while the order is being placed."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action per view: offer CTA, Add to Cart, Place Order, age-gate continue.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Shop Recovery</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background-color: var(--primary); color: var(--primary-foreground); font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9375rem; font-weight: 600; line-height: 1.25; padding: 0.75rem 1.5rem; border: 1px solid transparent; border-radius: calc(var(--radius) - 2px); cursor: pointer; text-decoration: none; transition: background-color 150ms ease; } .ds-btn-primary:hover { background-color: color-mix(in srgb, var(--primary) 90%, transparent); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; background-color: var(--primary); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action beside a primary one, e.g. the age gate's Decline & Exit.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">Decline &amp; Exit</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; background-color: transparent; color: var(--muted-foreground); font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9375rem; font-weight: 500; line-height: 1.25; padding: 0.625rem 1rem; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); cursor: pointer; transition: background-color 150ms ease, color 150ms ease; } .ds-btn-outline:hover { color: var(--foreground); background-color: var(--secondary); } .ds-btn-outline:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form fields on checkout: border-plus-ring focus, evergreen border.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Street address\" />",
+      "css": ".ds-input { width: 100%; box-sizing: border-box; background-color: var(--card); color: var(--foreground); font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; line-height: 1.5; padding: 0.625rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: var(--muted-foreground); opacity: 0.7; } .ds-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }"
+    },
+    {
+      "name": "Header Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "The five category links in the header, in fixed domain order.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a class=\"ds-nav-link\" href=\"/\">Home</a><a class=\"ds-nav-link\" href=\"/new-releases\">New Releases</a></nav>",
+      "css": ".ds-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.25rem; } .ds-nav-link { color: var(--muted-foreground); font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9375rem; font-weight: 500; line-height: 1.25; text-decoration: none; white-space: nowrap; transition: color 150ms ease; } .ds-nav-link:hover { color: var(--foreground); } .ds-nav-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card-product",
+      "description": "Text-led card, complete on name, size, spec and price. No image unless the product has one.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-name\"><a href=\"/recovery/bpc-157-5mg\">BPC-157</a></h3><p class=\"ds-card-spec\">5mg · Lyophilized powder</p><p class=\"ds-card-price\">$39.99</p><p class=\"ds-card-identity\">≥99% · BPC157-5MG</p></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; background-color: var(--card); color: var(--card-foreground); padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 150ms ease; } .ds-card:hover { border-color: color-mix(in srgb, var(--muted-foreground) 40%, transparent); } .ds-card-name { margin: 0; font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.025em; } .ds-card-name a { color: var(--foreground); text-decoration: none; } .ds-card-name a:hover { color: var(--primary); } .ds-card-spec { margin: 0.25rem 0 0; font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace; font-size: 0.8125rem; line-height: 1.3; color: var(--muted-foreground); } .ds-card-price { margin: 0.75rem 0 0; font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace; font-size: 1.125rem; font-weight: 600; color: var(--foreground); } .ds-card-identity { margin: 0.25rem 0 0; font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace; font-size: 0.8125rem; line-height: 1.3; color: var(--muted-foreground); }"
+    },
+    {
+      "name": "Category Card",
+      "kind": "card",
+      "refersTo": "card-category",
+      "description": "Homepage category tile; the name carries the category's own accent, the count is mono.",
+      "html": "<a class=\"ds-cat-card\" href=\"/recovery\"><span class=\"ds-cat-name\">Recovery</span><span class=\"ds-cat-count\">3 products</span></a>",
+      "css": ".ds-cat-card { display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box; background-color: var(--card); padding: 1.25rem; text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 150ms ease; } .ds-cat-card:hover { border-color: color-mix(in srgb, var(--muted-foreground) 40%, transparent); } .ds-cat-card:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; } .ds-cat-name { font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 600; color: var(--accent-recovery, var(--foreground)); } .ds-cat-count { margin-top: 2rem; font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace; font-size: 0.8125rem; color: var(--muted-foreground); }"
+    },
+    {
+      "name": "RUO Notice",
+      "kind": "custom",
+      "refersTo": "notice-ruo",
+      "description": "Research-use-only compliance block on every product page and in the age gate.",
+      "html": "<div class=\"ds-notice\"><span class=\"ds-notice-label\">Laboratory Research Notice (RUO)</span>This chemical compound is supplied strictly for in-vitro laboratory experimentation and analytical reference. Not for human, clinical, or veterinary administration.</div>",
+      "css": ".ds-notice { box-sizing: border-box; background-color: #fffbeb; color: #451a03; padding: 1rem; border: 1px solid #fcd34d; border-radius: calc(var(--radius) - 2px); font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.8125rem; line-height: 1.6; } .ds-notice-label { display: block; margin-bottom: 0.125rem; font-size: 0.75rem; font-weight: 600; color: #78350f; text-transform: uppercase; letter-spacing: 0.05em; }"
+    },
+    {
+      "name": "Specification Table",
+      "kind": "custom",
+      "description": "The analytical record as real tabular markup; mono only on chemical values, absent rows omitted.",
+      "html": "<table class=\"ds-spec\"><caption class=\"ds-spec-caption\">Analytical specification</caption><tbody><tr><th class=\"ds-spec-label\" scope=\"row\">CAS Registry Number</th><td class=\"ds-spec-value ds-spec-mono\">137525-51-0</td></tr><tr><th class=\"ds-spec-label\" scope=\"row\">Form</th><td class=\"ds-spec-value\">Lyophilized powder</td></tr><tr><th class=\"ds-spec-label\" scope=\"row\">Purity</th><td class=\"ds-spec-value\">≥99%</td></tr></tbody></table>",
+      "css": ".ds-spec { width: 100%; border-collapse: collapse; font-family: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9375rem; color: var(--foreground); } .ds-spec-caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .ds-spec-label { width: 40%; padding: 0.625rem 1rem 0.625rem 0; text-align: left; vertical-align: top; font-weight: 400; color: var(--muted-foreground); } .ds-spec-value { padding: 0.625rem 0; vertical-align: top; color: var(--foreground); } .ds-spec-mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace; word-break: break-all; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Warm Paper Counter",
+    "overview": "Elune Labs sells research reference peptides to people who are not scientists. They arrive skeptical of this category's sellers, and what reassures them is not atmosphere — it is a precise product and a clear statement about what is documented. The interface is therefore a counter, not a campaign: a warm paper ground, white panels laid on it, one evergreen action, and the paperwork — the specification — kept right beside the goods.\n\nThe ground is paper, not screen. It is a warm near-white (`#faf9f7`) with a yellow cast that reads as stationery; ink is a warm graphite (`#1f1d1a`) rather than black, which takes the harshness out of dense specification text. White panels (`#ffffff`) sit visibly above that ground on a single warm hairline (`#e5e0d8`) — the separation is tonal and structural, never a shadow. There is exactly one saturated color in the working interface: a deep evergreen (`#14604a`) that carries the primary action, the focus ring, text selection and the caret. Everything else is warm neutral or one of five deep, muted category accents that mark identity — never mood.\n\nTypography is two faces with strictly divided work. Source Sans 3, a humanist sans with a large x-height and open apertures, speaks for the brand; JetBrains Mono appears only where data must align, which means chemical values, prices and identifiers. Density is comfortable and generous: a 1200px measure, 1rem gutters, 1.25rem card padding, and a lot of white space left alone.",
+    "keyCharacteristics": [
+      "Light only. No dark surface exists anywhere in the storefront, and no `.dark` class is ever",
+      "One action color: evergreen is the only saturated color in the chrome.",
+      "Warm neutrals throughout; paper ground, graphite ink, warm-grey hairlines.",
+      "Text-first components: cards are complete on name, size, spec and price.",
+      "Mono is reserved for data; the sans face carries every word.",
+      "Depth comes from tone and hairlines, not shadow."
+    ],
+    "rules": [
+      {
+        "name": "The Evergreen-Is-Action Rule",
+        "body": "`--primary` is reserved for the primary action, the focus ring, text selection and the caret. It is not a decorative color, not a heading color, and not a border color. Its rarity is what makes the button findable.",
+        "section": "Colors"
+      },
+      {
+        "name": "The Hover-Surface-Is-Not-The-Brand Rule",
+        "body": "Tailwind maps `--color-accent: var(--accent)`, and core `ui/*` paints that token as the hover and selected *surface* of menus, selects and rows. `--accent` is therefore the warm recessed sand (`#f2efe9`) and must stay that. Brand ochre lives in `--brand-ochre` instead; painting `--accent` ochre would tint every hover state in the storefront.",
+        "section": "Colors"
+      },
+      {
+        "name": "The Category-Accent-Is-Identity Rule",
+        "body": "Category accents appear only on the category they name. They never color a button, a price, a badge container or a section. A category's fallback must never be what a real category renders as.",
+        "section": "Colors"
+      },
+      {
+        "name": "The Mono-Is-Data Rule",
+        "body": "The monospace face appears only on chemical data (CAS registry number, molecular formula, molecular weight, sequence), prices, and identifiers (SKU, lot, wallet address, category product count). It never carries a label, a heading, a button or body prose. If a string is a word rather than a value, it is not mono.",
+        "section": "Typography"
+      },
+      {
+        "name": "The Three-Weights Rule",
+        "body": "The interface is built from 400, 600 and 700 only — the three static weights that are actually loaded. 600 is the emphasis weight for headings, buttons and prices. 700 is the ceiling for interface emphasis and is reserved for the age-gate title and the wordmark. The wordmark asks for more weight than the loaded set provides, so the browser synthesizes it from 700; that gap is recorded drift, not a fourth weight, and no new surface should rely on it.",
+        "section": "Typography"
+      },
+      {
+        "name": "The Declaration-Not-Measurement Rule",
+        "body": "The purity value is the literal string `≥99%` on every product. It is a placeholder declaration, never a measured figure, never a per-product number, and never styled as a result. A specification value that is not sourced is omitted from the record entirely — no dash, no empty cell, no \"pending\".",
+        "section": "Typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest and there is exactly one shadow in the system, on the modal panel. A new shadow — a hover lift, a \"premium\" card, a glow — is not an addition to this vocabulary; it is a change to the world and needs the owner's decision.",
+        "section": "Elevation & Depth"
+      },
+      {
+        "name": "The 8px Ceiling Rule",
+        "body": "No corner in this storefront exceeds 8px. The full pill is not used anywhere in this world; anything rounder or softer reads as toy-like and belongs to another one.",
+        "section": "Shapes"
+      }
+    ],
+    "dos": [
+      "**Do** pull every color, radius and font from `shadcn.css`; a component that needs a value adds a",
+      "**Do** keep the ground warm paper and panels white; the tonal step is the depth.",
+      "**Do** keep mono to chemical data, prices and identifiers, and keep every word in Source Sans 3.",
+      "**Do** keep corners at 6px for buttons and small chrome and 8px for containers and form fields,",
+      "**Do** keep exactly one evergreen action per view, and let it be the only saturated chrome color.",
+      "**Do** render a spec value only when it is sourced; omit the row otherwise.",
+      "**Do** show a product image only when the product has one; a card must be complete without it.",
+      "**Do** keep notice labels inside their notice block, as captions rather than eyebrows.",
+      "**Do** keep the RUO line on every page and every product — \"For research use only. Not for human"
+    ],
+    "donts": [
+      "**Don't** add a dark surface, a `.dark` class, or a dark-mode variant. The storefront is light",
+      "**Don't** reintroduce neon, glow, gradient, blur-as-decoration, or a neon-terminal register — or",
+      "**Don't** make a verification claim. No \"tested\", \"verified\", \"certified\", \"accredited\", no",
+      "**Don't** render a measured purity percentage. Purity is the literal `≥99%` placeholder on every",
+      "**Don't** add dosing, protocols, cycle advice, medical or weight-loss claims, or before/after and",
+      "**Don't** present batch identity as a verification badge; a lot number is a plain product",
+      "**Don't** paint `--accent` with a brand hue — it is the shadcn hover surface for menus, selects",
+      "**Don't** hardcode a hex in a component, or extend the amber notice exception to a new surface.",
+      "**Don't** add a shadow, a pill, or a radius above 8px."
+    ]
+  }
+}

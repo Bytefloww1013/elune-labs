@@ -1,714 +1,594 @@
 ---
-version: "1.0.0"
-name: "Elune Labs Design System (Aegis-Dark)"
-description: "Design system and UI token specification for Elune Labs — high-purity peptide, SARM, and nootropic research ecommerce storefront."
-tokens:
-  colors:
-    primitives:
-      void:
-        0: "#050608"
-        50: "#090B0E"
-        100: "#0E1217"
-        200: "#141921"
-        300: "#1C232E"
-        400: "#273140"
-        500: "#374457"
-        600: "#50617B"
-        700: "#7485A0"
-        800: "#A2B1C6"
-        900: "#D4DCE8"
-        950: "#F1F5F9"
-      cyan:
-        300: "#67E8F9"
-        400: "#22D3EE"
-        500: "#00F0FF"
-        600: "#0891B2"
-        700: "#0E7490"
-        glow: "rgba(0, 240, 255, 0.25)"
-      violet:
-        300: "#D8B4FE"
-        400: "#C084FC"
-        500: "#A855F7"
-        600: "#9333EA"
-        700: "#7E22CE"
-        glow: "rgba(168, 85, 247, 0.25)"
-      emerald:
-        300: "#6EE7B7"
-        400: "#34D399"
-        500: "#00FF9D"
-        600: "#059669"
-        glow: "rgba(0, 255, 157, 0.25)"
-      amber:
-        300: "#FCD34D"
-        400: "#FBBF24"
-        500: "#FFB300"
-        600: "#D97706"
-        glow: "rgba(255, 179, 0, 0.25)"
-      crimson:
-        400: "#F87171"
-        500: "#EF4444"
-        600: "#DC2626"
-    semantic:
-      background: "{colors.primitives.void.50}"
-      foreground: "{colors.primitives.void.950}"
-      card: "{colors.primitives.void.100}"
-      cardForeground: "{colors.primitives.void.950}"
-      popover: "{colors.primitives.void.200}"
-      popoverForeground: "{colors.primitives.void.950}"
-      primary: "{colors.primitives.cyan.500}"
-      primaryForeground: "{colors.primitives.void.0}"
-      secondary: "{colors.primitives.void.300}"
-      secondaryForeground: "{colors.primitives.void.950}"
-      muted: "{colors.primitives.void.200}"
-      mutedForeground: "{colors.primitives.void.700}"
-      accent: "{colors.primitives.violet.500}"
-      accentForeground: "{colors.primitives.void.950}"
-      destructive: "{colors.primitives.crimson.500}"
-      destructiveForeground: "#FFFFFF"
-      border: "{colors.primitives.void.300}"
-      input: "{colors.primitives.void.300}"
-      ring: "{colors.primitives.cyan.500}"
-      divider: "{colors.primitives.void.300}"
-    categories:
-      peptides:
-        accent: "{colors.primitives.cyan.500}"
-        glow: "{colors.primitives.cyan.glow}"
-        badgeBg: "rgba(0, 240, 255, 0.10)"
-        badgeBorder: "rgba(0, 240, 255, 0.30)"
-      sarms:
-        accent: "{colors.primitives.amber.500}"
-        glow: "{colors.primitives.amber.glow}"
-        badgeBg: "rgba(255, 179, 0, 0.10)"
-        badgeBorder: "rgba(255, 179, 0, 0.30)"
-      nootropics:
-        accent: "{colors.primitives.emerald.500}"
-        glow: "{colors.primitives.emerald.glow}"
-        badgeBg: "rgba(0, 255, 157, 0.10)"
-        badgeBorder: "rgba(0, 255, 157, 0.30)"
-  typography:
-    fonts:
-      sans: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-      display: "Inter, 'Space Grotesk', -apple-system, sans-serif"
-      mono: "'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace"
-    scale:
-      xs: { size: "0.75rem", lineHeight: "1rem", letterSpacing: "0.02em" }
-      sm: { size: "0.875rem", lineHeight: "1.25rem", letterSpacing: "0.01em" }
-      base: { size: "1rem", lineHeight: "1.5rem", letterSpacing: "0" }
-      lg: { size: "1.125rem", lineHeight: "1.75rem", letterSpacing: "-0.01em" }
-      xl: { size: "1.25rem", lineHeight: "1.75rem", letterSpacing: "-0.015em" }
-      "2xl": { size: "1.5rem", lineHeight: "2rem", letterSpacing: "-0.02em" }
-      "3xl": { size: "1.875rem", lineHeight: "2.25rem", letterSpacing: "-0.025em" }
-      "4xl": { size: "2.25rem", lineHeight: "2.5rem", letterSpacing: "-0.03em" }
-      "5xl": { size: "3rem", lineHeight: "1.15", letterSpacing: "-0.035em" }
-    weights:
-      normal: 400
-      medium: 500
-      semibold: 600
-      bold: 700
-      extrabold: 800
-  spacing:
-    0: "0px"
-    1: "4px"
-    2: "8px"
-    3: "12px"
-    4: "16px"
-    5: "20px"
-    6: "24px"
-    8: "32px"
-    10: "40px"
-    12: "48px"
-    16: "64px"
-    20: "80px"
-    24: "96px"
-  radii:
-    none: "0px"
-    sm: "2px"
-    md: "4px"
-    lg: "6px"
-    xl: "8px"
-    full: "9999px"
-  elevations:
-    surface0: "0 0 0 0 transparent"
-    surface1: "0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4)"
-    surface2: "0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5)"
-    surface3: "0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6)"
-    glowCyan: "0 0 20px -4px rgba(0, 240, 255, 0.35)"
-    glowViolet: "0 0 20px -4px rgba(168, 85, 247, 0.35)"
-    glowEmerald: "0 0 20px -4px rgba(0, 255, 157, 0.35)"
-    glowAmber: "0 0 20px -4px rgba(255, 179, 0, 0.35)"
+name: "Elune Labs Design System (Warm Paper)"
+description: "Light-only storefront design system for Elune Labs — warm paper ground, graphite ink, one evergreen action color, five muted category accents."
+colors:
+  background: "#faf9f7"
+  foreground: "#1f1d1a"
+  card: "#ffffff"
+  card-foreground: "#1f1d1a"
+  popover: "#ffffff"
+  popover-foreground: "#1f1d1a"
+  primary: "#14604a"
+  primary-foreground: "#ffffff"
+  brand-ochre: "#8a5a1c"
+  accent: "#f2efe9"
+  accent-foreground: "#1f1d1a"
+  secondary: "#f2efe9"
+  secondary-foreground: "#1f1d1a"
+  muted: "#f2efe9"
+  muted-foreground: "#6b6558"
+  border: "#e5e0d8"
+  divider: "#e5e0d8"
+  input: "#e5e0d8"
+  ring: "#14604a"
+  destructive: "#a32a1f"
+  destructive-foreground: "#ffffff"
+  accent-glps: "#1c5f96"
+  accent-bioregulators: "#6b4f9e"
+  accent-recovery: "#0f6b6b"
+  accent-gh-releasing: "#9a6414"
+  accent-other: "#5c6270"
+  chart-1: "#14604a"
+  chart-2: "#1c5f96"
+  chart-3: "#6b4f9e"
+  chart-4: "#9a6414"
+  chart-5: "#a32a1f"
+typography:
+  display:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "3rem"
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: "-0.025em"
+  headline:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "1.875rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.011em"
+  headline-lg:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "2.25rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.011em"
+  headline-sm:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.011em"
+  title:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.011em"
+  body:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "normal"
+  body-large:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 400
+    lineHeight: 1.625
+    letterSpacing: "normal"
+  label:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  micro:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.3
+    letterSpacing: "normal"
+  caption:
+    fontFamily: "'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "0.05em"
+  mono:
+    fontFamily: "'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.3
+    letterSpacing: "normal"
+rounded:
+  sm: "4px"
+  md: "6px"
+  lg: "8px"
+  xl: "12px"
+  full: "9999px"
+spacing:
+  1: "0.25rem"
+  2: "0.5rem"
+  2.5: "0.625rem"
+  3: "0.75rem"
+  4: "1rem"
+  5: "1.25rem"
+  6: "1.5rem"
+  8: "2rem"
+  12: "3rem"
+  16: "4rem"
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.primary-foreground}"
+    rounded: "{rounded.md}"
+    padding: "0.75rem 1.5rem"
+    typography: "{typography.label}"
+  button-primary-hover:
+    backgroundColor: "color-mix(in srgb, #14604a 90%, transparent)"
+  button-outline:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted-foreground}"
+    rounded: "{rounded.md}"
+    padding: "0.625rem 1rem"
+    typography: "{typography.label}"
+  input:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.lg}"
+    padding: "0.625rem 0.75rem"
+    typography: "{typography.label}"
+  card-product:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.card-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "1.25rem"
+  card-category:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.card-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "1.25rem"
+  nav-link:
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.label}"
+  notice-ruo:
+    backgroundColor: "#fffbeb"
+    textColor: "#451a03"
+    rounded: "{rounded.md}"
+    padding: "1rem"
+    typography: "{typography.micro}"
 ---
 
-# Elune Labs Design System Specification (DESIGN.md)
-
-**Document Status:** Approved Architecture Standard  
-**Target Engine:** EverShop 2.2.1 Storefront + Docker Compose  
-**Primary Theme:** `themes/elune`  
-**Brand:** Elune Labs (`https://elunelabs.com`)  
-**Design Language:** *Aegis Dark* (High-Purity Bio-Intelligence)  
-**Visual Reference Assets:** Located in [`docs/design/mockups/`](file:///home/josh/dev/elune-labs/.treehouse/elune-labs-347ecc/2/elune-labs/docs/design/mockups/)
-
----
-
-## Visual Reference Mockups
-
-The Aegis-Dark design system was visually modeled, approved, and formalized around four high-contrast dark-mode mockups:
-
-1. **[Style 1: Electric Cyan (Peptides & Core Synthesis)](file:///home/josh/dev/elune-labs/.treehouse/elune-labs-347ecc/2/elune-labs/docs/design/mockups/mockup-cyan-peptides.jpg)**  
-   *Token Anchor:* `--accent-peptides: #00F0FF`, `--primary: #00F0FF`. Borosilicate serum vial with anodized cyan cap, lyophilized cake, glowing cyan purity pill `≥99.4% HPLC PURITY`, and cyan CTA.
-2. **[Style 2: Synaptic Emerald (Nootropics & Cognitive Focus)](file:///home/josh/dev/elune-labs/.treehouse/elune-labs-347ecc/2/elune-labs/docs/design/mockups/mockup-emerald-nootropics.jpg)**  
-   *Token Anchor:* `--accent-nootropics: #00FF9D`. Matte black dropper bottle & capsule vial with emerald caustic ripples, monospace specs, `99.6% PURITY` pill badge, and mint CTA.
-3. **[Style 3: Hyper Amber (SARMs & Metabolic Precision)](file:///home/josh/dev/elune-labs/.treehouse/elune-labs-347ecc/2/elune-labs/docs/design/mockups/mockup-amber-sarms.jpg)**  
-   *Token Anchor:* `--accent-sarms: #FFB300`. Anodized gold crimp cap, warm edge lighting, carbon composite pedestal, `FOR RESEARCH USE ONLY` pill badge, and amber-gold CTA.
-4. **[Style 4: Hyper-Violet (Elune Amethyst Theme)](file:///home/josh/dev/elune-labs/.treehouse/elune-labs-347ecc/2/elune-labs/docs/design/mockups/mockup-violet-elune.jpg)**  
-   *Token Anchor:* `--accent: #A855F7`. Metallic purple crimp seal, tabbed clinical specifications, and violet neon CTA glow.
-
----
-
-## 1. Brand Identity & Design Philosophy
-
-### 1.1 Brand Archetype: The Precision Synthesizer & Bio-Intelligence Lab
-Elune Labs is an ultra-modern, high-purity research chemical and cognitive enhancement storefront providing peptides, SARMs, and nootropics for biohacker hobbyists, laboratory researchers, and longevity practitioners. 
-
-The industry is saturated with two flawed archetypes:
-1. **The "Gym-Bro" Vaporware Store:** Garish neon colors, fake countdown timers, pseudo-medical claims, and aggressive marketing that repels serious researchers.
-2. **The 2004 Legacy Supplier:** Cluttered text tables, Windows 98 aesthetic, non-responsive layouts, and zero visual appeal.
-
-**Elune Labs occupies the high ground:** A clinical, aerospace-grade, high-contrast dark environment reminiscent of an advanced biotechnology laboratory interface or a high-end cryptographic terminal. It feels **competent, sterile, intelligent, and unshakeably trustworthy**.
-
-### 1.2 Core Pillars
-
-| Pillar | Expression in UI | Psychological Impact on Buyer |
-|---|---|---|
-| **Uncompromising Purity** | Sleek 3D renders with caustic glass reflections, batch verification badges, HPLC lab report tags (`≥99.2% Purity`), exact molecular weights and CAS numbers. | Eliminates anxiety regarding product adulteration or underdosing. |
-| **Laboratory Competence** | Monospace typography for scientific specifications, structured grid layouts, clean hairlines, and precise data tables. | Signals institutional knowledge, chemical rigor, and professional handling. |
-| **Cryptographic Trust** | Frictionless crypto checkout display (BTC, USDT TRC-20, ETH), clear TXID submission fields, copy-to-clipboard buttons, zero hidden steps. | Reassures privacy-focused, decentralized-currency biohackers. |
-| **Clear, Honest Communication** | Unapologetic Research-Use-Only (RUO) disclaimers, clear dosage/concentration metadata, transparent stock status, and zero deceptive sales hooks. | Establishes high long-term customer lifetime value (LTV) and mutual respect. |
-
-### 1.3 Target Audience Profile: The Analytical Biohacker
-- **Demographics:** Analytical self-optimizers, longevity researchers, amateur biochemists, software engineers, and fitness scientists aged 22–50.
-- **Mental Model:** Reads PubMed studies; understands HPLC chromatography and mass spectrometry; stores peptides at -20°C; values lyophilized cake stability; pays in cryptocurrency for speed and privacy.
-- **Visual Expectation:** Prefers refined dark mode (OLED matte black, dark charcoal), micro-interactions that feel snappy (<150ms), and crisp typography that renders chemical formulas legibly.
-
----
-
-## 2. Color System & Contrast Strategy
-
-### 2.1 Color Palette Architecture
-The palette is built on **Aegis Dark**, combining a deep obsidian/charcoal foundation with electric luminescent accents. Colors are calibrated using the modern **OKLCH** perceptual color space to preserve perceived lightness across devices and contrast ratios.
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│  SURFACES (OBSIDIAN)                                                  │
-│  [#050608 Void]  →  [#090B0E Canvas]  →  [#0E1217 Card]  →  [#1C232E Border]
-└────────────────────────────────────────────────────────────────────────┘
-       │                      │                      │
-       ▼                      ▼                      ▼
-┌───────────────┐      ┌───────────────┐      ┌───────────────┐
-│   PEPTIDES    │      │     SARMS     │      │  NOOTROPICS   │
-│ Electric Cyan │      │  Hyper Amber  │      │ Synaptic Mint │
-│   #00F0FF     │      │    #FFB300    │      │    #00FF9D    │
-└───────────────┘      └───────────────┘      └───────────────┘
-```
-
-### 2.2 Token Values & WCAG 2.1/2.2 AA Contrast Ratios
-
-| Token Name | CSS Custom Property | Hex Code | OKLCH Equivalent | Contrast vs Canvas (`#090B0E`) | Semantic Role |
-|---|---|---|---|---|---|
-| **Canvas Background** | `--background` | `#090B0E` | `oklch(0.14 0.015 250)` | Base | Root viewport background |
-| **Card / Surface 1** | `--card` | `#0E1217` | `oklch(0.18 0.020 250)` | 1.3:1 (vs Base) | Product cards, modules, drawer panels |
-| **Surface 2 / Popover**| `--popover` | `#141921` | `oklch(0.22 0.025 250)` | 1.8:1 (vs Base) | Dropdowns, dialogs, modals, hover states |
-| **Hairline Border** | `--border` / `--divider` | `#1C232E` | `oklch(0.26 0.025 250)` | 2.5:1 (vs Base) | 1px clean separation lines |
-| **Text Primary** | `--foreground` | `#F1F5F9` | `oklch(0.96 0.010 250)` | **16.2:1 (AAA)** | Primary titles, product names, prices |
-| **Text Muted** | `--muted-foreground` | `#7485A0` | `oklch(0.62 0.035 250)` | **5.4:1 (AA)** | Scientific metadata, secondary labels, notes |
-| **Primary Accent** | `--primary` | `#00F0FF` | `oklch(0.88 0.180 205)` | **13.8:1 (AAA)** | CTAs, focus rings, primary brand badges |
-| **Primary Foreground**| `--primary-foreground`| `#050608` | `oklch(0.10 0.010 250)` | **14.2:1 (AAA)** | Text inside Primary Cyan buttons |
-| **Secondary Accent** | `--accent` | `#A855F7` | `oklch(0.65 0.240 295)` | **6.8:1 (AA)** | Brand wordmark "LABS", hover states, badges |
-| **Destructive / Alert**| `--destructive` | `#EF4444` | `oklch(0.62 0.220 25)` | **5.2:1 (AA)** | Form errors, checkout cancellation |
-
-### 2.3 Category Tri-Accent Color Coding
-Every product category is visually anchored with a distinctive luminescent accent. This creates instantaneous cognitive categorization when scanning catalog listings or browsing category pages.
-
-```
-                    ┌─────────────────────────┐
-                    │    CATEGORY SYSTEM      │
-                    └────────────┬────────────┘
-         ┌───────────────────────┼───────────────────────┐
-         ▼                       ▼                       ▼
-┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│     PEPTIDES     │    │      SARMS       │    │    NOOTROPICS    │
-│  Electric Cyan   │    │   Hyper Amber    │    │  Synaptic Mint   │
-│     #00F0FF      │    │     #FFB300      │    │     #00FF9D      │
-│                  │    │                  │    │                  │
-│ Symbolizes:      │    │ Symbolizes:      │    │ Symbolizes:      │
-│ - Cellular repair│    │ - Anabolic drive │    │ - Neurogenesis   │
-│ - Purity & frost │    │ - Receptor bond  │    │ - Acetylcholine  │
-│ - Lyophilization │    │ - Metabolic surge│    │ - Synaptic spark │
-└──────────────────┘    └──────────────────┘    └──────────────────┘
-```
-
-- **Peptides (`--accent-peptides: #00F0FF` / `oklch(0.88 0.18 205)`):**
-  Electric Cyan evokes cryogenic storage, pure white lyophilized peptide cakes, laboratory peptide synthesis, and clean biological signalling.
-- **SARMs (`--accent-sarms: #FFB300` / `oklch(0.80 0.18 75)`):**
-  Hyper Amber evokes androgen receptor binding, cellular affinity, energetic vigor, and selective molecular targeting.
-- **Nootropics (`--accent-nootropics: #00FF9D` / `oklch(0.88 0.22 150)`):**
-  Synaptic Emerald/Mint evokes cognitive biohacking, neural arborization, memory consolidation, and heightened sensory alertness.
-
-### 2.4 Critical EverShop Token Collision Fix
-In stock EverShop 2.2.1, `tailwind.css` declares a second `:root` block that defines light-mode values (`--muted: oklch(0.97 0 0);`, `--input: oklch(0.922 0 0);`, `--secondary: oklch(0.97 0 0);`). Because these appear later in the stylesheet cascade, they overwrite the theme's dark tokens, resulting in jarring white input fields and washed-out cards.
-
-**The Fix:** All `:root` tokens in `themes/elune/src/pages/all/shadcn.css` must define the complete dark surface set, and the downstream duplicate declarations in `tailwind.css` must be synchronized to dark values.
-
----
-
-## 3. Typography & Technical Data Formatting
-
-### 3.1 Typeface Families
-- **Primary Interface Font (`--font-sans`):** `Inter`, system-ui fallback.  
-  *Characteristics:* Clean geometric neo-grotesque, tall x-height, neutral legibility at dense information scales.
-- **Display & Headlines (`--font-display`):** `Inter` with tight letter spacing (`-0.025em` to `-0.035em`) and font weight `700` (Bold) or `800` (Extrabold).
-- **Scientific, Code & Payment Font (`--font-mono`):** `JetBrains Mono`, `SF Mono`, `Consolas`, monospace fallback.  
-  *Characteristics:* Distinct 0 and O glyphs, clean numeric tabular alignment, ideal for CAS numbers, chemical formulas, crypto public keys, and transaction hashes (TXID).
-
-### 3.2 Type Scale Hierarchy
-
-| Level | Size (rem / px) | Line Height | Weight | Letter Spacing | Target Element / Usage |
-|---|---|---|---|---|---|
-| **Hero Display** | `3.000rem` (48px) | `1.15` | 800 (Extrabold) | `-0.035em` | Homepage hero punchlines, major banner headlines |
-| **Heading 1 (H1)** | `2.250rem` (36px) | `1.20` | 700 (Bold) | `-0.030em` | Product title on PDP, Category main title |
-| **Heading 2 (H2)** | `1.875rem` (30px) | `1.25` | 600 (Semibold) | `-0.025em` | Section headers, Checkout step headings, Age Gate title |
-| **Heading 3 (H3)** | `1.500rem` (24px) | `1.30` | 600 (Semibold) | `-0.020em` | Card titles, Cart modal headings, Drawer labels |
-| **Heading 4 (H4)** | `1.250rem` (20px) | `1.35` | 600 (Semibold) | `-0.015em` | Sub-sections, Accordion triggers, Table group headers |
-| **Body Large** | `1.125rem` (18px) | `1.50` | 400 / 500 | `0` | Lead paragraphs, Hero supporting copy |
-| **Body Default** | `1.000rem` (16px) | `1.50` | 400 (Regular) | `0` | Standard body text, product descriptions, instructions |
-| **Body Small / UI** | `0.875rem` (14px) | `1.40` | 500 (Medium) | `+0.010em` | Navigation items, form inputs, button labels, prices |
-| **Micro / Caption** | `0.750rem` (12px) | `1.30` | 500 / 600 | `+0.020em` | RUO badges, HPLC purity badges, timestamps, tags |
-| **Technical Mono** | `0.875rem` (14px) | `1.40` | 400 / 500 | `0` | CAS numbers, SKU, Crypto addresses, TXID |
-
-### 3.3 Scientific & Chemical Notation Rules
-To preserve biohacker trust, chemical data must never look like casual marketing copy:
-1. **Chemical Identifiers & SKUs:** Always render in monospace font (`font-mono tracking-tight text-muted-foreground`), e.g., `CAS: 137525-51-0` or `SKU: BPC157-5MG`.
-2. **HPLC Purity Badges:** Format as high-contrast pills: `≥99.2% (HPLC)`. The percentage is highlighted in the category accent color or emerald green.
-3. **Peptide Concentration & Quantity:** Standardize format as `[Compound Name] [Mass/Concentration]`, e.g., `BPC-157 5mg` or `TB-500 10mg`. Never write `5 Milligrams`.
-4. **RUO Compliance String:** The required disclaimer:
-   > *"For research use only. Not for human consumption."*  
-   Render in `text-xs uppercase tracking-wider text-muted-foreground/80` with a subtle warning glyph or 1px accent border.
-
----
-
-## 4. Spatial System, Grids & Responsive Layout
-
-### 4.1 Spatial Grid (8-Point Base System)
-All layout margins, paddings, and component heights adhere strictly to an **8px base grid** with a **4px half-step** for tight micro-spacing.
-
-```
-4px   (0.25rem) — Micro spacing (icon-to-text gap, badge internal padding)
-8px   (0.50rem) — Compact element gap (button vertical padding, input padding)
-12px  (0.75rem) — Component internal padding (card header margin, chip spacing)
-16px  (1.00rem) — Standard gutter (form field vertical separation, card padding)
-24px  (1.50rem) — Medium section rhythm (between related components in a grid)
-32px  (2.00rem) — Large card padding, modal inset padding
-48px  (3.00rem) — Major section break (desktop gap between hero and catalog)
-64px+ (4.00rem) — Page division padding, footer top margin
-```
-
-### 4.2 Layout Containers & Breakpoints
-The layout width is constrained to prevent extreme wide-screen stretching while giving 3D product renders room to breathe:
-
-```css
-.page-width {
-  max-width: 1280px; /* Refined from default 1200px for 4-column product grids */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-@media (min-width: 1024px) {
-  .page-width {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-```
-
-**Responsive Breakpoint Strategy:**
-- `sm` (`640px`): Single-column checkout stacks; product grid switches from 1 column to 2 columns.
-- `md` (`768px`): Header expands with navigation links; Category filter bar switches to horizontal tabs.
-- `lg` (`1024px`): Product grid expands to 3 or 4 columns; PDP shifts to 2-column split (Left: 3D render stage; Right: purchase panel).
-- `xl` (`1280px`): Full max-width container with generous margins and elevated card padding.
-
----
-
-## 5. Surface Elevations, Borders & High-Precision Glassmorphism
-
-### 5.1 The 4 Surface Tiers
-In dark mode, visual depth is created through lightness steps and subtle borders rather than heavy diffuse drop shadows:
-
-```
-┌────────────────────────────────────────────────────────┐
-│ LEVEL 0: Canvas (#090B0E)                              │
-│   ┌──────────────────────────────────────────────────┐ │
-│   │ LEVEL 1: Card (#0E1217) + 1px border (#1C232E)   │ │
-│   │   ┌────────────────────────────────────────────┐ │ │
-│   │   │ LEVEL 2: Input / Popover (#141921)         │ │ │
-│   │   │   ┌──────────────────────────────────────┐ │ │ │
-│   │   │   │ LEVEL 3: Active Element / Button     │ │ │ │
-│   │   │   └──────────────────────────────────────┘ │ │ │
-│   │   └────────────────────────────────────────────┘ │ │
-│   └──────────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────┘
-```
-
-1. **Level 0 (Canvas):** `#090B0E`. The deepest background plane.
-2. **Level 1 (Card & Section):** `#0E1217`. Distinct from the canvas, bounded by a 1px solid `#1C232E` border.
-3. **Level 2 (Interactive Modules & Flyouts):** `#141921`. Used for modals, dropdowns, cart drawer, and table hover states.
-4. **Level 3 (Form Inputs & Monospace Blocks):** `#1C232E`. High-contrast inset areas for typing, wallet display, or code chips.
-
-### 5.2 Micro-Radii Philosophy (Precision Aesthetic)
-Excessively rounded borders (e.g., `rounded-2xl` or `rounded-3xl`) convey playful consumer tech (like candy or toy apps). In contrast, aerospace and precision chemical equipment use sharp, engineered radii:
-- Buttons, Inputs, Cards: `rounded-md` (`4px` to `6px`).
-- Badges & Metric Pills: `rounded` (`2px` to `4px`) or `rounded-full` (only for tiny status dots).
-- Modals & Banners: `rounded-lg` (`8px`).
-
-### 5.3 Glassmorphism & Luminescent Glows
-- **Frosted Glass Backdrop:** For floating navigation bars and modals:
-  ```css
-  background-color: rgba(14, 18, 23, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(28, 35, 46, 0.8);
-  ```
-- **Category Rim Glows:**
-  When a product card is hovered, a soft accent glow illuminates the border:
-  ```css
-  /* Peptides card hover */
-  hover:border-cyan-500/50 hover:shadow-[0_0_25px_-5px_rgba(0,240,255,0.25)]
-  /* SARMs card hover */
-  hover:border-amber-500/50 hover:shadow-[0_0_25px_-5px_rgba(255,179,0,0.25)]
-  /* Nootropics card hover */
-  hover:border-emerald-500/50 hover:shadow-[0_0_25px_-5px_rgba(0,255,157,0.25)]
-  ```
-
----
-
-## 6. UI Component Anatomy & Design Guidelines
-
-### 6.1 Brand Header & Wordmark (`Wordmark.tsx`)
-The header anchors the store identity. Instead of an un-styled font or a generic image file, the wordmark is a typographic construct:
-
-```tsx
-<span className="font-sans font-extrabold tracking-[0.30em] text-xl text-foreground flex items-center gap-1.5 select-none">
-  <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
-  ELUNE<span className="text-accent ml-1 font-black">LABS</span>
-</span>
-```
-- A pulsing cyan beacon dot indicates "Active Synthesis / Online".
-- `ELUNE` in crisp Stark Off-White (`text-foreground`).
-- `LABS` in Electric Violet (`text-accent`), signaling bio-intelligence.
-
-### 6.2 Product Grid & Product Card Anatomy
-The product card is the engine of conversion. It must showcase the 3D vial render while communicating scientific rigor:
-
-```
-┌───────────────────────────────────────────────────┐
-│ [PEPTIDES]                               ≥99% HPLC│  ← Category chip & Purity Tag
-│                                                   │
-│                     ┌───┐                         │
-│                     │   │  ← 3D Render:           │
-│                     │   │    Matte black/glass    │
-│                     └───┘    vial with cyan cap   │
-│                                                   │
-│ BPC-157 5mg                                       │  ← Product Name (H3, Bold)
-│ CAS 137525-51-0 · Pentadecapeptide                │  ← Monospace Chemical Spec
-│                                                   │
-│ $39.99 USD                         [ADD TO CART]  │  ← Price + Cyan Action Button
-└───────────────────────────────────────────────────┘
-```
-
-**Card Components:**
-1. **Header Meta Row:** Category pill (left) and HPLC purity badge (right).
-2. **3D Render Staging Stage:** Aspect ratio 1:1, isolated against dark radial gradient (`radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 70%)`).
-3. **Nomenclature Block:** Exact compound name, dosage/vial size, CAS number.
-4. **Pricing & Purchase Action:** Price in bold tabular numerals with high-contrast Cyan CTA button.
-
-### 6.3 Interactive Buttons & Controls
-
-| Variant | Normal State | Hover State | Active / Focus State | Usage |
-|---|---|---|---|---|
-| **Primary (Cyan CTA)** | `bg-primary text-primary-foreground font-semibold rounded-md` (`#00F0FF` / `#050608`) | `bg-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.4)]` | `scale-[0.98] ring-2 ring-primary ring-offset-2 ring-offset-background` | "Add to Cart", "Place Order", "Enter (Age Gate)" |
-| **Secondary (Slate)** | `bg-secondary text-foreground border border-border rounded-md` | `bg-secondary/80 border-muted-foreground/40` | `ring-1 ring-border` | "Filter", "View Lab Report", "Cancel" |
-| **Ghost / Icon** | `text-muted-foreground hover:text-foreground` | `bg-muted/40 text-foreground` | `ring-1 ring-border` | Navigation icons, quantity adjusters, close modal |
-| **Disabled** | `bg-muted/40 text-muted-foreground/50 cursor-not-allowed` | No change | No change | Out of stock, processing payment |
-
-### 6.4 Advisory Age Gate Modal (`AgeGate.tsx`)
-Biohacker compliance requires an 18+ confirmation modal before viewing research products.
-- **Surface:** Level 2 Popover with frosted backdrop (`bg-background/90 backdrop-blur-md`).
-- **Heading:** "Age Verification & Research Protocol Confirmation".
-- **Body Copy:** Specific legal RUO statement emphasizing laboratory research compliance and age threshold.
-- **Actions:** Dual button layout — Primary "I am 18 or older — Confirm" (`bg-primary`) and Secondary "Leave" (`border border-border`).
-- **Persistence:** Cookie `elune_age_ok=1; path=/; max-age=2592000; SameSite=Lax`.
-
-### 6.5 Crypto Payment Checkout Module (`CashOnDelivery.tsx` & `ShippingNote.tsx`)
-Because standard merchant processors ban peptides and SARMs, manual cryptocurrency transfer is the lifeblood of checkout. The UI must eliminate user friction and anxiety:
-
-```
-┌────────────────────────────────────────────────────────────┐
-│ Select Payment Currency:  (●) BTC   ( ) USDT-TRC20  ( ) ETH│
-├────────────────────────────────────────────────────────────┤
-│ Total to Transfer: 0.000421 BTC  ($39.99 USD equivalent)   │
-│                                                            │
-│ Receiving Wallet Address (Native SegWit):                  │
-│ ┌───────────────────────────────────────────────┬────────┐ │
-│ │ bc1q8vj9s78d234...90sduf89230                 │ [COPY] │ │
-│ └───────────────────────────────────────────────┴────────┘ │
-│                                                            │
-│ Transaction ID (TXID):                                     │
-│ ┌────────────────────────────────────────────────────────┐ │
-│ │ Paste your on-chain transaction hash here...           │ │
-│ └────────────────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────┘
-```
-- **Monospace Address Blocks:** Wallet addresses rendered in `font-mono text-sm` with one-click clipboard copy and confirmation toast.
-- **QR Code Target:** Optional QR code render for mobile crypto wallet scanning.
-- **TXID Capture:** Clear input field mapped to EverShop's `order.shipping_note` for rapid on-chain audit and confirmation.
-
-### 6.6 RUO Product Page Notice (`RuoNotice.tsx`)
-On every single product detail page (PDP), a dedicated compliance block appears above the Add-to-Cart trigger:
-
-```tsx
-<div className="rounded-md border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-200/90 flex items-start gap-3">
-  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-  <div>
-    <span className="font-semibold text-amber-300 block uppercase tracking-wider text-xs">
-      Laboratory Research Notice
-    </span>
-    This compound is synthesized strictly as a chemical reference for in-vitro research and laboratory experimentation. Not for human or veterinary administration.
-  </div>
-</div>
-```
-
----
-
-## 7. 3D Product Render & Visual Asset Guidelines
-
-### 7.1 Staging & Geometry Standards
-All catalog visuals should use consistent 3D renders instead of mismatched supplier photographs.
-
-```
-                  ┌──────────────────────┐
-                  │ Aluminum Crimp Cap   │ ← Category color-coded anodized metal
-                  ├──────────────────────┤
-                  │ Rubber Stopper       │ ← Sterile grey/black butyl
-                  ├──────────────────────┤
-                  │                      │
-                  │ Clear Borosilicate   │ ← High-transmission glass shader
-                  │ Glass Serum Vial     │
-                  │                      │
-                  │ ┌──────────────────┐ │
-                  │ │ ELUNE LABS       │ │ ← Minimalist label with formula & CAS
-                  │ │ BPC-157 5mg      │ │
-                  │ └──────────────────┘ │
-                  │ ════════════════════ │ ← Lyophilized cake (white freeze-dried plug)
-                  └──────────────────────┘
-                   ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-                   Dark Obsidian Pedestal  ← Circular matte black platform with rim reflection
-```
-
-### 7.2 Material & Shader Parameters
-- **Vial Glass:** 
-  - Index of Refraction (IOR): `1.52` (Crown Glass / Borosilicate).
-  - Roughness: `0.02` (Ultra-clear, scratch-free).
-  - Transmission: `0.98`.
-- **Anodized Crimp Seal:**
-  - Metallic: `0.90`.
-  - Roughness: `0.30` (Brushed matte aluminum).
-  - Color: Matched to category accent (Cyan for Peptides, Gold for SARMs, Emerald for Nootropics).
-- **Lyophilized Cake (Pellet):**
-  - Subsurface Scattering (SSS): Subtle milk-white scatter (`0.2`).
-  - Roughness: `0.75` (Matte compressed powder plug).
-- **Lighting Rig:**
-  - Key Light: Cool 6500K softbox at 45 degrees left.
-  - Fill Light: 5500K softbox at 45 degrees right, 40% intensity.
-  - Rim Light (Edge): Color-gelled light matching category accent at 135 degrees behind the vial to trace a luminous silhouette.
-
-### 7.3 Asset Export Standards
-- **File Format:** Modern WebP or AVIF with fallback to compressed PNG.
-- **Resolution:** `1000px × 1000px` (1:1 aspect ratio square).
-- **Background:** Either transparent alpha or solid canvas void `#090B0E` (avoids white box clipping bugs).
-- **File Size Budget:** `< 120 KB` per product hero render.
-
----
-
-## 8. Technical Implementation in EverShop 2.2.1
-
-### 8.1 Unified Dark Tokens (`themes/elune/src/pages/all/shadcn.css`)
-Replace the default token values with the unified Aegis Dark specification:
-
-```css
-:root {
-  /* Aegis Dark Palette — Foundation */
-  --background: oklch(0.14 0.015 250);         /* #090B0E Canvas */
-  --foreground: oklch(0.96 0.010 250);         /* #F1F5F9 Primary Text */
-  
-  /* Brand Accents */
-  --primary: oklch(0.88 0.180 205);            /* #00F0FF Electric Cyan */
-  --primary-foreground: oklch(0.10 0.010 250); /* #050608 Deep Void */
-  
-  --accent: oklch(0.65 0.240 295);             /* #A855F7 Electric Violet */
-  --accent-foreground: oklch(0.96 0.010 250);
-  
-  /* Surfaces & Structural Containers */
-  --card: oklch(0.18 0.020 250);               /* #0E1217 Surface 1 */
-  --card-foreground: oklch(0.96 0.010 250);
-  
-  --popover: oklch(0.22 0.025 250);            /* #141921 Surface 2 */
-  --popover-foreground: oklch(0.96 0.010 250);
-  
-  --secondary: oklch(0.24 0.025 250);          /* #18202A Secondary Surface */
-  --secondary-foreground: oklch(0.96 0.010 250);
-  
-  --muted: oklch(0.20 0.020 250);              /* #12171F Muted Surface */
-  --muted-foreground: oklch(0.62 0.035 250);   /* #7485A0 Slate Meta Text */
-  
-  --border: oklch(0.26 0.025 250);             /* #1C232E Hairline Border */
-  --divider: oklch(0.26 0.025 250);
-  --input: oklch(0.24 0.025 250);
-  --ring: oklch(0.88 0.180 205);               /* Cyan Glow Ring */
-  
-  --destructive: oklch(0.62 0.220 25);         /* #EF4444 Crimson Alert */
-  --radius: 0.375rem;                          /* 6px Precision Radius */
-
-  /* Category Color Identifiers (url_key mapped) */
-  --accent-peptides: oklch(0.88 0.180 205);    /* Electric Cyan */
-  --accent-sarms: oklch(0.80 0.180 75);        /* Hyper Amber */
-  --accent-nootropics: oklch(0.88 0.220 150);  /* Synaptic Mint */
-
-  /* Font Families */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-}
-```
-
-### 8.2 Tailwind Configuration (`themes/elune/src/pages/all/tailwind.css`)
-Ensure Tailwind v4 inline theme mappings bind directly to these CSS variables:
-
-```css
-@import 'tailwindcss';
-@plugin "@tailwindcss/typography";
-@import 'tw-animate-css';
-@import './shadcn.css';
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-divider: var(--divider);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-destructive: var(--destructive);
-  --radius-sm: calc(var(--radius) - 2px);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) + 2px);
-}
-```
-
-### 8.3 Global SCSS Overrides (`themes/elune/src/pages/all/global.scss`)
-Apply typography tracking and dark form element rules:
-
-```scss
-body {
-  font-family: var(--font-sans);
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Precision inputs in dark mode */
-input[type='email'],
-input[type='password'],
-input[type='tel'],
-input[type='text'],
-select,
-textarea {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-  border-radius: var(--radius);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 1px var(--primary);
-  }
-
-  &::placeholder {
-    color: var(--muted-foreground);
-    opacity: 0.7;
-  }
-}
-
-/* Hide default fiat payment icons in footer */
-.card-icons {
-  display: none !important;
-}
-
-/* Modal body freeze */
-.elune-lock {
-  overflow: hidden;
-}
-```
-
----
-
-## 9. Accessibility (A11y) & WCAG 2.2 AA Compliance
-
-1. **Color Contrast:** Every text element must meet WCAG 2.2 AA standards:
-   - Normal text (below 18pt): Minimum `4.5:1` ratio against surface.
-   - Large text (18pt+ or 14pt+ bold): Minimum `3.0:1` ratio against surface.
-   - UI components and borders: Minimum `3.0:1` ratio against adjacent backgrounds.
-   - *Verification:* The primary text (`#F1F5F9`) on canvas (`#090B0E`) achieves `16.2:1` (passes AAA). Muted text (`#7485A0`) achieves `5.4:1` (passes AA). Primary Cyan (`#00F0FF`) with Dark Void text (`#050608`) achieves `14.2:1` (passes AAA).
-2. **Keyboard Navigation & Visible Focus:**
-   - All interactive elements must show a distinct `2px` focus ring using `var(--ring)` with an offset:
-     `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background`.
-3. **Screen Readers & ARIA Labels:**
-   - The Age Gate dialog must have `role="dialog"`, `aria-modal="true"`, and `aria-labelledby="age-gate-title"`.
-   - Category badges and purity tags must not rely on color alone; always include text labels (e.g., text `Peptides` alongside the cyan dot).
-4. **Motion Sensitivity:**
-   - Honor `prefers-reduced-motion`:
-     ```css
-     @media (prefers-reduced-motion: reduce) {
-       * {
-         animation-duration: 0.01ms !important;
-         animation-iteration-count: 1 !important;
-         transition-duration: 0.01ms !important;
-       }
-     }
-     ```
-
----
-
-## 10. Design Governance & Evolution Checklist
-
-When introducing a new component, category, or page layout to Elune Labs:
-- [ ] **Token Alignment:** Are all colors, radii, and fonts referencing variables from `shadcn.css` rather than hardcoded hex values?
-- [ ] **Contrast Check:** Does every new text combination score `≥ 4.5:1` on WebAIM contrast checkers?
-- [ ] **Scientific Integrity:** Are CAS numbers, molecular weights, and HPLC percentages rendered in `font-mono`?
-- [ ] **Category Theme Check:** Does the product adhere to its respective tri-accent color (Cyan, Amber, Mint)?
-- [ ] **RUO Compliance Check:** Is the mandatory disclaimer visible on all purchase pathways and footer regions?
-- [ ] **Crypto Verification:** Are wallet address blocks rendered with monospace typography and one-click copy feedback?
-- [ ] **SWC Build Verification:** Does the component maintain `export const layout` with target `es2022` to ensure EverShop inclusion?
+# Design System: Elune Labs (Warm Paper)
+
+**Document status:** Shipped. Every value below is read from the running theme — the token home is
+`themes/elune/src/pages/all/shadcn.css`, the Tailwind binding is
+`themes/elune/src/pages/all/tailwind.css`, and the browser-level rules are in
+`themes/elune/src/pages/all/global.scss`. This file replaces the previously shipped dark
+specification, which the owner rejected; nothing from that world is normative here.
+
+## Overview
+
+**Creative North Star: "The Warm Paper Counter"**
+
+Elune Labs sells research reference peptides to people who are not scientists. They arrive
+skeptical of this category's sellers, and what reassures them is not atmosphere — it is a precise
+product and a clear statement about what is documented. The interface is therefore a counter, not
+a campaign: a warm paper ground, white panels laid on it, one evergreen action, and the paperwork
+— the specification — kept right beside the goods.
+
+The ground is paper, not screen. It is a warm near-white (`#faf9f7`) with a yellow cast that reads
+as stationery; ink is a warm graphite (`#1f1d1a`) rather than black, which takes the harshness out
+of dense specification text. White panels (`#ffffff`) sit visibly above that ground on a single
+warm hairline (`#e5e0d8`) — the separation is tonal and structural, never a shadow. There is
+exactly one saturated color in the working interface: a deep evergreen (`#14604a`) that carries the
+primary action, the focus ring, text selection and the caret. Everything else is warm neutral or
+one of five deep, muted category accents that mark identity — never mood.
+
+Typography is two faces with strictly divided work. Source Sans 3, an Adobe humanist designed for
+legibility at small sizes — large x-height, open apertures and generous counters, which is why the
+interface carries 13–15px micro type cleanly — speaks for the brand; JetBrains Mono appears only
+where data must align, which means chemical values, prices and identifiers. Density is comfortable
+and generous: a 1200px measure, 1rem gutters, 1.25rem card padding, and a lot of white space left
+alone.
+
+**Explicit rejection, on record.** This world refuses three registers: the hype-and-countdown
+supplement page, the neon biohacker terminal, and the lab-cold institutional presentation that
+reads as intimidating or fake to the people who actually buy here. The dark world previously
+specified in this file is rejected and retired: no obsidian ground, no glow palette, no
+per-category accent trio, and no rule from it survives here.
+
+**Key Characteristics:**
+- Light only. No dark surface exists anywhere in the storefront, and no `.dark` class is ever
+  applied to the DOM.
+- One action color: evergreen is the only saturated color in the chrome.
+- Warm neutrals throughout; paper ground, graphite ink, warm-grey hairlines.
+- Text-first components: cards are complete on name, size, spec and price.
+- Mono is reserved for data; the sans face carries every word.
+- Depth comes from tone and hairlines, not shadow.
+
+## Colors
+
+A warm-paper palette with a single confident action color and five restrained category accents.
+Every value is declared in `shadcn.css` `:root` and exposed to Tailwind through `@theme inline` in
+`tailwind.css`; no component introduces its own color.
+
+### Primary
+- **Deep Evergreen** (`#14604a`): the only saturated chrome color. Fills primary buttons, the
+  focus ring (`--ring`), text selection, the text caret, and the hover state on linked product
+  names. With white text it holds 7.50:1, and it holds 7.12:1 against the ground.
+- **Evergreen on White** (`#ffffff`): the text color inside an evergreen fill.
+
+### Secondary
+- **Warm Ochre** (`#8a5a1c`): the brand's second color, used on the wordmark's "LABS", the crescent
+  brand mark beside it, and warm detail only. It is deliberately *not* wired to Tailwind's `accent`
+  slot (see The Hover-Surface-Is-Not-The-Brand Rule below). It holds 5.61:1 on the ground.
+
+### Tertiary
+Five muted, deep accents mark the five categories, keyed by the catalog's `url_key`. Each is dark
+enough to be legible as text on the paper ground and none is a fallback to another color.
+- **GLPs — Deep Blue** (`#1c5f96`): 6.38:1 on the ground.
+- **Bioregulators — Muted Violet** (`#6b4f9e`): 6.17:1 on the ground.
+- **Recovery — Deep Teal** (`#0f6b6b`): 5.98:1 on the ground.
+- **GH Releasing — Warm Ochre** (`#9a6414`): 4.74:1 on the ground — the tightest of the five and
+  the reason the set cannot be lightened further.
+- **Other — Slate** (`#5c6270`): 5.81:1 on the ground.
+
+A category accent is identity, not decoration: it appears as the category's own name in a listing
+or card, and nowhere else.
+
+### Neutral
+- **Warm Paper** (`#faf9f7`): the page ground. Never replaced by pure white.
+- **Panel White** (`#ffffff`): cards, modals, the offer band, and form field fills.
+- **Graphite Ink** (`#1f1d1a`): all primary text, at 15.98:1 on the ground.
+- **Warm Grey** (`#6b6558`): secondary and supporting text — nav links, trust statements, spec
+  labels, the footer compliance line. 5.50:1 on the ground, 5.79:1 on a panel.
+- **Recessed Sand** (`#f2efe9`): the one recessed surface, shared by `--secondary`, `--muted` and
+  `--accent`. Used for the hover/selected surface of menus, selects and rows, and for quiet
+  secondary buttons.
+- **Warm Hairline** (`#e5e0d8`): every border, divider and input stroke, always 1px.
+- **Deep Red** (`#a32a1f`): destructive only — form errors and cancellation. 7.22:1 with white.
+- **Chart tokens** (`--chart-1…5`): carried from the EverShop core surface set (evergreen, deep
+  blue, muted violet, warm ochre, deep red). No storefront surface consumes them; they are listed
+  so the palette's declared set stays complete.
+
+Contrast is a constraint, not an outcome: every text token above is at or above 4.5:1 on the paper
+ground, and the five category accents were verified as a set before any of them shipped.
+
+### Named Rules
+
+**The Evergreen-Is-Action Rule.** `--primary` is reserved for the primary action, the focus ring,
+text selection and the caret. It is not a decorative color, not a heading color, and not a border
+color. Its rarity is what makes the button findable.
+
+**The Hover-Surface-Is-Not-The-Brand Rule.** Tailwind maps `--color-accent: var(--accent)`, and
+core `ui/*` paints that token as the hover and selected *surface* of menus, selects and rows.
+`--accent` is therefore the warm recessed sand (`#f2efe9`) and must stay that. Brand ochre lives in
+`--brand-ochre` instead; painting `--accent` ochre would tint every hover state in the storefront.
+
+**The Category-Accent-Is-Identity Rule.** Category accents appear only on the category they name.
+They never color a button, a price, a badge container or a section. A category's fallback must
+never be what a real category renders as.
+
+## Typography
+
+**Display Font:** Source Sans 3 (with `system-ui`, `-apple-system`, `BlinkMacSystemFont`,
+`"Segoe UI"`, `sans-serif`)
+**Body Font:** Source Sans 3 (same stack)
+**Label/Mono Font:** JetBrains Mono (with `'SF Mono', Consolas, Menlo, monospace`)
+
+**Character:** One humanist sans for the brand's voice and one monospace for its data. Source Sans
+3 replaces the Inter default that this brief explicitly rejects — the neutral default with no point
+of view — and its open apertures and unadorned forms carry the technical register without going
+cold. It also replaces the previous face, whose shipped subsets omitted U+2265 (`≥`): the purity
+declaration's most important glyph rendered from a system fallback at a different weight, which is
+what read as jagged and inconsistent next to its own digits. JetBrains Mono is decisive at small
+sizes, which is where the specification lives.
+
+Both faces are self-hosted latin subsets served from the theme's static directory
+(`themes/elune/public/assets/fonts/`), declared with `@font-face` in `global.scss`. There is no
+third-party font request. Both are subset from the full variable sources with an explicit unicodes
+list, and the shipped files carry every glyph the storefront renders — 388 codepoints for the sans
+face and 379 for the mono face, verified including U+2265. That is what removed the fallback: no
+`unicode-range` is declared, so the guarantee comes from the subset's contents rather than from a
+range declaration. Four static sans weights ship — 400, 500, 600 and 700. JetBrains Mono stays a
+variable font (`wght` 100–800) because it renders at both 400 (specification labels) and 600 (the
+product-card price), and collapsing it to a single static instance would make the browser
+synthesize the 600. No italics are loaded or used anywhere.
+
+The scale was raised through Tailwind v4 theme tokens in `tailwind.css`: `--text-xs` is now
+0.8125rem (13px) and `--text-sm` is now 0.9375rem (15px), each with an explicit line-height; body
+stays 1rem.
+
+### Hierarchy
+- **Display** (600, 1.875rem rising to 3rem from 768px, 1.1, -0.025em): the homepage offer line
+  only. One per page.
+- **Headline** (600, 1.875rem, rising to 2.25rem from 768px, 1.2, -0.011em): page and section
+  titles. Section headings on the homepage step down to 1.5rem.
+- **Title** (600, 1.25rem, 1.2, -0.011em): the specification section heading and sub-sections.
+- **Body Large** (400, 1.125rem rising to 1.25rem, 1.625): the offer band's supporting sentence.
+- **Body** (400, 1rem, 1.5): product descriptions, notices, checkout copy, specification values.
+- **Label** (600, 0.9375rem, 1.25): nav links, button labels, trust statements, form labels and
+  inputs, the footer line.
+- **Micro** (400, 0.8125rem, 1.3): category counts, the product card's spec and identity lines, and
+  notice body text. Notice *labels* are uppercase at 0.75rem with wider tracking — a caption inside
+  a notice, never a standalone eyebrow above a headline.
+- **Mono** (400, 0.75rem–1.125rem): chemical values, prices and identifiers. Prices are mono at
+  1.125rem with 600 weight; wallet addresses are mono at 0.875rem and break across lines.
+
+### Named Rules
+
+**The Mono-Is-Data Rule.** The monospace face appears only on chemical data (CAS registry number,
+molecular formula, molecular weight, sequence), prices, and identifiers (SKU, lot, wallet address,
+category product count). It never carries a label, a heading, a button or body prose. If a string
+is a word rather than a value, it is not mono.
+
+**The Four-Weights Rule.** The interface is built from 400, 500, 600 and 700 — the four static sans
+weights that are actually loaded. 400 is body text. 500 is medium, for chrome that needs a touch
+more presence than body without becoming emphasis. 600 is the emphasis weight for headings, buttons
+and prices. 700 is the ceiling for interface emphasis and is reserved for the wordmark and the
+age-gate title. Every weight the interface asks for is a weight that is loaded; the wordmark uses a
+real 700, and no surface relies on browser synthesis.
+
+**The Declaration-Not-Measurement Rule.** The purity value is the literal string `≥99%` on every
+product. It is a placeholder declaration, never a measured figure, never a per-product number, and
+never styled as a result. A specification value that is not sourced is omitted from the record
+entirely — no dash, no empty cell, no "pending".
+
+## Layout
+
+Spacing runs on Tailwind's 4px unit (1 = 0.25rem), unmodified — the theme does not override the
+spacing scale. The steps the storefront actually uses are 0.25, 0.5, 0.625, 0.75, 1, 1.25, 1.5, 2,
+3 and 4rem, applied as: 0.25–0.5rem inside a control, 0.625–0.75rem for control padding, 1–1.25rem
+for card and panel padding, 1.5rem between sibling cards, and 2–4rem for section rhythm.
+
+The page measure is a single container, `.page-width`: max-width 1200px, centred, with a 1rem
+gutter rising to 1.5rem from 1024px. The offer band is a two-column grid from 1024px
+(`1.05fr 1fr`) and stacks below it, with the vial plate bleeding toward the band's right edge.
+Category and featured grids are 2-up from 640px and 4-up (featured) / 5-up (categories) from
+1024px. The specification table uses a 40% label column with the values taking the remainder.
+
+Breakpoints are Tailwind's defaults, also unmodified: `sm` 640px, `md` 768px, `lg` 1024px, `xl`
+1280px. The theme adds two structural media rules of its own — the header reflows below 768px, and
+the container gutter widens from 1024px.
+
+Density is comfortable but never airy for its own sake. Below 768px the header dissolves its
+wrapper so the wordmark and icons keep the first line and the top-level nav — Home, New Releases,
+Shop, FAQs, Shipping, Contact Us — takes a full-width second line that wraps whole labels rather
+than breaking them mid-name; the theme targets it as `nav[aria-label='Main']` in `global.scss`. The
+footer is tightened to its actual content: the core's five reserved widget areas stay in the DOM at
+zero height, but the reserved padding and margin are removed so no empty grey band separates the
+catalog from the compliance line.
+
+## Elevation & Depth
+
+**The system is flat by default; hairlines do the separating.** Depth is tonal — the paper ground,
+the recessed sand, and white panels — and structural: a single 1px warm hairline marks every edge.
+Cards, category tiles and the specification record carry no shadow at all, and a checkout card
+explicitly cancels both shadow and ring. One element in the whole storefront is lifted: the age-gate
+panel, which floats above a scrimmed ground. It is the modal, so it is the exception, and there is
+no second exception.
+
+### Shadow Vocabulary
+- **Modal panel** (`shadow-lg` tinted to `rgba(31, 29, 26, 0.05)` via `shadow-foreground/5`; the
+  theme does not override Tailwind's `--shadow-lg`): the age-gate panel only. The tint is the ink
+  color at 5%, so the lift stays warm rather than grey.
+- **None** (`shadow-none`, `ring-0`): the explicit resting state for panels that would otherwise
+  inherit a core shadow, such as the TXID card on checkout.
+
+### Named Rules
+
+**The Flat-By-Default Rule.** Surfaces are flat at rest and there is exactly one shadow in the
+system, on the modal panel. A new shadow — a hover lift, a "premium" card, a glow — is not an
+addition to this vocabulary; it is a change to the world and needs the owner's decision.
+
+## Shapes
+
+Corners are small and consistent: the whole system derives from one radius token, `--radius`
+(0.5rem / 8px), and Tailwind computes its steps from it. Containers — product cards, category
+tiles, the modal panel — take `rounded-lg` (8px, the base token), and so do form fields, which are
+styled at the token level with `border-radius: var(--radius)`. Buttons and the smaller chrome built
+with Tailwind classes take `rounded-md` (6px, `calc(var(--radius) - 2px)`). `rounded-xl` (12px)
+exists for larger shells and is unused by these surfaces; the 4px step appears exactly once, on the
+age gate's inner notice block. Tailwind's `2xl`–`4xl` also derive from the same base and are unused
+here.
+
+Nothing is rounder than 8px, nothing is a pill, and nothing is clipped or masked except the offer
+band's plate, which is cropped by the band edge rather than by a shape. Borders are always 1px of
+`--border`; there are no 2px outlines, no double rules, and no angled or offset geometry. Imagery
+inside a card carries the same small radius as its container.
+
+**The 8px Ceiling Rule.** No corner in this storefront exceeds 8px. The full pill is not used
+anywhere in this world; anything rounder or softer reads as toy-like and belongs to another one.
+
+## Components
+
+Components are warm, plain and text-led. Each one below is the shipped component, named by its
+file.
+
+### Buttons
+- **Shape:** small radius, `rounded-md` (6px). No shadow, ever.
+- **Primary:** evergreen fill (`--primary`), white text, `text-sm font-semibold`, padding
+  `0.75rem 1.5rem` for the offer CTA and `0.625rem 1.25rem` for the age gate. Used for exactly one
+  action per view: the offer CTA, "Add to Cart", "Place Order", the age gate's continue.
+- **Hover:** the fill drops to 90% opacity (`hover:bg-primary/90`) over 150ms, colors only.
+- **Secondary / Outline:** transparent fill, 1px `--border` stroke, warm-grey label that shifts to
+  ink on hover with a recessed-sand fill. Shipped in the age gate's "Decline & Exit".
+- **Disabled:** 50% opacity with a not-allowed cursor; the checkout submit keeps its evergreen fill
+  while disabled rather than greying out, so the pending state still reads as the action.
+
+### Links & Navigation
+- **Header nav:** six top-level destinations — Home, New Releases, Shop, FAQs, Shipping, Contact Us
+  — as `text-sm font-medium` links in warm grey, shifting to graphite ink on hover. No underline, no
+  active pill, no color change to evergreen. Home, New Releases, FAQs, Shipping and Contact Us are
+  plain links; **Shop** is a native `<details>`/`<summary>` disclosure holding the five category
+  links in fixed domain order (`glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`), and it
+  dismisses on Escape and on a click outside it.
+- **Shop panel:** the disclosure's panel is a hairline card on `--card`, `rounded-lg`, with no
+  shadow — the card treatment, not a menu chrome.
+- **In-card links:** a product name in graphite ink that turns evergreen on hover
+  (`hover:text-primary`); a category name in its own category accent.
+- **Wordmark:** `ELUNE` in graphite at 700 — a real loaded weight — with a 0.18em tracking and a
+  compensating negative right margin, and `LABS` in brand ochre at the same weight. The core demo
+  logo is suppressed so the wordmark is the sole text mark in the header.
+- **Brand mark:** a crescent (`themes/elune/src/pages/all/BrandMark.tsx`) sits in brand ochre beside
+  the wordmark, so brand ochre now appears on both the `LABS` half and the mark itself. The mark is
+  deliberately *not* evergreen: the Evergreen-Is-Action Rule reserves `--primary` for the action,
+  the focus ring, selection and the caret.
+- **Favicon:** a matching mark ships at `themes/elune/public/assets/favicon.svg`, wired through the
+  store's `favicon` setting so `<link rel="icon" href="/assets/favicon.svg">` is emitted. The owner
+  can replace it from the admin console with no rebuild.
+
+### Cards
+- **Product card:** white panel, 1px warm hairline, `rounded-lg` (8px), 1.25rem padding, no shadow.
+  Name in graphite (`text-base font-semibold`), a mono micro line for size and form, a mono price
+  at 1.125rem, and a mono identity line carrying `≥99% · SKU`. Hover raises the border to 40%
+  graphite; nothing moves.
+- **Text-led, always:** the product catalog ships no images, so the image element is rendered only
+  when a product actually has one. A card is complete on name, size, spec and price — there is no
+  empty frame and no placeholder box.
+- **Category card:** the same panel with the category name in its accent and a mono product count
+  in warm grey; used on the homepage's five-up category row.
+- **Notice / flush panel:** the checkout wallet panel is a white panel on a hairline with
+  `rounded-md`; the sand surface appears only where a control is hovered or selected.
+
+### Footer
+- **Page-link row:** area `footerMiddleCenter` carries a row listing every page — Home, New
+  Releases, All Products, the five categories, FAQs, Shipping, Contact Us — centred as a group.
+- **Compliance lines:** both the RUO line and the copyright are horizontally centred.
+
+### Inputs & Fields
+- **Style:** white fill (`--card`), 1px `--border` stroke, radius `var(--radius)` (8px, matching
+  containers), padding `0.625rem 0.75rem`, ink text, warm-grey placeholder at 70% opacity.
+- **Focus:** the border shifts to evergreen and a 1px evergreen ring is added by box-shadow
+  (`0 0 0 1px var(--primary)`), over 150ms. Form fields keep this treatment and are deliberately
+  excluded from the outline focus ring below, so they never show two rings at once.
+- **Text area:** same family; the TXID capture field is three rows and accepts the on-chain hash.
+- **No error styling ships yet** beyond the destructive token being available; nothing in the
+  storefront currently renders it.
+
+### Notices
+Two notice blocks ship, both compliance surfaces, both a hairline-bordered panel with micro body
+text and a small uppercase label inside the block: the product page's research-use-only notice
+(`rounded-md`), and the research chemical notice inside the age-gate panel, which uses the system's
+single 4px step. The product page carries "Laboratory Research Notice (RUO)"; the age gate carries
+the research chemical notice that precedes its confirmation sentence. These are the one place in
+the storefront where the color comes from Tailwind's amber palette rather than the token home — a
+documented exception, not a precedent to extend.
+
+Notice labels are captions. They sit inside the block they belong to and never float above a
+headline as a standalone eyebrow.
+
+### About This Compound
+The product page renders this section (`themes/elune/src/pages/productView/ProductDescription.tsx`)
+between the price and the specification table: one to two plain-language paragraphs on what the
+compound is, then a "Published research on this compound" block.
+- **Heading:** deliberately not "Product Description" — core renders its own heading by that name
+  into the same area and the two would collide.
+- **Literature block:** carries a sentence stating that it documents the external research
+  literature and not this product, the batch supplied, or any analysis of it, and that no
+  certificate of analysis is published for any product. It is deliberately un-ruled — no borders,
+  no table — so it cannot be mistaken for the specification record.
+- **Absent literature:** three SKUs ship with no literature at all (Epitalon, and both CJC-1295
+  entries) for compliance reasons; for those the entire literature section is omitted, never
+  rendered as an empty heading.
+
+### Specification Table
+The product page renders the analytical record as a real `<table>` with an `sr-only` caption and a
+`<th scope="row">` for each label — no decorative panel, no definition-list-as-grid.
+- **Labels:** warm grey, regular weight, left-aligned, 40% width, top-aligned.
+- **Values:** ink, with mono applied to the chemical values (CAS, formula, molecular weight,
+  sequence); form, purity and storage stay in the sans face.
+- **Density:** 0.625rem vertical padding per row and a 1rem gap before the value column, set by
+  utilities over the core base table's 0.313rem. Each cell keeps the base table's 1px warm hairline
+  border, so the record reads as a ruled label sheet rather than a floating list.
+- **Absent values vanish:** rows without a value are filtered out, and a SKU with no record renders
+  no specification section at all.
+
+### Age Gate
+A modal on first storefront visit (advisory only, 30-day cookie, client-side by design).
+- **Shape:** white panel, `rounded-lg` (8px), max-width 32rem, 1.5–2rem padding, the system's only
+  shadow, over a 95%-opaque paper scrim.
+- **Content order:** the question, the research chemical notice, the confirmation sentence, then the
+  actions — primary "I am 18 or older — Continue" and outline "Decline & Exit".
+- **Behaviour:** focus moves into the panel on open and cycles inside it; the body scroll is locked.
+  The gate never blocks `/admin` or API routes and is not a security control.
+
+### Crypto Payment Panel
+The payment step shows the order total above a definition list of wallet addresses (BTC native
+SegWit, USDT TRC-20, ETH ERC-20), all inside one white panel with a hairline border.
+- **Addresses:** mono, 0.875rem, breaking across lines, each with a small outline "Copy" button.
+- **Copy fallback:** the storefront is served over plain http on a LAN/tailnet address, where
+  `navigator.clipboard` does not exist, so the textarea + `execCommand` path is the real one; a
+  toast reports failure.
+- **TXID capture:** a separate card with a 3-row text area, stored on the order's shipping note.
+  The wallet addresses and instructions are edited in the admin console and take effect immediately.
+
+### Pages & Routes
+- **`/all`:** every product, alphabetical by name.
+- **`/new-releases`:** the newest 6 by catalog order.
+- **`elune-catalog` extension:** both routes are served by `extensions/elune-catalog/`, because
+  themes cannot register routes in EverShop; the theme binds to those routes by folder name.
+- **CMS pages:** `/faqs`, `/shipping` and `/contact` are CMS pages, editable in the admin console
+  with no rebuild.
+
+### Browser Surfaces
+The palette reaches the places Tailwind does not paint, from the token home in `shadcn.css`:
+- **Text selection:** evergreen fill with white text.
+- **Caret:** evergreen.
+- **Scrollbar (Firefox):** warm hairline thumb on the paper track.
+- **Keyboard focus ring:** `2px solid var(--ring)` with a 2px offset on links, buttons, summaries,
+  `[role="button"]` and `[tabindex]`. Form fields are excluded — they use their border-plus-ring
+  focus treatment instead.
+
+## Do's and Don'ts
+
+### Do:
+- **Do** pull every color, radius and font from `shadcn.css`; a component that needs a value adds a
+  token there and maps it in `tailwind.css`.
+- **Do** keep the ground warm paper and panels white; the tonal step is the depth.
+- **Do** keep mono to chemical data, prices and identifiers, and keep every word in Source Sans 3.
+- **Do** keep corners at 6px for buttons and small chrome and 8px for containers and form fields,
+  and separate surfaces with a 1px warm hairline.
+- **Do** keep exactly one evergreen action per view, and let it be the only saturated chrome color.
+- **Do** render a spec value only when it is sourced; omit the row otherwise.
+- **Do** show a product image only when the product has one; a card must be complete without it.
+- **Do** keep notice labels inside their notice block, as captions rather than eyebrows.
+- **Do** keep the RUO line on every page and every product — "For research use only. Not for human
+  consumption."
+
+### Don't:
+- **Don't** add a dark surface, a `.dark` class, or a dark-mode variant. The storefront is light
+  only; the inert `dark:` variant in `tailwind.css` is not an invitation.
+- **Don't** reintroduce neon, glow, gradient, blur-as-decoration, or a neon-terminal register — or
+  its inverse, the lab-cold institutional register.
+- **Don't** make a verification claim. No "tested", "verified", "certified", "accredited", no
+  testing status, no certificate affordance, and no link to a document that does not exist.
+- **Don't** render a measured purity percentage. Purity is the literal `≥99%` placeholder on every
+  product; never a precise figure, never a per-batch result.
+- **Don't** add dosing, protocols, cycle advice, medical or weight-loss claims, or before/after and
+  body imagery anywhere. The GLP category is a research reference category like any other.
+- **Don't** present batch identity as a verification badge; a lot number is a plain product
+  attribute.
+- **Don't** paint `--accent` with a brand hue — it is the shadcn hover surface for menus, selects
+  and rows. Brand ochre is `--brand-ochre`.
+- **Don't** hardcode a hex in a component, or extend the amber notice exception to a new surface.
+- **Don't** add a shadow, a pill, or a radius above 8px.
+
+### Governance checklist — every new surface
+- [ ] **Light only.** No dark surface, no `.dark`, no dark-mode tokens.
+- [ ] **No verification claim.** No testing, certification or accreditation wording, no status
+      badge, no certificate affordance. If a document does not exist in this repository, the
+      surface does not reference it.
+- [ ] **Purity is `≥99%`.** The literal declaration placeholder, on every product. Never a measured
+      figure, never a per-batch result.
+- [ ] **RUO framing is absolute.** No dosing, medical, weight-loss or body framing; the GLP category
+      carries no weight-management language. Plain language does not relax this.
+- [ ] **Mono only for chemical data, prices and identifiers.** Everything else is Source Sans 3.
+- [ ] **Tokens come from `shadcn.css`.** No hardcoded hex in a component; new values are declared in
+      the token home and mapped in `tailwind.css`.
+- [ ] **Category accents mark identity only**, and a real category never renders the fallback color.
+- [ ] **Text-led components.** No empty image frame; a card is complete on name, size, spec and
+      price.
+- [ ] **WCAG AA on the paper ground.** Any new text/background pair meets 4.5:1, checked against
+      `#faf9f7` and against white panels.

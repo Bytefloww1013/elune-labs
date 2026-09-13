@@ -1,0 +1,14 @@
+{
+  "comp": ".impeccable/mocks/decision/pick.png",
+  "approved": false,
+  "direction": "PICK — the regulated reagent label as the interface (grounded candidate 1 of 7, top-ranked)",
+  "seedKey": "12a9eaca",
+  "kind": "pick",
+  "viewport": "desktop 16:9, 1536x1024",
+  "prompt": "A desktop website homepage design for 'ELUNE LABS', a research-peptide supplier, rendered as a full-bleed desktop browser viewport with NO browser chrome. A UI design — a screenshot of a shipped web page, NOT a poster. The organising world is the regulated reagent bottle label: the product's own printed label — dense ruled fields, lot block, net contents, storage line and barcode — blown up to become the page's primary interface. Regions: slim header with wordmark and five category links; an oversized flat white label panel as the dominant first viewport, thin black outer keyline, heavy reversed-out black title bar reading 'ELUNE LABS - RESEARCH REFERENCE MATERIAL', ruled label/value field rows inside (CATALOGUE NO, LOT, CAS, FORMULA, MW, SEQUENCE, PURITY, APPEARANCE, NET, STORE) with monospace values and condensed uppercase labels, plus storage pictograms and a square barcode band; a right column of three smaller product label cards each showing compound name, lot and price; below, a full-width ruled index table with columns CAT NO, COMPOUND, LOT, FORM, QTY; a footer with the RUO line. Style: strictly printed and typographic — flat white paper ground, heavy black rules and bars, hairline grey keylines, condensed uppercase label lettering with a monospaced data face, square corners, dense tight rows. No gradients, no shadows, no neon, no blur, no dark mode, no black page background, no photography, no people.",
+  "provenance": "generated via harness image tool (xd://generate_image, provider xai/grok-imagine-image)",
+  "honestRisk": "The label system is the direction most other runs in this category would also land on: its familiarity is real. It wins on product clarity, not on distinctiveness.",
+  "notes": [
+    "Screen test passed: white ground, black type, no neon, no glow, no dark background, no photography of people."
+  ]
+}

@@ -11,6 +11,17 @@ backups/
 themes/*/dist/
 themes/*/node_modules/
 
+# Grok dir
+.grok/
+
+# Oh My Pi harness dir. Installed skills (18MB of vendored suites), agents and
+# extensions are tooling, not project source. .omp/beadfinder/state.json stays
+# tracked — that is plan memory, not tooling.
+.omp/skills/
+.omp/agents/
+.omp/extensions/
+
+
 # Treehouse work tree storage dir
 .treehouse/
 
@@ -40,4 +51,26 @@ themes/*/node_modules/
 .impeccable/live/deferred-svelte-component-accepts.json
 .impeccable/live/*.png
 # impeccable-ignore-end
+
+# The locked visual world is durable project memory: the chosen direction, the
+# challenger verdicts, and the fallback the owner asked to keep. Small JSON
+# only — comp rasters stay local (they are large and regenerable from prompts).
+#
+# DESIGN.md's sidecar and the persisted surface briefs are the same kind of
+# durable memory and the skill requires both for a new visual world, so they are
+# re-included too. The `**/` forms matter: a bare `.impeccable/` rule is
+# unanchored and matches the nested `themes/<theme>/.impeccable/` as well, but a
+# negation like `!.impeccable/surfaces/` (a slash inside the pattern anchors it
+# to this file's directory) would only ever re-include the repo-root copy.
+!.impeccable/
+.impeccable/*
+!.impeccable/config.json
+!**/.impeccable/design.json
+!**/.impeccable/surfaces/
+!**/.impeccable/surfaces/**
+!.impeccable/mocks/
+.impeccable/mocks/*
+!.impeccable/mocks/decision/
+.impeccable/mocks/decision/*
+!.impeccable/mocks/decision/*.json
 

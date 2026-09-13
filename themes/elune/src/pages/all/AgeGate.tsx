@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Age gate — advisory only, client-side by design (design 8-2 §2, SPEC ADR #3).
 export default function AgeGate() {
   const [show, setShow] = useState(false);
+  const panel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Belt-and-braces: themes are frontStore-only, /admin is theme-immune.
@@ -14,6 +15,34 @@ export default function AgeGate() {
     setShow(true);
     document.body.classList.add('elune-lock');
   }, []);
+
+  // Focus stays inside the modal while it is open. Advisory gate, but the
+  // contract still is a modal: focus in on open, Tab cycles the panel.
+  useEffect(() => {
+    if (!show) return;
+    const focusables = () =>
+      Array.from(
+        panel.current?.querySelectorAll<HTMLElement>('button, [href], [tabindex]') ?? []
+      );
+    focusables()[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') return;
+      if (event.key !== 'Tab') return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [show]);
 
   if (!show) return null;
 
@@ -32,32 +61,31 @@ export default function AgeGate() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="age-gate-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 backdrop-blur-md p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 p-4"
     >
-      <div className="w-full max-w-lg rounded-lg border border-border/80 bg-card p-6 md:p-8 text-card-foreground shadow-2xl shadow-black/80">
-        <div className="flex items-center gap-2 text-primary text-xs font-mono uppercase tracking-widest mb-3">
-          <span className="w-2 h-2 rounded-full bg-primary" />
-          <span>Access Verification Protocol</span>
-        </div>
+      <div
+        ref={panel}
+        className="w-full max-w-lg rounded-lg border border-border bg-card p-6 md:p-8 text-card-foreground shadow-lg shadow-foreground/5"
+      >
         <h2 id="age-gate-title" className="mb-4 text-2xl font-bold tracking-tight text-foreground">
           Are you 18 or older?
         </h2>
-        <div className="mb-5 rounded border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200/90 leading-relaxed">
-          <strong className="text-amber-300 font-semibold block uppercase tracking-wider text-[11px] mb-1">
+        <div className="mb-5 rounded border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950 leading-relaxed">
+          <strong className="text-amber-900 font-semibold block uppercase tracking-wider text-[0.75rem] mb-1">
             Research Chemical Notice
           </strong>
-          Compounds offered by Elune Labs are synthesized exclusively for <strong>in-vitro laboratory research and analytical evaluation</strong>. They are strictly not for human consumption, clinical application, or therapeutic use.
+          Compounds offered by Elune Labs are supplied exclusively for <strong>in-vitro laboratory research and analytical evaluation</strong>. They are strictly not for human consumption, clinical application, or therapeutic use.
         </div>
         <p className="mb-6 text-sm text-muted-foreground leading-relaxed">
-          By proceeding, you attest under penalty of perjury that you are at least 18 years of age and possess qualified laboratory handling expertise.
+          By continuing you confirm that you are at least 18 years of age and that you will handle these materials as laboratory reference compounds only.
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={enter}
-            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_0_15px_rgba(0,240,255,0.35)] hover:bg-cyan-400 hover:shadow-[0_0_25px_rgba(0,240,255,0.5)] transition-all duration-150 cursor-pointer"
+            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors duration-150 cursor-pointer"
           >
-            I am 18 or older — Enter Lab
+            I am 18 or older — Continue
           </button>
           <button
             type="button"
@@ -67,8 +95,8 @@ export default function AgeGate() {
             Decline & Exit
           </button>
         </div>
-        <p className="mt-5 text-xs text-muted-foreground/70">
-          Advisory verification status saved in client session cookie (30 days).
+        <p className="mt-5 text-xs text-muted-foreground">
+          Saved in a client session cookie for 30 days.
         </p>
       </div>
     </div>
