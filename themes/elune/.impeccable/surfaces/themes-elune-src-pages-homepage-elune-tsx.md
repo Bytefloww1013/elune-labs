@@ -11,14 +11,15 @@ Primary target: `themes/elune/src/pages/homepage/Elune.tsx`
 Related targets: `themes/elune/src/pages/all/*`, `themes/elune/src/pages/categoryView/*`, `themes/elune/src/pages/productView/*`, `themes/elune/src/components/frontStore/checkout/*`
 Visitor mode: **Persuade** on homepage, category and product; **Operate** on cart, checkout and confirmation.
 Seed key: `12a9eaca` · kind: `canon` · approved comp: `.impeccable/mocks/decision/canon.png`
+Pending direction roll: `5e5d0361` (assigned candidate 4) — see "Proposed redesign" below.
 
 ## Direction contract
-
-**THESIS.** A conventional storefront, executed properly for a non-scientist buyer: clean, warm and trustworthy, where the confidence comes from precise products and honest statements rather than from decoration or performance. It refuses the category's two habits — the hype-and-countdown supplement page and the neon biohacker terminal — and equally refuses the lab-cold institutional register, which reads as intimidating or fake to the people who actually buy here.
-**OWN-WORLD.** Warm near-white paper ground, white panels, warm graphite ink, soft warm-grey hairline rules, one confident accent carried by the primary action and by category. One sans face for voice, one monospaced face for numbers only. Square corners at small radius, single soft-offset card shadows, comfortable density, generous white space on a strict grid.
-**STORY.** A visitor lands, reads one line telling them plainly what is sold and what is documented about it, sees four statements that are all checkable, then opens a category or a product. Nothing asks to be believed; the product page is where confidence is earned.
-**FIRST VIEWPORT.** Slim header (wordmark left, six top-level destinations — Home, New Releases, Shop, FAQs, Shipping and Contact Us, with Shop a disclosure holding the five categories — cart right). A wide band beneath: the offer in one line at display scale, one supporting sentence, one filled accent button, and a single vial photograph to the right bleeding to the band edge. Then a hairline-ruled row of four honest trust statements. No kicker above the headline, no gradient, no glow, no badge cluster.
-**FORM.** Category-standard commerce at full craft. The comp supplies arrangement, scale and rhythm only — never its words. Density comfortable; specification detail available on the product page without dominating the homepage. Motion is one authored moment on scroll-in; nothing loops, nothing pulses.
+**THESIS (proposed 2026-09-13, pending approval — see "Proposed redesign").** The catalogue is a set of numbered plates: the compound and its written record are shown together, at the same scale, in the first viewport. This surface refuses the category's hype terminals and equally refuses lab-cold institution; confidence comes from the specification being visible before the pitch.
+**OWN-WORLD (proposed).** Cool near-monochrome field — snow `#F7F8FA`, mist `#ECEFF3`, one deep midnight ink `#16233C` — plus a single vivid lime beam `#CFF26F` reserved for badges. Whisper-light Manrope 250 at display sizes, JetBrains Mono for every code, value and measure. Flat: no shadows, no gradients, no blur. Pills for controls, 16px cards, one 32px plate sheet, one 14px figure frame. One authored ornament: a hairline cratered disc on the ink band, drawn from the brand mark.
+**STORY.** The visitor understands that every compound is identified and specified before purchase; believes this is a real, precise operation rather than a dropship storefront padded with claims; and acts by browsing the catalogue or a category. Nothing asks for trust that the record does not already supply.
+**FIRST VIEWPORT (proposed).** Mist band. Left, at 64px/250: "Research peptides, with the record attached." — one lede, one filled pill CTA plus one underlined link, one mono data line. Right, the same height: Plate 01, a white sheet with the photographed vial cropped portrait on the left and four hairline-ruled specification rows on the right, closed by a category chip and "View compound →".
+**FORM.** Journal plate, played as a storefront. Signature interaction: plates rise 14px and fade once on load, staggered, and hover inverts the pill to ink-on-white. Reach: the plate, the hairline ruling and the mono/data discipline carry to product, category and cart surfaces unchanged.
+**RISK.** Restraint can read as plain if the cutaway figures and the photograph ever slip to placeholder quality; the record is the only proof, so any unsourced field must be omitted rather than filled.
 **RAISES / BORROWED DISCIPLINE.** Batch/lot identity appears as a plain product attribute on product surfaces, never as a verification badge. State lives with the thing it describes, never as a floating overlay. Specifications are real tabular data with proper semantics, not a decorative panel.
 
 ### Void regions — comp content that must not be built
@@ -44,12 +45,13 @@ text-led product card, not a photo-led card with a missing photo.
 ## Hard constraints
 - **Research-use-only is absolute, and approachability does not relax it.** The audience buys to research on themselves, so plain language is required — and dosing, protocols, cycle advice, medical or weight-loss claims, before/after and body imagery remain forbidden on every surface. No weight-loss framing anywhere near the GLP category; it is presented as a research reference compound like any other.
 - **No verification claims.** No "tested", "verified", "certified", "accredited", no certificate affordance, no testing status. Purity is the literal `≥99%` on every product — a placeholder declaration, never a precise measured figure. An unsourced specification value is omitted, never status-flagged and never labelled "pending" or "coming soon".
-- **Light only.** Never a dark surface anywhere.
+- **Light only.** Never a dark surface anywhere. **Pending exception (decision D2, owner to confirm):** the proposed redesign introduces a *single* `--night` region carrying the specification record — a region, not a theme. Until the owner confirms, light-only stands unmodified; if D2 is declined, that band becomes `--mist` at identical structure and this constraint is unchanged.
 - **Shop-able, not just pretty:** every link, control and form on the touched surfaces works.
+- **No fabricated social proof.** No testimonials, ratings, press marks or customer counts exist in this repository and none may be invented; the specification record carries credibility instead.
 
 ## Data contract (settled — do not invent)
 **Categories (five, keyed by `url_key`):** `glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`. Currently the database holds the old trio, so `scripts/catalog-data.json` is reseeded to these five and the seeder creates them.
-**Category accents:** five muted deep keys in `shadcn.css` — `--accent-glps`, `--accent-bioregulators`, `--accent-recovery`, `--accent-gh-releasing`, `--accent-other` — each readable at AA on the light ground. `CategoryAccent.tsx` already keys `var(--accent-<url_key>, var(--accent))`; the fallback must never be what a real category renders as.
+**Category accents:** five muted deep keys in `shadcn.css` — `--accent-glps`, `--accent-bioregulators`, `--accent-recovery`, `--accent-gh-releasing`, `--accent-other` — each readable at AA on the light ground. No `CategoryAccent.tsx` exists (verified: nothing by that name under `themes/elune`); the token is applied inline as `color: var(--accent-<url_key>, var(--foreground))`, which is what `Elune.tsx` does today. Keep it that way, and the fallback must never be what a real category renders as.
 **Products:** the seeder carries only `name, sku, price, qty, category`. Product specification data (CAS, formula, molecular weight, sequence, purity, form, storage) lives in **one** theme-side map keyed by SKU — `themes/elune/src/data/productSpecs.ts` — and the product page renders it. One source of truth; do not duplicate spec values into the seed file. Values must come from the sourced chemistry table in the shape brief; a value that is not sourced is omitted from the record entirely.
 **Product narrative and literature:** the product page's plain-language description and its published-research references live in **one** theme-side map keyed by SKU — `themes/elune/src/data/productLiterature.ts` — beside the specification map and under the same one-source-of-truth rule as `productSpecs.ts`; the product page renders it between the price and the specification table. The compliance rule that governs it: a quoted study title that asserts an effect is itself a claim and is not carried, so three SKUs hold no references at all and their literature section is omitted outright.
 
@@ -167,4 +169,32 @@ peptides", "Antioxidant … Properties".
 
 **Detector and regression state.** The design detector reports no findings on the shipped surfaces,
 and the repository's checkout regression (`scripts/smoke-checkout.mjs`) passes end to end.
+
+## Proposed redesign (2026-09-13, awaiting owner approval — nothing has been built)
+
+`DESIGN-mockup.md` at the repository root carries the full brief: discovery audit, token layer with
+computed contrast, component rules, anti-pattern guardrails, responsive/motion/a11y, and the
+integration map. The prototype is `docs/design/mockups/elune-landing-mockup.html` (self-contained,
+no JS, no network), verified at 1440px and 390px.
+
+Direction roll `5e5d0361`, assigned candidate **4 — Lunar Plates**, from a grounded list of seven;
+six catalog challengers were dealt by the roll, fused with the product and declined, each with the
+discipline it contributed (one accent, level legends, hairline ruling, tabular data, a real pressed
+control state, themed browser surfaces).
+
+Three decisions are with the owner: **D1** Manrope replaces Source Sans 3 as the display face (Inter
+rejected) — note the theme ships only SS3 400/500/600/700 today, so the 250 display weight falls back to
+400 until the Manrope variable file (`wght 200–800`, subset fetched) is self-hosted; **D2** the single
+`--night` record band, pending per the hard constraint above; **D3** whether the lime beam `#CFF26F`
+stays for badges or the page goes fully achromatic.
+
+**One dependency to settle before the copy ships.** The proposed trust row restores "Batch and lot
+identifiers recorded against every product," which is the line the shipped build deliberately replaced
+because no lot identifier exists in the seeded data. `PRODUCT.md` §37 asserts it, so the claim is not
+baseless — but either the seeder gains a real `lot` field, or the line reverts to the decided form
+("Form, storage and purity on every product"). Do not ship the claim on the current catalog.
+
+Until approved, `DESIGN.md`, `.impeccable/design.json` and every file under `themes/elune/src` are
+untouched. On approval this section merges into "Shipped world" and the pending direction contract
+loses its "(proposed)" markers.
 

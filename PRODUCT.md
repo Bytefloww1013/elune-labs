@@ -7,7 +7,7 @@
 web
 
 ## Users
-- **Primary — people researching their own body and health.** Hobbyists, biohackers, self-improvement and longevity types, athletes and training-focused people, and parents. They are not scientists: they will not read a chromatogram, they do not have a lab, and clinical or institutional presentation reads as intimidating or fake to them. They are, however, careful — they have read enough to be wary of the hype-driven sellers in this category and they want to know what is actually in the vial.
+- **Primary — people researching their own body and health.** Hobbyists, biohackers, self-improvement and longevity types, athletes and training-focused people, and anyone who cares about improving their health. They are not scientists by trade: they will not read a chromatogram, they do not have a lab, and clinical or institutional presentation reads as intimidating or fake to them. They are, however, careful, and do their own research — they have read enough to be wary of the hype-driven sellers in this category and they want to know what is actually in the vial.
 - **Secondary — genuinely analytical buyers.** Independent researchers and lab-adjacent people who do read the specifications. The specification data must be correct and complete for them without becoming the interface the primary audience has to climb over.
 - **The shared trait:** both groups arrive skeptical of this category's sellers and both need the same reassurance — that this is a real, well-run operation with precise products, not a dropship storefront padded with claims.
 
@@ -17,9 +17,7 @@ Elune Labs sells research reference peptides — clearly described, precisely sp
 Success for v1: from a clean deployment, a visitor can understand what is sold and what is documented, browse five categories, place a guest order, and pay in crypto — and the owner can verify that payment and fulfil it from the admin console.
 
 ## Positioning
-Verification, not persuasion, is the mechanism this business is built around: every compound is identified by batch, described by its full analytical specification, and eventually backed by third-party accredited testing with per-batch documents a buyer can inspect. A neighboring storefront can copy the catalog and the layout; it cannot truthfully copy a per-batch evidence chain without actually building one.
-
-> **Document scope, not a verdict on the business.** Elune intends accredited third-party testing with per-batch documents a buyer can inspect; that is the proof mechanism this product is being built toward. What is true right now is narrower: no certificate, chromatogram, or accreditation document is loaded in this project, so no surface may present, link, or imply one until a real document is supplied. Surfaces carry batch identity and analytical specification only.
+Verification, with subtle persuasion, is the mechanism this business is built around: every compound is identified by batch, described by its full analytical specification (if available), and eventually backed by third-party accredited testing with per-batch documents a buyer can inspect. A neighboring storefront can copy the catalog and the layout; it cannot truthfully copy a per-batch evidence chain without actually building one.  Starting off, we will need to focus on a dropshipping model, using trusted and tested peptide suppliers.  Once enough funds are gained, we will hold stock ourselves and send out products ourselves.  This is why the ordering and admin systems are designed the way they are — the admin console is designed to allow for manual payment processing and order fulfillment.
 
 ## Operating Context
 - **Catalog:** peptides only, in five research categories — GLPs, Bioregulators, Recovery, GH Releasing, Other — with per-size simple products. Single currency (USD), single locale (English).
@@ -42,26 +40,27 @@ Verification, not persuasion, is the mechanism this business is built around: ev
 
 ## Brand Commitments
 - **Name:** Elune Labs; wordmark rendered `ELUNE LABS`.
+- **Mental Image** Like our logo, Elune Labs, reminds me of something very sophisticated, yet clean and simple. Like the lunar surface.  The colors of the sky, space, and moon.  Contrasted on a white background. Is what I see, but it is not the only solution
 - **Voice:** sober, transparent, rigorous — plain-spoken first, precise underneath. Say what the product is and what is documented about it in ordinary language; keep the exact technical vocabulary (batch and lot numbers, purity, form, sequence, molecular weight, storage) available and correct for the analytical buyer who wants it, without letting it become the register the whole store speaks in. Never hype, never jargon as decoration, never a claim about the body.
-- **Banned register:** underground, bodybuilding, and hype-driven biohacker jargon ("get shredded", "limitless", "superhuman synthesis"); equally, crypto-hype cues.
-- **Binding visual constraint from the owner:** a light theme; never default to dark. Light means clean, warm and trustworthy — **not** clinical, institutional, or lab-cold. The owner's words: buyers are regular people, so do not make the storefront overly clinical or "official".
-- **Standing preference — the conventional storefront (recorded 2026-09-11).** The owner reviewed an out-of-the-ordinary direction (a specimen-archive world) and rejected it, choosing the category standard instead: the familiar arrangement of hero, honest trust statements, category cards, featured products, footer, executed at full craft. This is a standing brand decision, not a per-surface one. Do not re-pitch unconventional visual worlds for this storefront unless the owner asks.
-- **Craft bar for the standard path:** plain-spoken and human in register, exact in detail — clarity, real product data, honest statements, no decoration. References the owner approved: consumer wellness brands that make sourcing legible to non-specialists, direct-to-consumer health brands that de-stigmatise a personal category, and product-led hardware brands with honest specifications. Not institutional lab-supply catalogues.
-- **Approachability does not relax compliance.** The audience buys to research on themselves, but every surface still holds the research-use-only frame absolutely: no dosing, no protocols, no medical or weight-loss claims, no before/after or body imagery. Plain language is required; permission is not granted by it.
-- **Anti-patterns:** no neon glows, cybernetic grids, matrix graphics, or sketchy crypto banners; no unverified commercial medical claims.
+- **Banned register:** hype-driven biohacker jargon ("get shredded", "limitless", "superhuman synthesis"); equally, crypto-hype cues.
+- **Binding visual constraint from the owner:** a light theme; never default to dark. Light means clean, modern and trustworthy — **not** clinical, institutional, or lab-cold. The owner's words: buyers are regular people, so do not make the storefront overly clinical or "official".
+- **Standing preference — the conventional storefront (recorded 2026-09-11).** The owner reviewed an out-of-the-ordinary direction (a specimen-archive world) and rejected it, choosing the category standard instead: the familiar arrangement of hero, honest trust statements, category cards, featured products, footer, executed at full craft. This is a standing brand decision, not a per-surface one. You can re-pitch unconventional visual worlds for this storefront if you feel it will genuinely be worth the effort.
+- **Craft bar for the standard path:** plain-spoken and human in register, exact in detail — clarity, real product data, honest statements. References the owner approved: consumer wellness brands that make sourcing legible to non-specialists, direct-to-consumer health brands that de-stigmatise a personal category, and quality driven nootropic brands with honest specifications. Not institutional lab-supply catalogues.
+- **Approachability does not relax compliance.** The audience buys to research on themselves, but every surface still holds the research-use-only frame absolutely: no dosing, no protocols, no medical or weight-loss claims, no before/after or body imagery. Plain language is required; permission is not granted by it. The quality should be AAA - high enough that a actual researcher would feel comfortable purchasing and using the product. Do not make the storefront overly clinical or "official".
+- **Anti-patterns:** no warm paper, no neon glows, cybernetic grids, matrix graphics, or sketchy crypto banners; no unverified commercial medical claims.  Although, do not shy away from using color, strong lines, and creative design to fit the idea I am after.
 
-> **Shipped world (updated 2026-09-11).** `themes/elune` now ships the light world described in DESIGN.md: warm paper ground, evergreen action, Source Sans 3. The previously shipped Aegis-Dark world was rejected by the owner and has been replaced; it is anti-reference, not approved source. One disclosure: the homepage hero ships a synthetic produced vial plate (its generation prompt is recorded in the asset's provenance), because the catalog carries no product photography. That image is placeholder material to be replaced with real photography — it is not a photograph of Elune stock.
 
 ## Evidence on Hand
 - **Specification and architecture:** `SPEC.md`, `ARCHITECTURE.md`, `IMPLEMENTATION.md`, `docs/DEVELOPER.md`.
-- **Design record:** `DESIGN.md` (the Aegis-Dark token system) and four mockups in `docs/design/mockups/` — cyan peptides, emerald nootropics, amber SARMs, violet Elune. These document a rejected direction; they are anti-reference, not approved source material.
+- **Design record:** `DESIGN.md` 
+- **Logo & Favicons:** docs/refs/brand-assets
 - **Placeholder catalog:** `scripts/catalog-data.json` — 3 categories, 15 products, $19.99–$79.99, with empty image arrays.
 - **Live compliance and brand copy:** the RUO notice, age gate, and wordmark in `themes/elune/src`.
 - **Absences that future work MUST NOT fabricate:** no real certificates of analysis, HPLC/MS reports, or ISO/IEC 17025 accreditation certificate exist in this repository; no customer testimonials, press coverage, logos, or benchmarks; no product photography; no real wallet addresses (settings hold placeholders).
 
 ## Product Principles
-1. **Verification before persuasion** — show the batch evidence and the batch identity; never ask the buyer to trust copy.
-2. **Restraint is the brand** — quiet, clinical surfaces where the compound data is the loudest element on the page.
+1. **Verification then slight persuasion** — show the batch evidence and the batch identity; never ask the buyer to trust copy.
+2. **Restraint and trustworthyness is the brand** — quiet, clinical surfaces where the compound data is the loudest element on the page.
 3. **The RUO line is absolute** — no surface, no matter how persuasive, implies human use, dosing, or therapeutic benefit.
 4. **Privacy-respecting commerce** — crypto-native payment, no third-party processors or trackers in the purchase path.
 5. **Operators are not engineers** — wallet addresses, shipping rates, and catalog content are editable from the admin console with no rebuild and no code change.

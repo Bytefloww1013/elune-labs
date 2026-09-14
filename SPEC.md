@@ -158,15 +158,15 @@ Crypto payment presentation data (3 address strings + per-coin networks + instru
 
 All under base `http://localhost:3000`. Admin API auth: `POST /api/user/tokens` with `{ "email", "password" }` → `{ accessToken, refreshToken }`; subsequent calls send `Authorization: Bearer <accessToken>` (admin token default lifetime ≈ 15 min — seed script must re-authenticate on 401).
 
-| Purpose | Method & path | Body / contract |
-|---|---|---|
-| Admin token | `POST /api/user/tokens` | `{email, password}` → `{accessToken, refreshToken}` |
-| Create category | `POST /api/categories` | Category payload above |
-| Attach product to category | `POST /api/categories/{id}/products` | `{product_id}` |
-| Create product | `POST /api/products` | Product payload above |
-| Cart lifecycle (storefront) | `POST` createCart / addCartContactInfo / addCartAddress / addCartShippingMethod / addCartPaymentMethod / addShippingNote / cartCheckout / createOrder | Stock EverShop checkout REST sequence |
-| Set shipping method | `POST /api/carts/:cart_id/shippingMethods` | `{ "provider_code": "core", "method_code": "<configured>" }` — both fields required |
-| Confirm payment (admin) | Capture action on order edit → `codCapturePayment` | pending → paid; records offline transaction + activity |
+| Purpose                     | Method & path                                                                                                                                         | Body / contract                                                                     |
+| -----------------------------| -------------------------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------------|
+| Admin token                 | `POST /api/user/tokens`                                                                                                                               | `{email, password}` → `{accessToken, refreshToken}`                                 |
+| Create category             | `POST /api/categories`                                                                                                                                | Category payload above                                                              |
+| Attach product to category  | `POST /api/categories/{id}/products`                                                                                                                  | `{product_id}`                                                                      |
+| Create product              | `POST /api/products`                                                                                                                                  | Product payload above                                                               |
+| Cart lifecycle (storefront) | `POST` createCart / addCartContactInfo / addCartAddress / addCartShippingMethod / addCartPaymentMethod / addShippingNote / cartCheckout / createOrder | Stock EverShop checkout REST sequence                                               |
+| Set shipping method         | `POST /api/carts/:cart_id/shippingMethods`                                                                                                            | `{ "provider_code": "core", "method_code": "<configured>" }` — both fields required |
+| Confirm payment (admin)     | Capture action on order edit → `codCapturePayment`                                                                                                    | pending → paid; records offline transaction + activity                              |
 
 Admin UI surfaces (no API work needed): `/admin` → Settings (store name, payment toggle + display name, shipping methods + rates), Products, Categories, Orders.
 
