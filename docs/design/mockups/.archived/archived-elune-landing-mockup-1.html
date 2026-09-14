@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f7">
+  <title>Elune Labs — Landing Page Redesign Prototype</title>
+  <link rel="icon" type="image/png" href="../refs/brand-assets/favicons/favicon-32x32.png">
+  <style>
+    @font-face { font-family: "Source Sans 3"; src: url("../../themes/elune/public/assets/fonts/source-sans-3-400.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Source Sans 3"; src: url("../../themes/elune/public/assets/fonts/source-sans-3-600.woff2") format("woff2"); font-style: normal; font-weight: 600; font-display: swap; }
+    @font-face { font-family: "Source Sans 3"; src: url("../../themes/elune/public/assets/fonts/source-sans-3-700.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; }
+    @font-face { font-family: "JetBrains Mono"; src: url("../../themes/elune/public/assets/fonts/jetbrains-mono-latin.woff2") format("woff2"); font-style: normal; font-weight: 100 800; font-display: swap; }
+
+    :root {
+      --paper: #faf9f7;
+      --panel: #ffffff;
+      --ink: #1f1d1a;
+      --muted: #6b6558;
+      --line: #e5e0d8;
+      --sand: #f2efe9;
+      --green: #14604a;
+      --ochre: #8a5a1c;
+      --glp: #1c5f96;
+      --bio: #6b4f9e;
+      --recovery: #0f6b6b;
+      --gh: #9a6414;
+      --other: #5c6270;
+      --sans: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 400 16px/1.5 var(--sans);
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; }
+    svg { display: block; }
+    .shell { width: min(1200px, calc(100% - 48px)); margin-inline: auto; }
+    .mono { font-family: var(--mono); }
+    .button {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 20px;
+      border: 1px solid var(--green);
+      border-radius: 6px;
+      background: var(--green);
+      color: white;
+      font-weight: 650;
+      text-decoration: none;
+      transition: background-color 150ms ease, border-color 150ms ease;
+    }
+    .button:hover { background: #0f4d3b; border-color: #0f4d3b; }
+    .text-link {
+      color: var(--muted);
+      font-weight: 600;
+      text-underline-offset: 4px;
+    }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    .notice {
+      border-bottom: 1px solid var(--line);
+      background: var(--sand);
+      color: var(--muted);
+      font-size: .8125rem;
+    }
+    .notice .shell {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .notice strong { color: var(--ink); font-weight: 600; }
+
+    .site-header {
+      position: relative;
+      z-index: 2;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper) 96%, transparent);
+    }
+    .nav {
+      display: flex;
+      min-height: 72px;
+      align-items: center;
+      gap: 32px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      margin-right: auto;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .brand img { display: block; width: 160px; height: 56px; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .mobile-menu { display: none; position: relative; }
+    .nav-links a, .nav-links summary, .nav-tools a, .mobile-menu summary, .mobile-menu a {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--muted);
+      font-size: .875rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .nav-links a:hover, .nav-links summary:hover, .nav-tools a:hover { color: var(--ink); }
+    .shop-menu { position: relative; }
+    .shop-menu summary { cursor: pointer; list-style: none; }
+    .shop-menu summary::-webkit-details-marker { display: none; }
+    .shop-menu summary::after { content: "⌄"; margin-left: 5px; color: var(--ochre); }
+    .shop-menu div { position: absolute; top: calc(100% + 4px); left: -14px; min-width: 220px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .shop-menu div a { display: flex; min-height: 40px; padding: 0 10px; }
+    .mobile-menu > summary { cursor: pointer; list-style: none; }
+    .mobile-menu > summary::-webkit-details-marker { display: none; }
+    .mobile-menu > summary::after { content: "⌄"; margin-left: 5px; color: var(--ochre); }
+    .mobile-menu > div { position: absolute; top: calc(100% + 4px); right: 0; width: min(260px, calc(100vw - 32px)); padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .mobile-menu > div > a, .mobile-menu .shop-menu > summary { display: flex; min-height: 44px; padding: 0 10px; }
+    .mobile-menu .shop-menu div { position: static; margin: 0 8px 8px; border: 0; border-left: 1px solid var(--line); border-radius: 0; }
+    .nav-tools { display: flex; align-items: center; gap: 10px; }
+    .cart {
+      display: inline-flex;
+      min-height: 40px;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+    .cart-count {
+      display: inline-grid;
+      width: 20px;
+      height: 20px;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--sand);
+      color: var(--ink);
+      font: 600 .6875rem/1 var(--mono);
+    }
+
+    .hero { padding: 72px 0 76px; overflow: hidden; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(360px, 5fr);
+      gap: clamp(48px, 7vw, 96px);
+      align-items: center;
+    }
+    .hero h1 {
+      max-width: 820px;
+      margin: 0;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 600;
+      letter-spacing: -.035em;
+      line-height: .96;
+      text-wrap: balance;
+    }
+    .hero .lede {
+      max-width: 650px;
+      margin: 26px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.0625rem, 1.7vw, 1.25rem);
+      line-height: 1.6;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 22px; margin-top: 34px; }
+    .restriction { display: flex; align-items: center; gap: 9px; margin-top: 36px; color: var(--muted); font-size: .8125rem; }
+    .restriction::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: var(--ochre); }
+
+    .evidence-plate {
+      position: relative;
+      min-height: 540px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .evidence-plate::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -178px;
+      top: -170px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+    }
+    .plate-index {
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font: 500 .6875rem/1.2 var(--mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .vial-stage {
+      display: grid;
+      height: 280px;
+      place-items: center;
+      background: linear-gradient(180deg, #fff 0%, #fbfaf8 100%);
+    }
+    .vial-stage svg { width: 112px; height: 218px; }
+    .spec { margin: 0; border-top: 1px solid var(--line); }
+    .spec-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 18px;
+      margin: 0;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .spec-row:last-child { border-bottom: 0; }
+    .spec dt { color: var(--muted); font-size: .75rem; }
+    .spec dd { margin: 0; font: 500 .75rem/1.4 var(--mono); }
+
+    .trust { border-block: 1px solid var(--line); background: var(--panel); }
+    .trust-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .trust-list li {
+      min-height: 96px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .875rem;
+    }
+    .trust-list li:first-child { padding-left: 0; }
+    .trust-list li:last-child { border-right: 0; padding-right: 0; }
+    .trust-list b { display: block; margin-bottom: 7px; color: var(--ink); font-weight: 650; }
+
+    .section { padding: 92px 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 42px;
+    }
+    .section-head h2 {
+      max-width: 520px;
+      margin: 0;
+      font-size: clamp(2.25rem, 4vw, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.03;
+      text-wrap: balance;
+    }
+    .section-head p { max-width: 620px; margin: 0; color: var(--muted); font-size: 1.0625rem; }
+
+    .category-list { margin: 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+    .category-list a {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      min-height: 86px;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      transition: background-color 150ms ease;
+    }
+    .category-list a:hover { background: var(--panel); }
+    .category-list .index { color: var(--muted); font: .75rem/1 var(--mono); }
+    .category-list .name { font-size: clamp(1.25rem, 2.2vw, 1.75rem); font-weight: 600; }
+    .category-list .browse { color: var(--muted); font-size: .8125rem; }
+    .category-list .glp { color: var(--glp); }
+    .category-list .bio { color: var(--bio); }
+    .category-list .recovery { color: var(--recovery); }
+    .category-list .gh { color: var(--gh); }
+    .category-list .other { color: var(--other); }
+
+    .documentation { background: var(--sand); border-block: 1px solid var(--line); }
+    .documentation-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: clamp(48px, 8vw, 112px);
+      align-items: start;
+    }
+    .documentation h2 { margin: 0; font-size: clamp(2.25rem, 4vw, 3.5rem); line-height: 1.03; letter-spacing: -.025em; }
+    .documentation .intro { margin: 24px 0 0; color: var(--muted); font-size: 1.0625rem; }
+    .record {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .record-title {
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      font-size: .8125rem;
+      font-weight: 650;
+    }
+    .record-title span:last-child { color: var(--ochre); font-family: var(--mono); font-weight: 500; }
+    .record-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 20px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .record-row:last-child { border: 0; }
+    .record-row dt { color: var(--muted); font-size: .8125rem; }
+    .record-row dd { margin: 0; font: 500 .8125rem/1.45 var(--mono); }
+
+    .cta { padding: 88px 0; }
+    .cta-panel {
+      display: grid;
+      grid-template-columns: 8fr 4fr;
+      gap: 40px;
+      align-items: end;
+      padding: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .cta-panel h2 { max-width: 760px; margin: 0; font-size: clamp(2.1rem, 4vw, 3.5rem); letter-spacing: -.025em; line-height: 1.05; }
+    .cta-panel p { max-width: 660px; margin: 18px 0 0; color: var(--muted); }
+    .cta-action { justify-self: end; }
+
+    footer { border-top: 1px solid var(--line); background: var(--panel); }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px;
+      padding-block: 48px 36px;
+    }
+    .footer-note { max-width: 460px; margin: 18px 0 0; color: var(--muted); font-size: .8125rem; }
+    .footer-col h3 { margin: 0 0 14px; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+    .footer-col a { display: block; margin: 9px 0; color: var(--muted); font-size: .875rem; text-decoration: none; }
+    .footer-col a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+    .legal { padding: 18px 0 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: .8125rem; }
+
+    .spec-row { animation: resolve-record 360ms ease-out both; }
+    .spec-row:nth-child(2) { animation-delay: 60ms; }
+    .spec-row:nth-child(3) { animation-delay: 120ms; }
+    .spec-row:nth-child(4) { animation-delay: 180ms; }
+    @keyframes resolve-record { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .mobile-menu { display: block; }
+      .hero-grid, .section-head, .documentation-grid, .cta-panel { grid-template-columns: 1fr; }
+      .hero { padding-top: 56px; }
+      .hero-grid { gap: 44px; }
+      .evidence-plate { min-height: 0; }
+      .trust-list { grid-template-columns: repeat(2, 1fr); }
+      .trust-list li:nth-child(2) { border-right: 0; }
+      .trust-list li:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .trust-list li:first-child, .trust-list li:nth-child(3) { padding-left: 0; }
+      .cta-action { justify-self: start; }
+    }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 32px, 1200px); }
+      .notice .shell { justify-content: center; text-align: center; }
+      .notice span:last-child { display: none; }
+      .nav { min-height: 64px; gap: 12px; }
+      .brand img { width: 132px; height: 52px; }
+      .nav-tools > a:first-child { display: none; }
+      .hero { padding: 46px 0 52px; }
+      .hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
+      .hero-actions { align-items: flex-start; flex-direction: column; gap: 14px; }
+      .evidence-plate { border-radius: 8px; }
+      .vial-stage { height: 250px; }
+      .trust-list { grid-template-columns: 1fr; }
+      .trust-list li { min-height: 0; padding: 20px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .trust-list li:last-child { border-bottom: 0; }
+      .section { padding: 64px 0; }
+      .section-head { gap: 20px; margin-bottom: 28px; }
+      .category-list a { grid-template-columns: 38px 1fr; min-height: 76px; }
+      .category-list .browse { display: none; }
+      .documentation-grid { gap: 34px; }
+      .record-row { grid-template-columns: 1fr; gap: 5px; }
+      .cta { padding: 64px 0; }
+      .cta-panel { gap: 28px; padding: 28px 24px; border-radius: 8px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="notice">
+    <div class="shell">
+      <span><strong>Research use only.</strong> Not for human consumption.</span>
+      <span>Tracked &amp; discreet shipping</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Elune Labs home">
+        <img src="../refs/brand-assets/website_header_logo_transparent.png" width="378" height="188" alt="Elune Labs">
+      </a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/new-releases">New Releases</a>
+        <details class="shop-menu">
+          <summary>Shop</summary>
+          <div>
+            <a href="/glps">GLPs</a>
+            <a href="/bioregulators">Bioregulators</a>
+            <a href="/recovery">Recovery</a>
+            <a href="/gh-releasing">GH Releasing</a>
+            <a href="/other">Other</a>
+          </div>
+        </details>
+        <a href="/faqs">FAQs</a>
+        <a href="/shipping">Shipping</a>
+        <a href="/contact">Contact Us</a>
+      </div>
+      <details class="mobile-menu">
+        <summary>Menu</summary>
+        <div>
+          <a href="/">Home</a>
+          <a href="/new-releases">New Releases</a>
+          <details class="shop-menu">
+            <summary>Shop</summary>
+            <div>
+              <a href="/glps">GLPs</a>
+              <a href="/bioregulators">Bioregulators</a>
+              <a href="/recovery">Recovery</a>
+              <a href="/gh-releasing">GH Releasing</a>
+              <a href="/other">Other</a>
+            </div>
+          </details>
+          <a href="/faqs">FAQs</a>
+          <a href="/shipping">Shipping</a>
+          <a href="/contact">Contact Us</a>
+        </div>
+      </details>
+      <div class="nav-tools">
+        <a href="/all">Search</a>
+        <a class="cart" href="/cart">Cart <span class="cart-count">0</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid shell">
+        <div>
+          <h1 id="hero-title">Research peptides, with the specification on record.</h1>
+          <p class="lede">Five categories of reference compounds. Each product page carries its own form, storage guidance, and purity declaration before you add it to cart.</p>
+          <div class="hero-actions">
+            <a class="button" href="#catalog">Browse all products</a>
+            <a class="text-link" href="#documentation">See what is documented</a>
+          </div>
+          <p class="restriction">For research use only — not for human consumption</p>
+        </div>
+
+        <aside class="evidence-plate" aria-label="Example product record">
+          <div class="plate-index"><span>Example record</span><span>EL–REF–001</span></div>
+          <div class="vial-stage" aria-hidden="true">
+            <svg viewBox="0 0 112 218" role="presentation">
+              <defs>
+                <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#e5e0d8" stop-opacity=".8"/><stop offset=".3" stop-color="#ffffff"/><stop offset=".72" stop-color="#f2efe9"/><stop offset="1" stop-color="#d8d2c8"/></linearGradient>
+              </defs>
+              <rect x="35" y="6" width="42" height="24" rx="3" fill="#b7b2aa" stroke="#8f8a82"/>
+              <path d="M29 34h54v16c0 8 7 15 7 26v110c0 16-13 26-29 26H51c-16 0-29-10-29-26V76c0-11 7-18 7-26z" fill="url(#glass)" stroke="#b8b1a8"/>
+              <rect x="29" y="91" width="54" height="70" fill="#faf9f7" stroke="#e5e0d8"/>
+              <image href="../refs/brand-assets/favicon_master_moon.png" x="45" y="105" width="22" height="22"/>
+              <text x="56" y="148" text-anchor="middle" font-size="7" font-family="monospace" fill="#1f1d1a">REFERENCE</text>
+              <path d="M29 177h54" stroke="#e5e0d8"/>
+            </svg>
+          </div>
+          <dl class="spec">
+            <div class="spec-row"><dt>Form</dt><dd>Lyophilized powder</dd></div>
+            <div class="spec-row"><dt>Storage</dt><dd>Shown per product</dd></div>
+            <div class="spec-row"><dt>Purity</dt><dd>Declaration shown per product</dd></div>
+            <div class="spec-row"><dt>Status</dt><dd>Research use only</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="trust" id="shipping" aria-label="How orders are handled">
+      <ul class="trust-list shell">
+        <li><b>Tracked &amp; discreet</b>Shipping designed for privacy and visibility.</li>
+        <li><b>Crypto payment</b>BTC, USDT and ETH accepted.</li>
+        <li><b>Specification present</b>Form, storage and purity on each product.</li>
+        <li><b>Use restriction clear</b>Research use only — not for human consumption.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="categories" aria-labelledby="categories-title">
+      <div class="shell">
+        <div class="section-head">
+          <p>Categories are an index, not a claim. Each route leads to the available product records and their documented specification.</p>
+        </div>
+        <ol class="category-list">
+          <li><a href="#catalog"><span class="index">01</span><span class="name glp">GLPs</span><span class="browse">Browse category →</span></a></li>
+          <li><a href="#catalog"><span class="index">02</span><span class="name bio">Bioregulators</span><span class="browse">Browse category →</span></a></li>
+          <li><a href="#catalog"><span class="index">03</span><span class="name recovery">Recovery</span><span class="browse">Browse category →</span></a></li>
+          <li><a href="#catalog"><span class="index">04</span><span class="name gh">GH Releasing</span><span class="browse">Browse category →</span></a></li>
+          <li><a href="#catalog"><span class="index">05</span><span class="name other">Other</span><span class="browse">Browse category →</span></a></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section documentation" id="documentation" aria-labelledby="documentation-title">
+      <div class="documentation-grid shell">
+        <div>
+          <h2 id="documentation-title">The product record stays beside the product.</h2>
+          <p class="intro">Instead of borrowed lab imagery or unsupported badges, the interface shows the fields a customer can verify before purchase.</p>
+        </div>
+        <dl class="record">
+          <div class="record-title"><span>PRODUCT SPECIFICATION</span><span>VISIBLE PRE-PURCHASE</span></div>
+          <div class="record-row"><dt>Compound identity</dt><dd>Name, SKU and category</dd></div>
+          <div class="record-row"><dt>Physical form</dt><dd>Declared on the product page</dd></div>
+          <div class="record-row"><dt>Storage guidance</dt><dd>Product-specific handling information</dd></div>
+          <div class="record-row"><dt>Purity declaration</dt><dd>Shown with the individual product</dd></div>
+          <div class="record-row"><dt>Use restriction</dt><dd>Research use only — not for human consumption</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="cta" id="catalog" aria-labelledby="catalog-title">
+      <div class="cta-panel shell">
+        <div>
+          <h2 id="catalog-title">Start with the record. Choose the product second.</h2>
+          <p>Browse every available reference compound with its category, form, storage guidance, purity declaration and stock status in view.</p>
+        </div>
+        <a class="button cta-action" href="/all">Browse all products</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid shell">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="Elune Labs home">
+          <img src="../refs/brand-assets/website_header_logo_transparent.png" width="378" height="188" alt="">
+        </a>
+        <p class="footer-note">Reference compounds presented with clear product documentation and an explicit research-use-only restriction.</p>
+      </div>
+      <div class="footer-col"><h3>Catalog</h3><a href="/new-releases">New Releases</a><a href="/all">All products</a><a href="#documentation">Documentation</a></div>
+      <div class="footer-col"><h3>Information</h3><a href="/faqs">FAQs</a><a href="/shipping">Shipping</a><a href="/contact">Contact Us</a></div>
+    </div>
+    <div class="legal shell">For research use only. Not for human consumption.</div>
+  </footer>
+</body>
+</html>

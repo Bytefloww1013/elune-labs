@@ -1,6 +1,6 @@
 # ⚙️ RUN CONFIGURATION (UPDATE EACH RUN)
-- **TARGET_VERSION:** `v2`        <-- [Set to: v2, v3, v4, etc.]
-- **SOURCE_VERSION:** `v1` 
+- **TARGET_VERSION:** `v3`        <-- [Set to: v2, v3, v4, etc.]
+- **SOURCE_VERSION:** `v2` 
 
 ---
 
@@ -38,24 +38,11 @@ You will update the design brief and HTML mockup by reading from `[SOURCE_VERSIO
 
 ---
 
-### 1. Hero Visual Showcase Card (Right-hand Hero Column)
-- **Target Element:** The product card / image container positioned to the right of the Hero copy.
-- **Image Source:** Update the vial image source to:
-  `docs/refs/brand-assets/Product-placeholder-vial-night-cap-moon-3-4.jpg`
-- **Styling Rules:** Ensure proper container framing, aspect-ratio preservation (`object-fit: contain` or `cover` as appropriate), and optical alignment with the adjacent hero typography.
-t
-### 2. Value Props component
-- **Target Element:** The ruled Value Props component that is displayed vertically under the Hero section
-- **Instruction:**
-  1. Drop the existing Value promps and replace them with:
-    - Tracked & discreet, flat rate shipping
-    - Bitcoin, USDT (ERC-20), and Ethereum Accepted
-    - Batch tracking for each vial
-    - Best in class factory direct pricing
-    - Unbeatable delivery rate. Zero issues.
-  2. Instead of vertically listed/ruled, list these horizontal in a ribbon that scrolls slowly accross the screen. Example: | text item 1 | Text item 2 | Text item 3 | etc |
-     - Use a stylte that makes sense for this prokect  
-- **Styling Rules:** horizontal scrolling ribbon for Value props
+### 1. Catalogue plates
+- **Target Element:** Catalogue plate section - "card-head" - 
+- **Instruction:** Change the color of each "card-head" product text to the color that corrisponds to it's category color
+  - *Example:* The product SEMAGLUTIDE 5MG is part of the GLPs category, it's text color would be set to: #1F6FA8
+- **Styling Rules:** Ensure the proper text color is applied to the product's name and miligram provided via it's category.  This text coloring is only to be done on this landing page mockup for now.
 
 ---
 
