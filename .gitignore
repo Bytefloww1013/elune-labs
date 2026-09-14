@@ -74,3 +74,7 @@ themes/*/node_modules/
 .impeccable/mocks/decision/*
 !.impeccable/mocks/decision/*.json
 
+# Directory containing archived landing page mockups
+docs/design/mockups/archived/*.html
+docs/design/mockups/archived/*.md
+docs/design/mockups/archived/*.jpg

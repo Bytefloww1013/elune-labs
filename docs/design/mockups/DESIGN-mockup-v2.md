@@ -1,10 +1,10 @@
-# Design Brief — Elune Labs Landing Redesign ("Lunar Plates") — v1
+# Design Brief — Elune Labs Landing Redesign ("Lunar Plates") — v2
 
-**Status:** proposal for review, **v1 working copy**. `DESIGN.md` (the shipped Warm Paper system) is untouched; on approval this
+**Status:** proposal for review, **v2 working copy**. `DESIGN.md` (the shipped Warm Paper system) is untouched; on approval this
 brief promotes to `DESIGN.md` + `.impeccable/design.json`, and the prototype becomes the build blueprint.
-The base brief (`DESIGN-mockup.md`) remains the full specification; this v1 file carries only the delta in §0 below.
+The base brief (`DESIGN-mockup.md`) remains the full specification; this v2 file carries the v1 delta in §0 and the v2 delta in the Version Changelog at the end.
 **Surface:** `themes/elune/src/pages/homepage/Elune.tsx` · **Mode:** Persuade, constrained by storefront trust.
-**Prototype:** `docs/design/mockups/elune-landing-mockup-v1.html` (single self-contained file, no JS, no network).
+**Prototype:** `docs/design/mockups/elune-landing-mockup-v2.html` (single self-contained file, no JS, no network).
 
 ---
 
@@ -412,3 +412,71 @@ right in mono. Compliance text is never shrunk or dimmed below AA.
 No hero video, no illustration set beyond the one cutaway and the cratered disc, no animation library, no
 icon library, no new dependency. The category-standard arrangement the owner picked — hero, honest trust
 statements, categories, featured products, footer — is intact; only its world is new.
+
+---
+
+## Version Changelog: v2
+
+Surgical revision of two regions only — the hero plate figure and the value-props band. Every token,
+section and rule outside these two regions is inherited unchanged from v1; nothing below re-specifies
+them. All prior version files (`DESIGN-mockup-v1.md`, `elune-landing-mockup-v1.html` and earlier) are
+immutable and untouched.
+
+### v2.1 Hero plate figure — asset swap to the night-cap vial
+- **Asset:** the embedded teal-cap photograph is replaced by
+  `docs/refs/brand-assets/Product-placeholder-vial-night-cap-moon-3-4.jpg` (1792×2376, ≈3:4), embedded
+  as a base64 JPEG so the mockup stays a single self-contained file; this path is its provenance of
+  record. The embedded derivative is downscaled to 1200px wide at quality 82 (≈2× the largest render
+  size, 71.6KB vs the source's 1.48MB) to keep the single file light; no visible loss at plate size.
+- **Framing:** unchanged — `aspect-ratio:3/4` + `object-fit:cover`. The asset's 0.7542 ratio against
+  the figure's 0.75 crops under 0.3% per side: no letterbox seam against `--snow`, no distortion, no
+  transform hack at any breakpoint.
+- **Why the night cap reads better here:** the cap's midnight navy is the palette's own ink family
+  (`--night #16233C`), so the plate object carries the page's ink instead of an outside hue, and the
+  black cratered-crescent label puts the owner-verified mark at product scale in the first viewport.
+- **Alt:** rewritten to the actual subject — "Sealed glass vial with midnight-navy crimp cap and
+  Elune Labs label, lyophilized powder at the base, on a pale seamless ground".
+
+### v2.2 Value props — ruled ledger replaced by a scrolling ribbon
+- **Copy:** the four v1 ledger statements are dropped; the ribbon carries the five owner-supplied
+  statements verbatim: "Tracked & discreet, flat rate shipping" · "Bitcoin, USDT (ERC-20), and
+  Ethereum Accepted" · "Batch tracking for each vial" · "Best in class factory direct pricing" ·
+  "Unbeatable delivery rate. Zero issues."
+- **Form:** a full-bleed horizontal ribbon on `--snow` between the hero and the categories, replacing
+  the vertical ruled ledger. One `--hairline` pipe between items — the ledger's ruling turned 90° —
+  and the ledger's own 15px/1.5 `--slate` type, so the band keeps the v1 trust row's voice while it
+  moves. Items are `white-space:nowrap`; the band is a ticker, not a wrapping list.
+- **Motion:** the track holds two identical sets and drifts exactly one set-width per 64s loop
+  (`@keyframes ribbon-drift`, `translateX(-50%)`, linear, infinite) — slow enough to read at a glance,
+  seamless at the seam because every item opens on a pipe. Hover pauses the drift, and keyboard focus
+  on the band pauses it too — `tabindex="0"` + `role="region"` on the section with `:focus-within` on
+  the track, the WCAG 2.2.2 pause mechanism for auto-scrolling content, the system's focus ring as
+  its visible cue.
+  `prefers-reduced-motion:reduce` stops the drift, hides the duplicate set and hands the band to
+  native horizontal scroll (`overflow-x:auto`), so no statement is lost to reduced-motion users.
+  This is a deliberate, owner-requested exception to v1 §5's "no marquees": that ban stood against
+  decorative motion, and this ribbon *is* the value-props component, not decoration on top of it.
+- **Deleted with the ledger:** the `.trust` grid and its 900px / 640px override blocks — a ticker is
+  width-agnostic, so the ribbon needs zero responsive rules where the ledger needed six.
+- **Compliance notes:** "Batch tracking for each vial" states identity tracking only — no per-batch
+  document affordance is implied or linked (§4.9 holds). No purity figure and no verification
+  adjective enters the ribbon.
+- **Flagged for owner confirmation — (a) the rail contradiction, on one page.** The ribbon copy says
+  **USDT (ERC-20)** (owner-supplied, verbatim) while this same mockup's footer Payment link list,
+  PRODUCT.md's Operating Context and DESIGN.md's crypto panel all say **USDT (TRC-20)** — a
+  visible contradiction on the page. Resolution the owner must confirm: which rail is live. Until
+  then the ribbon carries the owner copy and the footer stays TRC-20 (the footer is outside v2's
+  scoped regions); one follow-up edit aligns whichever line loses.
+- **Flagged for owner confirmation — (b) the speed claim.** "Unbeatable delivery rate. Zero issues."
+  is a delivery/speed claim, and the inherited value-props rule (base brief §3, `DESIGN-mockup.md`
+  line 211: "No certification, no testing status, no speed claims") bans exactly it. Kept verbatim as
+  owner-supplied copy this iteration — noted, not rewritten; the owner must confirm the override of
+  the inherited rule, or supply compliant copy, before promotion.
+
+### v2.3 Micro-tokens added
+- `.ribbon` — the band: `--snow` ground, 1px `--hairline` bottom rule, `overflow:hidden` viewport.
+- `.ribbon-track` — the drifting flex track, `width:max-content`, one 64s linear infinite loop.
+- `.ribbon-set` — one loop set; five `li` items, each opening on a 1px `--hairline` pipe.
+- `@keyframes ribbon-drift` — `to { transform: translateX(-50%) }`, the ribbon's only motion.
+- No new colour, radius or type token: the ribbon consumes `--snow`, `--hairline`, `--slate` and the
+  ledger's 15px/1.5 step exactly as the trust row did.
