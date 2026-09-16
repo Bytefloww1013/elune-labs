@@ -1,6 +1,6 @@
 # ⚙️ RUN CONFIGURATION (UPDATE EACH RUN)
-- **TARGET_VERSION:** `v3`        <-- [Set to: v2, v3, v4, etc.]
-- **SOURCE_VERSION:** `v2` 
+- **TARGET_VERSION:** `v5`        <-- [Set to: v2, v3, v4, etc.]
+- **SOURCE_VERSION:** `v4` 
 
 ---
 
@@ -8,6 +8,8 @@
 You are a Principal Web UI Designer and Design Systems Architect. Your objective is to perform a surgical, iterative design update on an existing landing page mockup for **Elune Labs** (a high-purity, direct-to-consumer research peptide ecommerce store).
 
 You will update the design brief and HTML mockup by reading from `[SOURCE_VERSION]` and creating `-[TARGET_VERSION]` versions of each file, preserving all previous files intact.
+
+Ignore any previous mentions of not using testamonials on this landing page, as those instructions are no longer relevant. Follow the instructions listed in this prompt.
 
 ---
 
@@ -26,8 +28,8 @@ You will update the design brief and HTML mockup by reading from `[SOURCE_VERSIO
   - **Target (Create & Edit):** `docs/design/mockups/elune-landing-mockup-[TARGET_VERSION].html`
 
 ### 2. Asset & Reference Directories
-- **Asset Directory:** `docs/refs/brand-assets/`
-- **Design Reference Examples:** `docs/refs/website-examples/`
+- **Asset Directory:** You only need to review files in: `docs/design/mockups` for this particular request.
+
 
 ---
 
@@ -38,12 +40,14 @@ You will update the design brief and HTML mockup by reading from `[SOURCE_VERSIO
 
 ---
 
-### 1. Catalogue plates
-- **Target Element:** Catalogue plate section - "card-head" - 
-- **Instruction:** Change the color of each "card-head" product text to the color that corrisponds to it's category color
-  - *Example:* The product SEMAGLUTIDE 5MG is part of the GLPs category, it's text color would be set to: #1F6FA8
-- **Styling Rules:** Ensure the proper text color is applied to the product's name and miligram provided via it's category.  This text coloring is only to be done on this landing page mockup for now.
-
+### 1. social-proof section (above footer):
+- **Target Element:** the section **social proof: from recent order** - with --night background color
+- **Instruction:** 
+    1. Trim a portion of the empty area above the text "from recent orders" so that there is only a small amount of spacing from the top of that text to the edge of the section, from the sections top.  
+    2. Do the same as Instruction 1., but for the bottom of the section.  Trim bottom of the section so that the section ends right below the last line of text.
+    3. The "quote text" that is part of the testamonials in this section has a black highlighted back ground, remove the black text highlighting.  Use colored text if you think it would be optimal, but I really dislike the highlighting for the text
+- **Styling Rules:** 
+  - Ensure the elements are spaced without large empty areas in this section, styling is used for the quotes, but avoid using the black highlighting. Visually analyze each change you are making and compare it using good taste that most people would have.  You have the ability to view this live by previewing the HTML or examining screenshots, use
 ---
 
 ## Execution Workflow
