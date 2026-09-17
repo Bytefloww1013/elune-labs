@@ -1,0 +1,9 @@
+{
+  "subject": "Sealed glass vial with a midnight-navy crimp cap and the Elune Labs label, lyophilized powder at the base, on a pale seamless ground — the Plate 01 sheet figure on the homepage.",
+  "source": "docs/refs/assets/brand/Product-placeholder-vial-night-cap-moon-3-4.jpg (1792x2376)",
+  "extracted": "The 1200x1591 JPEG embedded in docs/design/mockups/elune-landing-mockup-v5.html, copied here unchanged. The prototype's re-encode is the exact frame the approved composition renders and a ninth of the source file's weight; the aspect is 0.7542 against the source's 0.7543, so the 3:4 figure crops under 0.3% per side and no crop hack is needed.",
+  "use": "the hero plate sheet's figure only (aspect-ratio 3/4, object-fit: cover)",
+  "createdAt": "2026-09-17T11:44:00.000Z",
+  "supersedes": "hero-photo.webp (2026-09-11), an earlier synthetic plate with a plain white cap and no label, removed with this pass.",
+  "provenance": "A produced raster, not a photograph of Elune stock — the kit's own filename calls it a product placeholder. It makes no claim about a real product and is to be replaced when real product photography exists."
+}

@@ -5,55 +5,86 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Bindings only. Every raw value lives in shadcn.css `:root` (the token home);
+ * this block exposes those values to Tailwind's utility namespaces without
+ * re-emitting them, which is what `inline` is for. A component that needs a new
+ * value adds a token to shadcn.css and binds it here — no hex literal, no raw
+ * radius and no off-step size appears in a component.
+ *
+ * The class-based `dark:` variant above stays inert rather than being stripped
+ * from every core component: there is no dark palette, no `.dark` token set, and
+ * no `.dark` class is ever added to the DOM.
+ */
 @theme inline {
+  /* Colour — Lunar Plates primitives */
+  --color-snow: var(--snow);
+  --color-panel: var(--panel);
+  --color-mist: var(--mist);
+  --color-hairline: var(--hairline);
+  --color-ash: var(--ash);
+  --color-night: var(--night);
+  --color-slate: var(--slate);
+  --color-beam: var(--beam);
+  --color-night-muted: var(--night-muted);
+  --color-night-rule: var(--night-rule);
+  --color-night-surface: var(--night-surface);
+  --color-accent-glps: var(--accent-glps);
+  --color-accent-bioregulators: var(--accent-bioregulators);
+  --color-accent-recovery: var(--accent-recovery);
+  --color-accent-gh-releasing: var(--accent-gh-releasing);
+  --color-accent-other: var(--accent-other);
+
+  /* Colour — role aliases (repointed at the Lunar Plates primitives in
+   * shadcn.css, so core-rendered cart, checkout, account, popover and menu
+   * chrome inherits this world without bespoke work) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
   --color-divider: var(--divider);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-brand-ochre: var(--brand-ochre);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  /* Type scale (2026-09-11, owner's font review: "the font is small and hard to
-   * read clearly"). Tailwind v4 reads these `--text-*` theme variables, so
-   * raising the two micro steps here lifts every `text-xs`/`text-sm` in the
-   * theme AND in core's own components — the cart, checkout and admin-facing
-   * storefront chrome — from one place instead of a hunt through every surface.
-   * 12px -> 13px and 14px -> 15px: enough to read comfortably, small enough that
-   * the comfortable density this world is built on survives. Body stays at the
-   * stock 16px, which was never the complaint. Line heights are set explicitly
-   * because Tailwind's defaults are computed ratios off the old sizes. */
-  --text-xs: 0.8125rem;
-  --text-xs--line-height: 1.45;
-  --text-sm: 0.9375rem;
-  --text-sm--line-height: 1.5;
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* Colour — sidebar aliases */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Faces */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radii — the differentiated set. A uniform radius is banned and 32px is the
+   * ceiling, so these are named, not derived. */
+  --radius-pill: var(--r-pill);
+  --radius-ctrl: var(--r-ctrl);
+  --radius-card: var(--r-card);
+  --radius-sheet: var(--r-sheet);
+  --radius-inner: var(--r-inner);
+  --radius-focus: var(--r-focus);
+  /* The legacy base-derived steps keep computing from `--radius`, which stays
+   * declared as a compatibility alias resolving to `--r-ctrl`: core-derived
+   * utilities get their corners from that base, and re-basing it would move every
+   * one of them. Theme-owned components name the set above instead. */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -61,26 +92,69 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-}
 
-:root {
-  --chart-1: #14604a;                          /* Evergreen */
-  --chart-2: #1c5f96;                          /* Deep blue */
-  --chart-3: #6b4f9e;                          /* Muted violet */
-  --chart-4: #9a6414;                          /* Warm ochre */
-  --chart-5: #a32a1f;                          /* Deep red */
-  --sidebar: var(--card);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--secondary);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-}
+  /* Type steps — the DESIGN.md Hierarchy table, bridged to Tailwind's `text-*`
+   * utilities. Line-height and letter-spacing come from the step; the weight does
+   * not, because the weight is a per-surface choice from Manrope's variable
+   * range, so a surface adds `font-medium` / `font-semibold` / `font-normal`. */
+  --text-display: var(--text-display);
+  --text-display--line-height: var(--text-display--line-height);
+  --text-display--letter-spacing: var(--text-display--letter-spacing);
+  --text-headline: var(--text-headline);
+  --text-headline--line-height: var(--text-headline--line-height);
+  --text-headline--letter-spacing: var(--text-headline--letter-spacing);
+  --text-title: var(--text-title);
+  --text-title--line-height: var(--text-title--line-height);
+  --text-title--letter-spacing: var(--text-title--letter-spacing);
+  --text-lede: var(--text-lede);
+  --text-lede--line-height: var(--text-lede--line-height);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--text-body--line-height);
+  --text-label: var(--text-label);
+  --text-label--line-height: var(--text-label--line-height);
+  --text-label-sm: var(--text-label-sm);
+  --text-label-sm--line-height: var(--text-label-sm--line-height);
+  --text-name: var(--text-name);
+  --text-name--line-height: var(--text-name--line-height);
+  --text-micro: var(--text-micro);
+  --text-micro--line-height: var(--text-micro--line-height);
+  --text-caption: var(--text-caption);
+  --text-caption--line-height: var(--text-caption--line-height);
+  --text-caption--letter-spacing: var(--text-caption--letter-spacing);
+  --text-caption-mono: var(--text-caption-mono);
+  --text-caption-mono--line-height: var(--text-caption-mono--line-height);
+  --text-caption-mono--letter-spacing: var(--text-caption-mono--letter-spacing);
+  --text-mono: var(--text-mono);
+  --text-mono--line-height: var(--text-mono--line-height);
+  --text-mono--letter-spacing: var(--text-mono--letter-spacing);
+  --text-price: var(--text-price);
+  --text-price--line-height: var(--text-price--line-height);
+  --text-price--letter-spacing: var(--text-price--letter-spacing);
+  --text-quote: var(--text-quote);
+  --text-quote--line-height: var(--text-quote--line-height);
 
-/*
- * Light only (2026-09-11). There is no dark palette in this storefront and no
- * `.dark` class is ever added to the DOM; the class-based `dark:` variant above
- * stays inert rather than being stripped from every core component.
- */
+  /* Tailwind's own step names, resolved onto the nearest step in the table. Core
+   * components are written against these names, so aligning them here is what
+   * makes core's cart, checkout, account and CMS pages land on the scale instead
+   * of on Tailwind's stock 14px/16px/18px values — the same reason the previous
+   * theme raised these two, but now derived from the table rather than from a
+   * legibility patch. The scale collapses above the title step because the
+   * headline (page and section titles) and the display (the one offer line) are
+   * the top of the register. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.3;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.4;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.62;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: var(--text-headline);
+  --text-2xl--line-height: var(--text-headline--line-height);
+  --text-2xl--letter-spacing: var(--text-headline--letter-spacing);
+  --text-3xl: var(--text-headline);
+  --text-3xl--line-height: var(--text-headline--line-height);
+  --text-3xl--letter-spacing: var(--text-headline--letter-spacing);
+}

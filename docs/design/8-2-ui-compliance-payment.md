@@ -64,6 +64,13 @@ Hook targets verified against core: storefront master `Base.tsx` (`modules/base/
 
 ### 1.4 Palette / typography tokens (placeholder values, designer-swappable)
 
+> **Superseded in part (2026-09-17).** This section records the palette the original build shipped (dark violet /
+> lavender). Root `DESIGN.md` now specifies the "Lunar Plates" world — cool lunar neutrals, one lime accent,
+> five `--accent-<url_key>` category accents, Manrope + JetBrains Mono, the pill/8/16/32/14 radius set — and
+> the migration is in progress (IMPLEMENTATION.md B7). The mechanism described here is unchanged and still
+> correct: tokens live as CSS custom properties on `:root`, mapped through `@theme inline`, no
+> `tailwind.config.js`. Only the values are superseded, and `DESIGN.md`'s frontmatter is the normative palette.
+
 Tokens live as CSS custom properties on `:root` in the theme's `shadcn.css` (copied via `tailwind.css`'s `@import './shadcn.css'`), mapped into Tailwind v4 through `@theme inline` in `tailwind.css` — there is no `tailwind.config.js` (Tailwind v4 is config-in-CSS; docs: Styling). Swapping the look = editing token values only; all components reference utility classes (`bg-primary`, `text-accent`, `font-sans`) that read these vars.
 
 ```css
@@ -160,7 +167,7 @@ Fixed string (SPEC FR-4):
 
 ---
 
-## 3. ADR — where BTC / USDT (TRC-20) / ETH addresses + instructions live
+## 3. ADR — where BTC / USDT (Ethereum, ERC-20) / ETH addresses + instructions live
 
 ### 3.1 Decision record
 
@@ -174,9 +181,25 @@ Fixed string (SPEC FR-4):
 | key | placeholder value |
 |---|---|
 | `crypto_wallet_btc` | `bc1qPLACEHOLDER_REPLACE_ME` (network label: Bitcoin — native SegWit) |
-| `crypto_wallet_usdt` | `TPLACEHOLDER_REPLACE_ME` (network label: TRON — TRC-20) |
+| `crypto_wallet_usdt` | **(none — see the rail rule below)** (network label: `USDT — Ethereum (ERC-20)`) |
 | `crypto_wallet_eth` | `0xPLACEHOLDER_REPLACE_ME` (network label: Ethereum — ERC-20) |
 | `crypto_wallet_instructions` | "Send the order total to one of the addresses above, then paste your transaction ID (TXID) into the TXID note field before placing the order. We confirm on-chain and ship after 1 network confirmation." |
+
+**Rail rule — USDT is Ethereum (ERC-20), and the rail fails closed.** The
+`crypto_wallet_usdt` resolver returns the stored value **only** when it matches `^0x[0-9a-fA-F]{40}$`;
+otherwise it returns `null`. Nothing is seeded into that key. The consequences are deliberate:
+
+- The retired TRON (`TRC-20`) rail is gone. Its `T…` placeholder and any address stored under it cannot be
+  reused, and the resolver no longer honours them — a legacy value resolves `null` like any other.
+- A `null` address makes the checkout row render as unavailable — the sentence `Not configured — contact us
+  before sending.` in place of an address, no Copy control — never a payable address. An empty value disables
+  the rail; it never falls back to a default.
+- **The database still holds the old TRON placeholder, so the shipped storefront shows USDT as unavailable
+  until the owner saves a real Ethereum address.** That is the expected state. No migration inserts a fake
+  address, and no document or test may present an unconfigured rail as working.
+- Bringing the rail up is a **configuration step for the owner**: an Ethereum wallet that can receive USDT on
+  ERC-20, entered as `0x…` in `/admin` → Settings → Payment. The admin field validates on save (empty, or
+  `0x` + 40 hex) so a TRON address is rejected rather than stored.
 
 ### 3.2 Options considered
 
@@ -193,8 +216,12 @@ extensions/elune-payments/
 │                          cryptoWalletEth: String  cryptoWalletInstructions: String }
 ├── src/graphql/types/Setting/CryptoWalletSetting.resolvers.js
 │     # each field: getSetting('crypto_wallet_btc', 'bc1qPLACEHOLDER_REPLACE_ME') …
+│     # cryptoWalletUsdt: return the stored value only when it matches
+│     #   ^0x[0-9a-fA-F]{40}$ ; otherwise null (no sentinel default — see §3.1)
 └── src/pages/admin/paymentSetting/CryptoWalletSetting.tsx
       # layout {areaId:'paymentSetting', sortOrder:30}; 4 InputFields; query setting {…}
+      # USDT field labelled "USDT — Ethereum (ERC-20)", validated on save
+      #   (empty, or 0x + 40 hex) so a legacy TRON address cannot be stored
 ```
 
 Registered in repo `config/default.json` → `system.extensions: [{name:"elune-payments", resolve:"extensions/elune-payments", enabled:true}]` (shape verified: `configExample.text@v2.2.1`). Extension reads by the theme override in §4.
@@ -204,6 +231,7 @@ Registered in repo `config/default.json` → `system.extensions: [{name:"elune-p
 - **Wins:** owner swap without code/rebuild/restart; one place (spec seam); theme stays presentation-only; works with the ro config mount of 8.1.
 - **Cost:** one 3-file extension touching core GraphQL/admin extension API — the same API every module uses. Risk rated **low**; the image pin (`2.2.1`) controls exposure regardless, and the extension is the first thing to re-verify on upgrade.
 - **Upgrade path:** if EverShop later offers a native custom-settings UI, the keys and their consumers stay identical — only the 3 files die.
+- **Rail change (USDT TRON → Ethereum ERC-20).** The decision to accept USDT on Ethereum rather than TRON touches three places and no more: the resolver's validity test (`^0x[0-9a-fA-F]{40}$`), the admin field's label/validation, and the checkout row's network label. The `crypto_wallet_usdt` key is unchanged, so nothing about the settings seam moves — but **the stored value is not migrated**: it is a retired TRON placeholder, it resolves `null` under the new test, and the rail renders unavailable until the owner saves an Ethereum address. Retiring the TRON value is the intended outcome, not a defect; no code path may re-admit it.
 
 ---
 
@@ -237,10 +265,15 @@ Customization surfaces for this file: (1) **theme master override** — same fol
 [crypto_wallet_instructions]
 
 BTC  — Bitcoin (native SegWit):  <crypto_wallet_btc>
-USDT — TRON (TRC-20):            <crypto_wallet_usdt>
+USDT — Ethereum (ERC-20):        <crypto_wallet_usdt>
 ETH  — Ethereum (ERC-20):        <crypto_wallet_eth>
 ```
 
+- **A `null` address renders as unavailable, not as a row.** When `cryptoWalletUsdt` (or any rail) resolves
+  `null`, the row prints the plain sentence **"Not configured — contact us before sending."** in place of an
+  address, with **no Copy control** — an unconfigured rail is never presented as payable. With the retired TRON
+  placeholder still stored, this is what the shipped USDT row shows until the owner saves an Ethereum address
+  (§3.1).
 - Keep `registerPaymentComponent('cod', …)`, `checkoutButtonRenderer`, `layout`, and the `useEffect` redirect verbatim — order creation path untouched.
 
 **TXID capture — verified.** The stock checkout **"Order Note"** field exists and is enabled: shared component `components/frontStore/checkout/ShippingNote.tsx@v2.2.1` (title "Order Note", textarea → `checkoutData.note` → server persists `cart.shipping_note`); rendered on the checkout page (form flow + summary rail) when `showShippingNote` is true — resolver `modules/checkout/graphql/types/CheckoutSetting/CheckoutSetting.resolvers.js@v2.2.1` returns `getConfig('checkout.showShippingNote', true)` (default **true**; explicit `checkout.showShippingNote: true` committed in repo config for clarity). REST alternative confirmed: `addShippingNote` → `POST /carts/:cart_id/shippingNotes`, `access: "public"` (`modules/checkout/api/addShippingNote/route.json@v2.2.1`).
@@ -254,10 +287,12 @@ Mechanics unchanged (`checkoutData.note` → `cart.shipping_note` → carried on
 
 ### 4.4 Payment-presentation smoke (maps to SPEC §7)
 
-1. Checkout → Payment step shows "Crypto Payment (BTC / USDT / ETH)", three network-labelled address blocks (from settings), no cash doorstep copy, no cash logo.
-2. TXID field titled "Transaction ID (TXID)" above Place Order; note text lands on the order (`order.shipping_note`) and is visible in `/admin` → Orders.
-3. Place order → `payment_status = pending`; admin Capture → `paid` (verified capture flow by 8.3; built-in `cod` method, no client-side paid path).
-4. Swap `crypto_wallet_btc` in admin → reload checkout → new address rendered. No rebuild, no restart.
+1. Checkout → Payment step shows "Crypto Payment (BTC / USDT / ETH)", the three network-labelled address rows (from settings): `BTC — Bitcoin (native SegWit)`, `USDT — Ethereum (ERC-20)`, `ETH — Ethereum (ERC-20)`. No cash doorstep copy, no cash logo.
+2. **USDT row with the stored TRON placeholder reads `Not configured — contact us before sending.` with no Copy control** — the rail is visibly unavailable, not payable. Save a valid `0x…` Ethereum address in admin → reload → the row shows the address and its Copy control. Save an empty value → the row returns to unavailable.
+3. TXID field titled "Transaction ID (TXID)" above Place Order; note text lands on the order (`order.shipping_note`) and is visible in `/admin` → Orders.
+4. Place order → `payment_status = pending`; admin Capture → `paid` (verified capture flow by 8.3; built-in `cod` method, no client-side paid path).
+5. Swap `crypto_wallet_btc` in admin → reload checkout → new address rendered. No rebuild, no restart.
+6. No surface on the payment step states when a transfer will be detected, credited or confirmed; the order stays `pending` until the owner captures it.
 
 ---
 

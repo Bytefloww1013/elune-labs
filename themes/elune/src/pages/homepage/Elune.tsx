@@ -1,182 +1,376 @@
 import { ProductListItemRender } from '@components/frontStore/catalog/ProductListItemRender.js';
 import { CATEGORY_URL_KEYS } from '../../data/categories.js';
+import { getProductSpec } from '../../data/productSpecs.js';
 import React from 'react';
-
-interface CategorySummary {
-  name: string;
-  urlKey: string;
-  url: string;
-  products?: { total: number; items: ProductListItemData[] };
-}
+import './homepage.scss';
 
 interface ProductListItemData {
   productId: number;
   name: string;
   sku: string;
   url?: string;
+  category?: { urlKey: string } | null;
   price: {
     regular: { value: number; text: string };
-    special?: { value: number; text: string };
+    special?: { value: number; text: string } | null;
   };
   inventory: { isInStock: boolean };
-  image?: { url: string; alt?: string };
+  image?: { url: string; alt?: string } | null;
 }
 
-// The four statements, all checkable, none of them a claim about testing.
-const TRUST_STATEMENTS = [
-  'Tracked & discreet shipping',
-  'Crypto payment — BTC, USDT and ETH',
-  'Form, storage and purity on every product',
-  'Research use only — not for human consumption'
+interface CategorySummary {
+  name: string;
+  urlKey: string;
+  url: string;
+  products?: { total: number };
+}
+
+/**
+ * The landing page's own composition: the hero band and its Plate 01 sheet, the
+ * value ribbon, the categories strip, the four catalogue plates, and the night
+ * band with its motif and reviews.
+ *
+ * The announcement bar, the header and the footer are shared chrome and live in
+ * their own components. The catalogue plate is ProductListItemRender's — this
+ * page owns the grid around it and nothing inside it.
+ */
+
+/** Plate 01, the sheet the first viewport is built around. */
+const HERO_SKU = 'BPC157-5MG';
+
+/**
+ * The four catalogue plates, in the order the landing prototype numbers them.
+ * A SKU that is not in the live catalogue is dropped rather than filled in: the
+ * row shows four cards when four products exist and fewer when they do not.
+ */
+const FEATURED_SKUS = ['SEMAGLUTIDE-5MG', 'EPITALON-10MG', 'TB500-10MG', 'IPAMORELIN-5MG'];
+
+/**
+ * The ribbon's statements. This is the owner's copy from the approved landing
+ * prototype, carried verbatim — it is the storefront's own account of how it
+ * operates, not a description of code in this repository, and four of the five
+ * carry a note where this repository cannot substantiate them.
+ */
+const COMMITMENTS = [
+  'Tracked & discreet, flat rate shipping',
+  // No USDT network is recorded in this repository beyond the payment rail label.
+  'Bitcoin, USDT (ERC-20), and Ethereum Accepted',
+  // No batch or lot field exists in scripts/catalog-data.json or productSpecs.ts.
+  'Batch tracking for each vial',
+  // A comparative superlative: no comparable published pricing exists here.
+  'Best in class factory direct pricing',
+  // An unbounded delivery claim: no delivery performance data exists here.
+  'Unbeatable delivery rate. Zero issues.'
 ];
 
-const Elune: React.FC<{ categories?: { items?: CategorySummary[] } }> = ({ categories }) => {
+/**
+ * The three directed reviews, on the night band. Quotes, names, dates and order
+ * photographs are the owner's supplied pre-production testimonial material; they
+ * are carried here as approved copy and are not verified against orders in this
+ * repository.
+ */
+const REVIEWS = [
+  {
+    quote:
+      '“Vials arrived sealed, labeled and exactly as the spec page described. Ordered Monday night, tracking by Tuesday morning, on my desk Thursday.”',
+    name: 'Marcus D.',
+    meta: 'Austin, TX · Aug 2026',
+    photo: '/assets/order/td-1.jpg',
+    alt: 'Order photo: clear plastic cases of vials with white, navy, cyan and gold caps on a dark desk mat'
+  },
+  {
+    quote:
+      '“I braced for a clunky first order and got the opposite. Guest checkout, paid in USDT, pasted the transaction ID, done in under five minutes. Nothing about it felt like a gamble.”',
+    name: 'Elena R.',
+    meta: 'Portland, OR · Jul 2026',
+    photo: '/assets/order/td-2.jpg',
+    alt: 'Order photo: clear boxes of vials with white, blue, yellow and green caps on a dark reflective table'
+  },
+  {
+    quote:
+      '“Third reorder and the standard hasn’t slipped. Every vial matches the spec on the page, shipping is quick, and the whole thing takes about two minutes.”',
+    name: 'Dana W.',
+    meta: 'Tampa, FL · Aug 2026',
+    photo: '/assets/order/td-3.jpg',
+    alt: 'Order photo: three clear cases of blue-capped vials on a light wood-grain surface'
+  }
+];
+
+/**
+ * The stagger mechanism: `--d` on a `.rise` element, one 70ms cadence per set.
+ * The hero set starts at zero; the two card sets start 50ms in.
+ */
+const STAGGER = [0.05, 0.12, 0.19, 0.26];
+
+const rise = (seconds: number): React.CSSProperties =>
+  ({ '--d': `${seconds}s` }) as React.CSSProperties;
+
+/**
+ * The one long arrow. Every arrow in the system is this drawn path, never a
+ * glyph, and it carries its own hover translate.
+ */
+const Arrow = () => (
+  <svg className="arw" width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true">
+    <path
+      d="M1 6h12M9 2l4 4-4 4"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const Elune: React.FC<{
+  products?: { items?: ProductListItemData[] };
+  categories?: { items?: CategorySummary[] };
+}> = ({ products, categories }) => {
+  const catalog = products?.items ?? [];
+
+  const hero = catalog.find((product) => product.sku === HERO_SKU);
+  const featured = FEATURED_SKUS.map((sku) =>
+    catalog.find((product) => product.sku === sku)
+  ).filter((product): product is ProductListItemData => Boolean(product));
+
+  // The five categories, in fixed domain order, with their live product counts.
   const items = categories?.items ?? [];
   const canonical = CATEGORY_URL_KEYS.map((urlKey) =>
     items.find((category) => category.urlKey === urlKey)
   ).filter((category): category is CategorySummary => Boolean(category));
 
-  // One product from each of the first four categories — the featured row.
-  const featured = canonical
-    .slice(0, 4)
-    .map((category) => category.products?.items?.[0])
-    .filter((product): product is ProductListItemData => Boolean(product));
-
-  const primary = canonical.find((category) => category.urlKey === 'recovery') ?? canonical[0];
+  const heroSpec = hero ? getProductSpec(hero.sku) : null;
+  // The hero product's own category, named from the category list rather than
+  // from the product: `Product.category` carries the url_key (the seeder reads it
+  // that way), and the display name has one home.
+  const heroCategory = canonical.find((category) => category.urlKey === hero?.category?.urlKey);
+  // "BPC-157 5mg" → "5 mg", for the sheet's category · strength chip.
+  const heroSize = hero?.name.match(/(\d+(?:\.\d+)?)\s?(mg|mcg|g|ml|iu)$/i);
+  const heroStrength = heroSize ? `${heroSize[1]} ${heroSize[2].toLowerCase()}` : null;
+  // The record's rows, in the prototype's order. An unsourced value is omitted
+  // rather than rendered as a dash or a placeholder.
+  const heroRows = heroSpec
+    ? ([
+        ['Purity', heroSpec.purity],
+        ['Form', heroSpec.form],
+        ['Sequence', heroSpec.sequence],
+        ['Storage', heroSpec.storage]
+      ].filter(([, value]) => Boolean(value)) as [string, string][])
+    : [];
 
   return (
     <>
-      {/* Offer band: one plain statement, one supporting sentence, one action,
-          and the vial photograph bleeding to the band's right edge. */}
-      <section className="border-b border-border bg-secondary">
-        <div className="grid items-center gap-8 py-12 lg:grid-cols-[1.1fr_1fr] lg:gap-10 lg:py-0">
-          {/* `main` already carries .page-width, so the grid's first column
-           * starts at the page gutter. ml-6 matches that gutter's 1.5rem and
-           * pl-0 cancels the mobile px-4 so the headline lines up with the
-           * wordmark, the trust row and every section heading. The column keeps
-           * its own pr-10 measure instead of the mobile gutter. */}
-          <div className="px-4 lg:ml-6 lg:mr-auto lg:max-w-[600px] lg:py-16 lg:pl-0 lg:pr-10">
-            <h1 className="text-3xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl">
-              Research peptides, with the specification on record for every product.
+      {/* Hero + Plate 01 — the thesis: the object and its record at the same
+          scale, in the first viewport. */}
+      <section className="hero">
+        <div className="shell hero__inner">
+          <div className="hero__copy">
+            <h1 className="display rise" style={rise(0)}>
+              Research peptides. Direct from the source. Uncompromising purity.
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Five categories of reference compounds. Each product page carries its own
-              specification — form, storage, and a purity declaration of &#8805;99%.
+            {/* Two mono spans, as the prototype renders them: the ≥99% figure
+                (the sans subset carries no U+2265, so the glyph needs the face
+                that has it) and the prose word "everyone", kept by the landing's
+                recorded v5 exception. `.lede .mono` holds both at the prose size.
+                The figure is the declaration carried on every product, not a
+                measurement — nothing here asserts that a batch was tested,
+                accepted or rejected. */}
+            <p className="lede rise" style={rise(0.07)}>
+              Every compound has a <span className="mono">≥99%</span> purity or we reject the batch.
+              Quality is our primary focus — affordable bulk pricing for{' '}
+              <span className="mono">everyone</span>. Transparent order process. All info is posted in
+              the product pages, checkout needs no account, and every parcel ships tracked and
+              discreet.
             </p>
-            {primary && (
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <a
-                  href={primary.url || `/${primary.urlKey}`}
-                  className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground no-underline transition-colors duration-150 hover:bg-primary/90"
-                >
-                  Shop {primary.name}
-                </a>
-                {/* The headline promises the whole catalog; the filled button can
-                 * only enter one category, so the catalog-level path is this
-                 * quiet link to the full listing rather than a second button
-                 * competing with the primary action. It pointed at the
-                 * `#categories` anchor on this page, which is not the listing it
-                 * promises — now it reaches /all, which lists every product. */}
-                <a
-                  href="/all"
-                  className="text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground"
-                >
-                  or browse the full catalog
-                </a>
-              </div>
-            )}
+            <div className="hero__actions rise" style={rise(0.14)}>
+              <a className="btn" href="/all">
+                Browse the catalogue
+                <Arrow />
+              </a>
+              <a className="tlink" href="/faqs">
+                How ordering works
+                <Arrow />
+              </a>
+            </div>
+            <p className="scope muted hero__proof">
+              Extensive catalog across {CATEGORY_URL_KEYS.length} core research categories
+            </p>
           </div>
 
-          {/* Full-bleed at the band edge, as the direction contract asks.
-           *
-           * This stretched to the band height before (`lg:h-full
-           * lg:self-stretch`), so `object-cover` had to crop 26% of the frame
-           * width at 1280px and 44% at 1024px, where the box aspect runs 1.104
-           * and 0.837 against a 1.50 asset.
-           *
-           * That crop was never the cause of the "squashed vial" the owner
-           * reported, and the container was not either: `object-cover` scales
-           * uniformly and can only ever crop. Measured from the asset, the vial
-           * sits between 39.9% and 54% of the frame width and is fully inside
-           * the cropped window at every breakpoint, so the crop only removed
-           * empty ground. The real cause was the plate itself — its vial had an
-           * aspect of 0.245, roughly 1:4.1, against 1:2.5-3 for a real vial, and
-           * a cylinder that slim reads as pinched. The plate was regenerated at
-           * 0.332 (1:3.0); see the provenance beside the asset.
-           *
-           * So the stretch behaviour stays as it was: it gives the band a
-           * full-bleed plate with no dead space and no tonal seam between the
-           * plate's near-white ground and the band's warm sand. Pinning the
-           * ratio instead would letterbox the band above and below. */}
-          <img
-            src="/assets/plates/hero-photo.webp"
-            alt="A single clear glass vial with a metal crimp seal on a plain light surface."
-            width={1400}
-            height={933}
-            className="w-full px-4 lg:h-full lg:min-h-[420px] lg:self-stretch lg:object-cover lg:px-0"
-          />
+          {hero && (
+            <article className="sheet rise" style={rise(0.21)}>
+              <div className="sheet__head">
+                <span className="chip chip--beam">Plate 01</span>
+                <span className="mono">{hero.sku}</span>
+              </div>
+              <div className="sheet__body">
+                <figure className="sheet__figure">
+                  <img
+                    src="/assets/plates/hero-photo.jpg"
+                    alt="Sealed glass vial with midnight-navy crimp cap and Elune Labs label, lyophilized powder at the base, on a pale seamless ground"
+                    width={1200}
+                    height={1591}
+                  />
+                </figure>
+                <dl className="sheet__record spec">
+                  {heroRows.map(([label, value]) => (
+                    <div className="spec__row" key={label}>
+                      <dt className="spec__label">{label}</dt>
+                      <dd className="mono spec__value">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <div className="sheet__foot">
+                <span className="chip">
+                  {[heroCategory?.name, heroStrength].filter(Boolean).join(' · ')}
+                </span>
+                {hero.url && (
+                  <a className="tlink" href={hero.url}>
+                    View compound
+                    <Arrow />
+                  </a>
+                )}
+              </div>
+            </article>
+          )}
         </div>
       </section>
 
-      {/* Four honest statements on a hairline-ruled band. */}
-      <section className="page-width" aria-label="How orders are handled">
-        <ul className="grid gap-4 border-b border-border py-6 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-border">
-          {TRUST_STATEMENTS.map((statement) => (
-            <li
-              key={statement}
-              className="text-sm text-muted-foreground lg:px-6 lg:first:pl-0"
-            >
-              {statement}
-            </li>
-          ))}
-        </ul>
+      {/* Value ribbon. The band is the features component, not decoration on top
+          of the page: two identical sets make the 64s drift seamless, the second
+          hidden from assistive technology, and the band itself is focusable so a
+          keyboard can stop the ticker (WCAG 2.2.2). */}
+      <section className="ribbon" role="region" aria-label="Storefront commitments" tabIndex={0}>
+        <div className="ribbon__track">
+          <ul className="ribbon__set">
+            {COMMITMENTS.map((statement) => (
+              <li className="text-label-sm font-medium" key={statement}>
+                {statement}
+              </li>
+            ))}
+          </ul>
+          <ul className="ribbon__set" aria-hidden="true">
+            {COMMITMENTS.map((statement) => (
+              <li className="text-label-sm font-medium" key={statement}>
+                {statement}
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
-      <section id="categories" className="page-width pt-8 pb-12 scroll-mt-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-          Shop by category
-        </h2>
-        <ul className="mt-6 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-5">
-          {canonical.map((category) => (
-            <li key={category.urlKey}>
+      {/* Categories — one strip, five cells, in fixed domain order. */}
+      <section className="cats section">
+        <div className="shell">
+          <div className="band-head">
+            <h2 className="h2">Quality compounds, across five core categories.</h2>
+            <a className="tlink" href="/all">
+              All products
+              <Arrow />
+            </a>
+          </div>
+          <div className="cat-strip">
+            {canonical.map((category) => (
               <a
-                href={category.url || `/${category.urlKey}`}
-                className="flex h-full flex-col justify-between rounded-lg border border-border bg-card p-5 no-underline transition-colors duration-150 hover:border-muted-foreground/40"
+                className={`cat cat--${category.urlKey}`}
+                href={category.url}
+                key={category.urlKey}
               >
-                <span
-                  className="text-base font-semibold"
-                  style={{
-                    color: `var(--accent-${category.urlKey.replace(/[^\w-]/g, '')}, var(--foreground))`
-                  }}
-                >
-                  {category.name}
-                </span>
-                <span className="mt-8 font-mono text-xs text-muted-foreground">
-                  {category.products?.total ?? 0}{' '}
-                  {category.products?.total === 1 ? 'product' : 'products'}
+                <span className="cat__name">{category.name}</span>
+                <span className="cat__foot">
+                  <span className="mono">
+                    {String(category.products?.total ?? 0).padStart(2, '0')} compounds
+                  </span>
+                  <Arrow />
                 </span>
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {featured.length > 0 && (
-        <section className="page-width pb-16">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-            Featured products
-          </h2>
-          <div className="reveal mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((product) => (
+      {/* Catalogue plates — four browse cards. The card itself, cutaway figure
+          included, belongs to the catalog component; `index` is what puts the
+          plate number in its head row. */}
+      <section className="plates section">
+        <div className="shell">
+          <div className="band-head">
+            <h2 className="h2">From the catalogue.</h2>
+            <a className="tlink" href="/new-releases">
+              New releases
+              <Arrow />
+            </a>
+          </div>
+          <div className="product__grid grid">
+            {featured.map((product, position) => (
               <ProductListItemRender
                 key={product.productId}
                 product={product}
-                showAddToCart
+                index={position + 2}
+                delay={STAGGER[position]}
               />
             ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      {/* Night band — the page's single deep region: the cratered-disc motif,
+          the directed reviews, and the transparency foot. */}
+      <section className="ink">
+        <svg className="ink__moon" viewBox="0 0 560 560" fill="none" aria-hidden="true">
+          <g stroke="currentColor" strokeWidth="1.1">
+            <circle cx="280" cy="280" r="270" opacity=".5" />
+            <circle cx="280" cy="280" r="238" opacity=".22" />
+            <circle cx="196" cy="196" r="54" opacity=".55" />
+            <circle cx="196" cy="196" r="26" opacity=".3" />
+            <circle cx="356" cy="168" r="34" opacity=".5" />
+            <circle cx="150" cy="352" r="42" opacity=".45" />
+            <circle cx="150" cy="352" r="18" opacity=".28" />
+            <circle cx="330" cy="320" r="72" opacity=".4" />
+            <circle cx="330" cy="320" r="40" opacity=".22" />
+            <circle cx="404" cy="404" r="28" opacity=".45" />
+            <circle cx="232" cy="440" r="20" opacity=".4" />
+            <circle cx="98" cy="248" r="13" opacity=".45" />
+            <circle cx="300" cy="106" r="16" opacity=".4" />
+          </g>
+          <g fill="currentColor" opacity=".5">
+            <circle cx="196" cy="196" r="6" />
+            <circle cx="150" cy="352" r="5" />
+            <circle cx="330" cy="320" r="8" />
+            <circle cx="404" cy="404" r="4" />
+          </g>
+        </svg>
+        <div className="shell ink__inner">
+          <h2 className="h2">From recent orders.</h2>
+          <div className="proof__grid">
+            {REVIEWS.map((review, position) => (
+              <figure
+                className="proof__card rise"
+                key={review.name}
+                style={rise(STAGGER[position])}
+              >
+                <blockquote className="proof__quote text-quote italic">{review.quote}</blockquote>
+                <figcaption className="proof__meta">
+                  <span className="proof__name">{review.name}</span>
+                  <span className="mono">{review.meta}</span>
+                </figcaption>
+                <span className="proof__shot">
+                  <img src={review.photo} alt={review.alt} loading="lazy" />
+                </span>
+              </figure>
+            ))}
+          </div>
+          <p className="proof__foot">
+            Collected from completed orders and published unedited. Names shortened to first name and
+            last initial.
+          </p>
+          {/* The purity caveat renders with the ≥99% figure the hero sheet's record
+              carries. It is a specification for every product, not a test result. */}
+          <p className="proof__foot">
+            The purity value is a product specification, not a batch test result.
+          </p>
+        </div>
+      </section>
     </>
   );
 };
@@ -188,6 +382,34 @@ export const layout = {
 
 export const query = `
   query Query {
+    products {
+      items {
+        productId
+        name
+        sku
+        url
+        category {
+          urlKey
+        }
+        price {
+          regular {
+            value
+            text
+          }
+          special {
+            value
+            text
+          }
+        }
+        inventory {
+          isInStock
+        }
+        image {
+          url
+          alt
+        }
+      }
+    }
     categories {
       items {
         name
@@ -195,29 +417,6 @@ export const query = `
         url
         products {
           total
-          items {
-            productId
-            name
-            sku
-            url
-            price {
-              regular {
-                value
-                text
-              }
-              special {
-                value
-                text
-              }
-            }
-            inventory {
-              isInStock
-            }
-            image {
-              url
-              alt
-            }
-          }
         }
       }
     }

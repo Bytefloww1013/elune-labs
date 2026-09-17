@@ -173,14 +173,14 @@ T9=$(bd create "elune-payments extension: Setting GraphQL fields + resolvers" -t
 - config/default.json (system.extensions registration)
 
 Contract / Interface:
-Per docs/design/8-2 section 3. GraphQL: extend type Setting { cryptoWalletBtc: String cryptoWalletUsdt: String cryptoWalletEth: String cryptoWalletInstructions: String }. Resolvers use core getSetting() with placeholder defaults: crypto_wallet_btc -> "bc1qPLACEHOLDER_REPLACE_ME", crypto_wallet_usdt -> "TPLACEHOLDER_REPLACE_ME", crypto_wallet_eth -> "0xPLACEHOLDER_REPLACE_ME", crypto_wallet_instructions -> default text from docs/design/8-2 section 3.1. Pattern source: modules/cod/graphql/types/CODSetting/CODSetting.resolvers.js @ v2.2.1. Register in config/default.json: "system": { "extensions": [{ "name": "elune-payments", "resolve": "extensions/elune-payments", "enabled": true }] }.
+Per docs/design/8-2 section 3. GraphQL: extend type Setting { cryptoWalletBtc: String cryptoWalletUsdt: String cryptoWalletEth: String cryptoWalletInstructions: String }. Resolvers use core getSetting() with placeholder defaults: crypto_wallet_btc -> "bc1qPLACEHOLDER_REPLACE_ME", crypto_wallet_usdt -> NO sentinel (see the rail rule below), crypto_wallet_eth -> "0xPLACEHOLDER_REPLACE_ME", crypto_wallet_instructions -> default text from docs/design/8-2 section 3.1. USDT rail rule: cryptoWalletUsdt resolves the stored value ONLY when it matches ^0x[0-9a-fA-F]{40}$ and otherwise resolves null, so the retired TRON placeholder (and any non-Ethereum value) renders the rail as unavailable instead of as a payable address; no placeholder default is admitted for that key. Pattern source: modules/cod/graphql/types/CODSetting/CODSetting.resolvers.js @ v2.2.1. Register in config/default.json: "system": { "extensions": [{ "name": "elune-payments", "resolve": "extensions/elune-payments", "enabled": true }] }.
 
 Verification Command:
 docker compose restart app && curl -s http://localhost:3000/api/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ setting { cryptoWalletBtc cryptoWalletUsdt cryptoWalletEth } }\"}"
 
 Acceptance Criteria:
 - [ ] extension registered and loads without boot errors
-- [ ] Setting query returns the 3 wallet fields with placeholder values
+- [ ] Setting query returns the 3 wallet fields; USDT is null while the stored value is not a valid Ethereum address
 - [ ] storefront boots clean with extension enabled' \
   --json | jq -r '.id')
 
@@ -191,15 +191,16 @@ T10=$(bd create "elune-payments admin Settings card" -t task -p 2 \
 - extensions/elune-payments/src/pages/admin/paymentSetting/CryptoWalletSetting.tsx
 
 Contract / Interface:
-Per docs/design/8-2 section 3.3. Admin component layout { areaId: "paymentSetting", sortOrder: 30 } with 4 InputFields (BTC / USDT / ETH / instructions) bound to the crypto_wallet_* setting keys, saving through the standard admin settings save path. Pattern source: modules/cod/pages/admin/paymentSetting/CODSetting.tsx @ v2.2.1.
+Per docs/design/8-2 section 3.3. Admin component layout { areaId: "paymentSetting", sortOrder: 30 } with 4 InputFields (BTC / USDT / ETH / instructions) bound to the crypto_wallet_* setting keys, saving through the standard admin settings save path. USDT field label "USDT — Ethereum (ERC-20)" with save-time validation: empty (rail disabled) or 0x + 40 hex only, so a legacy TRON address is rejected rather than stored. Pattern source: modules/cod/pages/admin/paymentSetting/CODSetting.tsx @ v2.2.1.
 
 Verification Command:
-Manual: /admin -> Settings -> Payment shows the 4 fields; change BTC value, save; then curl -s http://localhost:3000/api/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ setting { cryptoWalletBtc } }\"}" reflects the new value.
+Manual: /admin -> Settings -> Payment shows the 4 fields; change BTC value, save; then curl -s http://localhost:3000/api/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ setting { cryptoWalletBtc } }\"}" reflects the new value. Then save an Ethereum address in the USDT field -> curl reflects it; save a TRON "T..." value -> rejected.
 
 Acceptance Criteria:
 - [ ] admin card renders in Settings -> Payment
 - [ ] save persists to the setting table
-- [ ] GraphQL reads the updated value' \
+- [ ] GraphQL reads the updated value
+- [ ] USDT field rejects a non-Ethereum address' \
   --json | jq -r '.id')
 
 T11=$(bd create "COD payment-step override with crypto wallet blocks" -t task -p 1 \
@@ -209,13 +210,15 @@ T11=$(bd create "COD payment-step override with crypto wallet blocks" -t task -p
 - themes/elune/src/pages/checkout/CashOnDelivery.tsx
 
 Contract / Interface:
-Per docs/design/8-2 section 4. Copy core modules/cod/pages/frontStore/checkout/CashOnDelivery.tsx @ v2.2.1 into the theme at the same folder+filename (master override). Keep registerPaymentComponent("cod", ...), checkoutButtonRenderer, layout, and the useEffect redirect VERBATIM - order creation path untouched. nameRenderer: drop the base64 cash logo, render setting.codDisplayName text only. formRenderer: extend the GraphQL query with cryptoWalletBtc/cryptoWalletUsdt/cryptoWalletEth/cryptoWalletInstructions and render instructions text + three blocks: "BTC — Bitcoin (native SegWit)", "USDT — TRON (TRC-20)", "ETH — Ethereum (ERC-20)" with the address values.
+Per docs/design/8-2 section 4. Copy core modules/cod/pages/frontStore/checkout/CashOnDelivery.tsx @ v2.2.1 into the theme at the same folder+filename (master override). Keep registerPaymentComponent("cod", ...), checkoutButtonRenderer, layout, and the useEffect redirect VERBATIM - order creation path untouched. nameRenderer: drop the base64 cash logo, render setting.codDisplayName text only. formRenderer: extend the GraphQL query with cryptoWalletBtc/cryptoWalletUsdt/cryptoWalletEth/cryptoWalletInstructions and render instructions text + three rows: "BTC — Bitcoin (native SegWit)", "USDT — Ethereum (ERC-20)", "ETH — Ethereum (ERC-20)" with the address values. A rail whose address is null renders the sentence "Not configured — contact us before sending." in place of an address, with NO Copy control - an unconfigured rail is never shown as payable. USDT is Ethereum ERC-20, not TRON. Panel radius: the wallet rail list and the TXID panel are flush panels at --r-ctrl (8px), the control radius, not the card radius.
 
 Verification Command:
-Build + restart; walk a cart to the payment step (products from seed or a manual admin-created product); payment step shows crypto display name + 3 wallet blocks, no cash logo, no doorstep copy; placing the order still succeeds.
+Build + restart; walk a cart to the payment step (products from seed or a manual admin-created product); payment step shows crypto display name + 3 wallet rows, no cash logo, no doorstep copy; the USDT row reads "Not configured — contact us before sending." with no Copy control while the stored value is the retired TRON placeholder, and shows the address once a valid 0x... Ethereum address is saved; placing the order still succeeds.
 
 Acceptance Criteria:
-- [ ] payment step renders 3 network-labelled wallet blocks from settings
+- [ ] payment step renders 3 network-labelled wallet rows from settings
+- [ ] an unconfigured/invalid rail renders the "Not configured" sentence with no Copy control, never an address
+- [ ] wallet + TXID panels use --r-ctrl, not --r-card
 - [ ] cash logo + doorstep copy gone
 - [ ] Place Order path untouched (order created, payment_status pending)' \
   --json | jq -r '.id')
@@ -246,16 +249,16 @@ T13=$(bd create "Payment settings bootstrap + no-restart swap verification" -t t
 - README.md (admin settings walkthrough step)
 
 Contract / Interface:
-Stage gate for cluster B3. Bootstrap data only (no code): enable COD via POST /api/settings {"codPaymentStatus": 1, "codDisplayName": "Crypto Payment (BTC / USDT / ETH)"} and set the 4 crypto_wallet_* placeholder values (admin UI or REST; smoke items 20-21 in docs/design/8-3 section 4). Then verify the owner swap path: change crypto_wallet_btc in /admin -> Settings -> Payment, save, reload the checkout payment step -> new address appears with NO rebuild and NO restart (docs/design/8-2 section 4.4). Document the walkthrough step in README.
+Stage gate for cluster B3. Bootstrap data only (no code): enable COD via POST /api/settings {"codPaymentStatus": 1, "codDisplayName": "Crypto Payment (BTC / USDT / ETH)"} and set the crypto_wallet_btc / crypto_wallet_eth placeholder values (admin UI or REST; smoke items 20-21 in docs/design/8-3 section 4). Do NOT seed a crypto_wallet_usdt sentinel: the USDT rail is Ethereum (ERC-20), the retired TRON placeholder is not reusable, and the key starts empty so the rail renders unavailable rather than payable. Then verify the owner swap path: change crypto_wallet_btc in /admin -> Settings -> Payment, save, reload the checkout payment step -> new address appears with NO rebuild and NO restart (docs/design/8-2 section 4.4). Then save a valid 0x... Ethereum address in the USDT field and confirm the row switches from "Not configured" to the address, and an empty value switches it back. Document the walkthrough step in README.
 
 Verification Command:
-curl -s http://localhost:3000/api/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ setting { codDisplayName cryptoWalletBtc } }\"}" before and after the admin swap.
+curl -s http://localhost:3000/api/graphql -H "Content-Type: application/json" -d "{\"query\":\"{ setting { codDisplayName cryptoWalletBtc cryptoWalletUsdt } }\"}" before and after the admin swap (cryptoWalletUsdt null until a valid Ethereum address is saved).
 
 Acceptance Criteria:
 - [ ] COD enabled with crypto display name
-- [ ] 4 wallet placeholder settings present
+- [ ] wallet settings present; USDT intentionally unset (rail unavailable, not payable)
 - [ ] address swap lands without rebuild/restart
-- [ ] README settings walkthrough step documented' \
+- [ ] README settings walkthrough step documented, including the USDT Ethereum configuration step' \
   --json | jq -r '.id')
 
 T14=$(bd create "catalog-data.json: 3 categories, 15 products" -t task -p 2 \

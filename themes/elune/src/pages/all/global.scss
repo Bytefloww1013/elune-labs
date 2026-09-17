@@ -1,34 +1,17 @@
 @layer base {
+  /* Body step — DESIGN.md Typography. The Manrope variable file's weight axis
+   * defaults to 200, so an element that inherits a size without an explicit
+   * weight renders hairline; the body step states its weight rather than
+   * inheriting the axis default, and everything below it inherits 400 from here.
+   * The step drops to 1rem at ≤640px. */
   body {
-    /* Re-skin (2026-07-10): 16px base + 1.5 line-height + token text color,
-     * matching the design reference (was 14px, line-height up to 2.0, #3a3a3a). */
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-weight: 400;
     color: var(--foreground);
 
-    input[type='email'],
-    input[type='password'],
-    input[type='tel'],
-    input[type='text'],
-    input[type='number'],
-    select,
-    textarea {
-      padding: 0.625rem 0.75rem;
-      background-color: var(--card);
-      border: 1px solid var(--border);
-      color: var(--foreground);
-      border-radius: var(--radius);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-      &:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 1px var(--primary);
-      }
-
-      &::placeholder {
-        color: var(--muted-foreground);
-      }
+    @media screen and (max-width: 640px) {
+      font-size: 1rem;
     }
 
     main.content {
@@ -36,58 +19,102 @@
     }
   }
 
-  /* Heading scale — semibold, tight leading + tracking (reference-aligned). */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .h1,
-  .h2,
-  .h3,
-  .h4,
-  .h5,
-  .h6 {
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.011em;
+  /* Fields — DESIGN.md Inputs & Fields. Core's account, cart, checkout and
+   * contact forms inherit this from one place, so none of them needs bespoke
+   * work: panel fill, 1px hairline stroke, the control radius, the 44px target
+   * floor, body-step ink text, slate placeholder and the ink caret. */
+  input[type='email'],
+  input[type='password'],
+  input[type='tel'],
+  input[type='text'],
+  input[type='number'],
+  input[type='search'],
+  select,
+  textarea {
+    min-height: 44px;
+    padding: 0.625rem 0.75rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
     color: var(--foreground);
-  }
-  h1,
-  .h1 {
-    font-size: 1.875rem;
-  }
-  h2,
-  .h2 {
-    font-size: 1.5rem;
-  }
-  h3,
-  .h3 {
-    font-size: 1.25rem;
-  }
-  h4,
-  .h4 {
-    font-size: 1.125rem;
-  }
-  h5,
-  .h5 {
-    font-size: 1rem;
-  }
-  h6,
-  .h6 {
-    font-size: 0.875rem;
+    border-radius: var(--r-ctrl);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-weight: 400;
+    transition: border-color 0.16s var(--ease), background-color 0.16s var(--ease);
+
+    &::placeholder {
+      color: var(--muted-foreground);
+    }
+
+    /* A field keeps the global focus ring and adds only the ink border. There is
+     * no separate border-plus-shadow ring in this system and no exclusion from
+     * the global ring: one ring treatment, everywhere. */
+    &:focus {
+      border-color: var(--night);
+      box-shadow: none;
+    }
+
+    /* Disabled chrome is ash with an ink label — never hue-tinted, never a
+     * lightened fill. */
+    &:disabled {
+      background-color: var(--ash);
+      border-color: var(--ash);
+      color: var(--night);
+      cursor: not-allowed;
+    }
+
+    /* Error — the field's own 1px stroke goes destructive; the message beside it
+     * carries the same token and begins with a word, never with colour alone. */
+    &[aria-invalid='true'] {
+      border-color: var(--destructive);
+    }
   }
 
-  @media (min-width: 768px) {
-    h1,
-    .h1 {
-      font-size: 2.25rem;
-    }
-    h2,
-    .h2 {
-      font-size: 1.875rem;
-    }
+  /* Heading scale — the DESIGN.md step table resolved onto elements. No heading
+   * asks for 600 or more: display sits at 250 and the register descends from
+   * there, because the whisper weight is the point of this world.
+   * `h1` is deliberately not here: it is declared un-layered further down, so it
+   * can beat the utilities core renders its page titles with. */
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--foreground);
+  }
+
+  h2 {
+    font-size: var(--text-headline);
+    line-height: 1.12;
+    font-weight: 300;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: var(--text-title);
+    line-height: 1.3;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  h4 {
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  h5 {
+    font-size: var(--text-label-sm);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  h6 {
+    font-size: var(--text-micro);
+    line-height: 1.4;
+    font-weight: 500;
   }
 
   .wrapper .content {
@@ -98,13 +125,15 @@
     margin: 0 auto;
   }
 
-  /* Container — tighter gutter to match the reference (was 22px / 55px). */
+  /* Shell — one container for the whole storefront: 1200px, centred, with the
+   * gutter narrowing to 32px at ≤900px. Content never bleeds outside it. */
   .page-width {
-    max-width: 1200px;
+    max-width: var(--shell);
     margin: 0 auto;
-    padding: 0 1rem;
-    @media screen and (min-width: 1024px) {
-      padding: 0 1.5rem;
+    padding-inline: calc(var(--page-gutter) / 2);
+
+    @media screen and (max-width: 900px) {
+      padding-inline: calc(var(--page-gutter-sm) / 2);
     }
   }
 
@@ -136,162 +165,26 @@
   }
 }
 
-/* Elune Labs — design 8-2 §1.3/§1.4 (un-layered so they beat core @layer base) */
+/* Elune Labs — global surfaces (un-layered so they beat core's @layer base) */
 body {
   font-family: var(--font-sans);
   background-color: var(--background);
 }
 
-/* Footer cleanup: hides the core Visa/MC/PayPal cash-icon block in footerBottom */
+/* Footer cleanup: hides the core Visa/MC/PayPal cash-icon block in footerBottom.
+ * The storefront takes payment by hand and lists its rails as plain text, so the
+ * card network icons are not a promise it can keep. */
 .card-icons {
   display: none;
 }
 
-/* Body lock class while the AgeGate modal (b04.6) is open */
+/* Body lock class while the AgeGate modal is open */
 .elune-lock {
   overflow: hidden;
 }
 
-/* Typefaces — rebuilt 2026-09-11 for the owner's font review. Sans is now Source
- * Sans 3, replacing Titillium Web.
- *
- * The first reason is a real bug, not a taste call. The Google-style `latin`
- * subsets the old faces shipped with carry only 212 codepoints and omit U+2265
- * GREATER-THAN OR EQUAL. The storefront's most visible string is the purity
- * declaration `≥99%`, so that glyph fell through the stack to a system fallback
- * and rendered in a different face at a different weight next to its own digits
- * — which is what read as jagged, inconsistent and "pixelated".
- *
- * The second is legibility. Source Sans 3 is an Adobe humanist drawn for small
- * sizes: large x-height, open apertures, generous counters. The old interface
- * leaned on 11-12px micro type to fit; this face reads cleanly there, so the
- * scale could come up rather than being clipped around.
- *
- * Both faces are subset here from the full variable sources with an explicit
- * unicodes list that includes U+2265 (and the `·`, `—`, `©`, `°` the storefront
- * also renders), so every shipped face provably carries every glyph the store
- * uses — 388 codepoints versus 212, ~30KB per file. Still self-hosted from the
- * theme's static directory: no third-party request.
- *
- * Four real weights ship. The old build had no 500 cut and aliased `font-medium`
- * onto the 600 file, and had no 800/900 cuts at all, so the wordmark's
- * `font-extrabold` and `font-black` were synthesized by the browser — recorded as
- * drift in DESIGN.md and a genuine source of uneven-looking type. The wordmark is
- * now set from weights that actually exist. */
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/assets/fonts/source-sans-3-400.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/assets/fonts/source-sans-3-500.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/assets/fonts/source-sans-3-600.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Source Sans 3';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/assets/fonts/source-sans-3-700.woff2') format('woff2');
-}
-
-/* Mono is reserved for data — chemical values, prices, identifiers (see
- * DESIGN.md, The Mono-Is-Data Rule). Its subset carries U+2265 for the purity
- * string, which renders in mono on every product card. */
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 100 800;
-  font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin.woff2') format('woff2');
-}
-
-/* Browser surfaces (2026-09-11) — the palette reaching the places Tailwind does
- * not paint: text selection, the text caret, the keyboard focus ring and
- * Firefox's scrollbar. All values from the token home in shadcn.css. */
-::selection {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-html {
-  caret-color: var(--primary);
-  scrollbar-color: var(--border) var(--background); /* Firefox: thumb / track */
-}
-
-/* Keyboard focus ring. Form fields keep the box-shadow ring declared in
- * @layer base above, so they are deliberately left out of this rule. */
-a:focus-visible,
-button:focus-visible,
-summary:focus-visible,
-[role='button']:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-/* Footer density. The core footer reserves five widget areas; this store fills
- * only footerBottom (the RUO line and the copyright), so the reserved padding
- * plus `mt-12` shipped ~180px of empty grey band between the catalog and the
- * footer text. The areas stay in the DOM — they cost nothing at height 0 and
- * widgets still work — the reserved space is what goes. */
-.footer {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  padding-bottom: 1.5rem;
-}
-
-.footer__bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-  border-top: 0;
-  padding-top: 0;
-  text-align: center;
-}
-
-/* Both compliance lines are centred (owner's review, 2026-09-11: "center
- * justified horizontally"). This block has two stacked children — this theme's
- * RUO line and core's card-icon/copyright grid. The inner grid is returned to
- * normal flow so the display:none card-icon cell cannot leave a phantom first
- * column pushing the copyright off-centre, and `.copyright` is what beats core's
- * `md:text-right`. */
-.footer__bottom .page-width {
-  display: block;
-  width: 100%;
-  text-align: center;
-}
-
-.footer__bottom .copyright {
-  text-align: center;
-}
-
-/* The footer's three middle areas are laid out `justify-between`. Only the
- * centre one is filled (the page-link row), so it would sit hard left without
- * this. */
-.footer__middle {
-  justify-content: center;
-}
-
 /* The Shop disclosure in the header nav is a link, not a list item: no native
- * marker. */
+ * marker. The disclosure itself stays a native <details>/<summary>. */
 summary {
   list-style: none;
 }
@@ -300,18 +193,325 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-/* The one authored moment (FORM: "one authored moment on scroll-in; nothing
- * loops, nothing pulses"). Native CSS scroll-driven animation, no JavaScript:
- * `animation-timeline: view()` ties the reveal to the element's own scroll
- * position, so it cannot leave content hidden the way an observer can — the
- * element is only mid-reveal while it is genuinely entering the viewport.
- * Guarded by @supports, so a browser without scroll-driven animation gets a
- * fully visible, static row rather than an opacity-0 one. Linear timing is
- * correct here: the scrollbar supplies the pacing. */
-@keyframes elune-reveal-in {
+/* Typefaces — Manrope (variable 200–800) for everything, JetBrains Mono
+ * (variable, the existing subset reused) for data. Both self-hosted woff2 from
+ * the theme's static directory: no third-party request, no CDN.
+ *
+ * The previous four-weight static sans is retired with its @font-face
+ * declarations and its four files: it had no Light face, so it could not render
+ * the display step's whisper register, and the step table replaces four aliased
+ * cuts with one variable family. Manrope is semi-geometric with rounded
+ * terminals, so the whisper register keeps a point of view instead of collapsing
+ * into a neutral default. No italics are loaded — the only italic in the system
+ * is the serif review quote.
+ *
+ * Two things are load-bearing and shipped here rather than after the migration:
+ *  - the variable file's weight axis defaults to 200, so any element that
+ *    inherits a size without a weight would render hairline — the body step and
+ *    every inheriting surface state their weight.
+ *  - the latin subset carries neither ≥ (U+2265) nor → (U+2192), so the purity
+ *    declaration renders in JetBrains Mono, whose subset carries it, and every
+ *    arrow in the system is a drawn SVG path rather than a glyph. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/assets/fonts/manrope-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('/assets/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
+
+/* Browser surfaces — the palette reaching the places Tailwind does not paint.
+ * All values from the token home in shadcn.css. */
+
+/* Text selection: the beam fill with ink text. */
+::selection {
+  background-color: var(--beam);
+  color: var(--night);
+}
+
+html {
+  caret-color: var(--night);
+  /* Firefox: a slate thumb on the snow track. The thumb is a control affordance,
+   * not decoration, so it holds the 3:1 non-text floor rather than sitting on
+   * --ash at 1.77:1. */
+  scrollbar-color: var(--slate) var(--snow);
+}
+
+/* WebKit: a 12px snow track with a slate thumb, a 4px snow border and the pill
+ * radius. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--snow);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--slate);
+  border: 4px solid var(--snow);
+  border-radius: var(--r-pill);
+}
+
+/* Keyboard focus ring — one treatment everywhere, fields included: 2px ink at a
+ * 2px offset, 4px on links, with a 2px corner. Never suppressed, never replaced
+ * by a colour change alone, never drawn twice.
+ *
+ * The corner radius is declared here rather than on the outline because
+ * `outline` follows the element's own border-radius. Primitives and anything
+ * with a stronger radius are declared after this rule and keep their own shape;
+ * fields are pinned back to the control radius so a focused field does not
+ * square off. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--r-focus);
+}
+
+a:focus-visible {
+  outline-offset: 4px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-radius: var(--r-ctrl);
+}
+
+/* The page title. Every route has exactly one h1, and core renders its own page
+ * titles with utilities only — `text-3xl font-semibold tracking-tight`, with no
+ * class hook to hang a rule on — so /cart, /checkout, /account/*, the order views
+ * and /404 would otherwise keep a second title convention beside the section
+ * titles. This is the one element declared un-layered, which is also why it is
+ * stated here rather than in the base layer: un-layered CSS beats core's utility
+ * layer, so the step lands instead of losing to `text-3xl`.
+ *
+ * The step is Headline, not Display: display belongs to the homepage offer line
+ * alone, and that h1 carries `.display`, an un-layered class that out-specifies
+ * this element rule. A section title is an h2 and takes the same step. */
+h1 {
+  font-size: var(--text-headline);
+  line-height: 1.12;
+  font-weight: 300;
+  letter-spacing: -0.018em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+/* ---------------------------------------------------------------------------
+ * Primitives — the shared vocabulary every Elune surface composes from, authored
+ * in the approved v5 landing prototype and shipped here so the landing, the
+ * catalogue and the chrome use one definition each rather than three. Declared
+ * un-layered and after the browser-surface rules, so a primitive's own radius and
+ * colour win over the focus corner and over core's utilities.
+ * ------------------------------------------------------------------------- */
+
+/* Shell — one container for the whole storefront. The gutter narrows to 32px at
+ * ≤900px. */
+.shell {
+  width: min(var(--shell), 100% - var(--page-gutter));
+  margin-inline: auto;
+
+  @media screen and (max-width: 900px) {
+    width: min(var(--shell), 100% - var(--page-gutter-sm));
+  }
+}
+
+/* Mono — data only: codes, chemical values, prices, counts, measures and
+ * identifiers. Never a label, a heading, a button, prose. */
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* An inline figure inside prose keeps the prose step's size, so the glyph matches
+ * its sentence instead of dropping to the mono step's 13px. */
+.lede .mono {
+  font-size: 1em;
+}
+
+.display {
+  font-size: var(--text-display);
+  line-height: 1.06;
+  font-weight: 250;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+
+.h2 {
+  font-size: var(--text-headline);
+  line-height: 1.12;
+  font-weight: 300;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-size: var(--text-title);
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.lede {
+  font-size: var(--text-lede);
+  line-height: 1.62;
+  font-weight: 400;
+  color: var(--slate);
+  max-width: 56ch;
+}
+
+.muted {
+  color: var(--slate);
+}
+
+.scope {
+  font-size: var(--text-micro);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Buttons — a full pill, ink fill, snow label, a 1px transparent border and no
+ * shadow ever. Minimum height 44px on every variant, so a button is never the
+ * smallest thing on a row. One filled pill per action group. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 14px 24px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--night);
+  color: var(--snow);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s var(--ease), color 0.16s var(--ease),
+    border-color 0.16s var(--ease);
+}
+
+/* Hover inverts: panel fill, ink label, ink border. Nothing moves, nothing
+ * scales, nothing lifts. Pressed is the same appearance, held. */
+.btn:hover,
+.btn:active {
+  background: var(--panel);
+  color: var(--night);
+  border-color: var(--night);
+}
+
+/* Disabled is ash chrome with an ink label, keeping its shape and its label —
+ * never a category hue and never a beam fill. */
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  background: var(--ash);
+  border-color: transparent;
+  color: var(--night);
+  cursor: not-allowed;
+}
+
+/* A pending action keeps its ink fill and its label rather than greying out, so a
+ * pending order still reads as the action. */
+.btn[aria-busy='true'] {
+  background: var(--night);
+  color: var(--snow);
+}
+
+.btn--sm {
+  padding: 10px 18px;
+  font-size: var(--text-label-sm);
+}
+
+/* A drawn arrow carries `currentColor` and translates 3px on hover; pressed holds
+ * the offset. No glyph arrows exist anywhere in this system. */
+.btn .arw,
+.tlink .arw {
+  transition: transform 0.22s var(--ease);
+}
+
+.btn:hover .arw,
+.btn:active .arw,
+.tlink:hover .arw {
+  transform: translateX(3px);
+}
+
+/* Text links — a second-path action, never a second button. */
+.tlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-label);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--ash);
+  transition: text-decoration-color 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.tlink:hover {
+  text-decoration-color: var(--night);
+}
+
+/* Chips — the neutral pill. Mono at the caption step, mist fill, slate text. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  background-color: var(--mist);
+  color: var(--slate);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption-mono);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+}
+
+/* The badge fill — one of the three places the beam accent is spent. */
+.chip--beam {
+  background-color: var(--beam);
+  color: var(--night);
+}
+
+/* Section rhythm. One override exists for the night band and belongs to that
+ * band's own stylesheet. */
+.section {
+  padding-block: clamp(56px, 7vw, 96px);
+}
+
+/* A hairline rule. */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin: 0;
+}
+
+/* The one authored entrance. `--d` is the per-element delay, stepped 70ms apart
+ * within a set; nothing loops and nothing pulses. Reduced motion removes it
+ * entirely rather than shortening it, and print always shows the content. */
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -319,23 +519,81 @@ summary::-webkit-details-marker {
   }
 }
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: elune-reveal-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 28%;
-    }
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    opacity: 0;
+    animation: rise 0.66s var(--ease) forwards;
+    animation-delay: var(--d, 0s);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+@media print {
+  .rise {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* Core surfaces this theme does not own, brought into the world rather than
+ * overridden in behaviour: one restyle (the filled button vocabulary, which DESIGN
+ * specifies for every route) and one behaviour fix (the payment list's line
+ * clamp). Both are global because cart, checkout, account, product and CMS are all
+ * core-rendered. */
+
+/* Core's shadcn Button. DESIGN's button vocabulary is a full pill, an ink fill and
+ * a 44px floor, and it applies on every route: core's filled primary is what the
+ * product page's "Add to cart", the cart's checkout pill, the checkout's "Place
+ * order" and the age gate's confirm all render, and it ships `rounded-md` and no
+ * minimum height on its own. `bg-primary` is the signal — it *is* the ink fill, so
+ * the icon buttons, quantity steppers, pagination arrows and menu rows, which
+ * render the border variants, are untouched. Hover inverts to a panel fill with an
+ * ink label and an ink border, pressed holds it, a pending action keeps its ink
+ * fill instead of greying out, and the rest of the disabled set takes the ash
+ * chrome with an ink label. */
+[data-slot='button'].bg-primary,
+button.bg-primary {
+  border-radius: var(--r-pill);
+  min-height: 44px;
+}
+
+[data-slot='button'].bg-primary:hover,
+button.bg-primary:hover,
+[data-slot='button'].bg-primary:active,
+button.bg-primary:active {
+  background-color: var(--panel);
+  color: var(--night);
+  border-color: var(--night);
+}
+
+[data-slot='button'].bg-primary:disabled,
+button.bg-primary:disabled {
+  opacity: 1;
+  background-color: var(--ash);
+  color: var(--night);
+  cursor: not-allowed;
+}
+
+[data-slot='button'].bg-primary[aria-busy='true'],
+button.bg-primary[aria-busy='true'] {
+  background-color: var(--night);
+  color: var(--snow);
 }
 
 /* Crypto payment step. Core's PaymentMethods renders every registered payment
  * component's formRenderer inside an `ItemDescription`, which is a <p> carrying
  * Tailwind's `line-clamp-2` — `-webkit-line-clamp: 2` plus `overflow: hidden`.
  * The crypto block is ~152px of real content (order total, three wallet rows,
- * a copy control on each), so the clamp cut it to two lines and the buyer saw
- * no addresses at all: they existed in the DOM, which is why a DOM check
- * reports them present while the screen shows none. Lift the clamp only inside
+ * a copy control on each), so the clamp cut it to two lines and the buyer saw no
+ * addresses at all: they existed in the DOM, which is why a DOM check reports
+ * them present while the screen shows none. The rail list must print in full —
+ * `USDT (ERC-20)` is line-clamped otherwise — so the clamp is lifted only inside
  * the payment list; every other ItemDescription in the store keeps it. */
 .checkout-payment-methods [class*='line-clamp-2'] {
   display: block;
@@ -343,61 +601,112 @@ summary::-webkit-details-marker {
   line-clamp: unset;
   overflow: visible;
 }
-/* Header at narrow widths. The core header packs the wordmark and the category
- * nav into one flex item (~263px at 390px), which stacks the five links into a
- * 184px-tall column and wraps "GH Releasing" onto two lines. `display: contents`
- * dissolves that wrapper so the wordmark, the icons and the nav become direct
- * children of the header row: wordmark plus icons on the first line, the nav on
- * its own full-width second line, wrapping whole labels rather than breaking
- * them mid-name. */
-@media (max-width: 767px) {
-  .header__middle {
-    flex-wrap: wrap;
-    row-gap: 0.5rem;
-  }
 
-  .header__middle__left {
-    display: contents;
-  }
-
-  .header__middle__right {
-    margin-left: auto;
-  }
-
-  nav[aria-label='Main'] {
-    order: 3;
-    flex: 1 1 100%;
-    /* Wrap to a second line rather than scroll horizontally: the store's
-     * top-level destinations are few and a scroll strip hides the last one
-     * behind an affordance nobody reads. Links stay nowrap so a two-word label
-     * wraps whole instead of breaking mid-name. */
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-  }
-}
-
-/* Product page: the two blocks core renders for content this store does not
- * have. The catalog ships no product imagery (scripts/catalog-data.json carries
- * empty image arrays) and no descriptions (the seeded rows have no description
- * body), so core drew its ProductNoThumbnail placeholder in a 562x384 frame and
- * a "Product Description" heading above an empty editor body. The product card
- * already drops its empty thumbnail frame; the detail page was still showing one.
+/* Core's own fields. The account, cart, checkout and CMS forms are core-rendered,
+ * and core paints them with utilities that beat the field step declared in the
+ * base layer above — so wherever a utility wins, the step is restated here,
+ * un-layered, where it lands. Nothing here changes behaviour: it is the field
+ * step, applied to the fields that were missing it.
  *
- * The left column is collapsed whole rather than just the placeholder box: it is
- * a fixed track in core's `grid md:grid-cols-2`, so hiding only the box leaves a
- * dead half-page beside the price and the specification. Both rules key off
- * `.product-slider`, react-slick's root class, which core's Media renders only
- * when the product genuinely has images — so a product that ships photography
- * lays out exactly as core does, with no override to unwind. `:has()` is
- * baseline and the theme already ships scroll-driven animation. */
-.product__detail__left:not(:has(.product-slider)) {
-  display: none;
+ *  - core ships `rounded-md` (6px, which is not a radius step in DESIGN's table,
+ *    where a control is 8px), `shadow-xs` (a light-side shadow this world never
+ *    draws) and `text-base md:text-sm` (the label step, not the body step the
+ *    field takes). The 44px floor needs no restating: `min-height` and core's
+ *    `h-9` are different properties, so the base rule's floor already wins.
+ *  - a field carrying a prefix or suffix icon is wrapped in core's
+ *    `data-slot="input-group"` box and the control inside it is `border-0
+ *    bg-transparent`, so the wrapper is the field a buyer sees. It takes the
+ *    field's own treatment, its affixes stay inside the 1px border, and the one
+ *    focus ring is drawn on the box rather than invisibly inside it — DESIGN:
+ *    "fields keep the global focus ring and add nothing else ... there is no
+ *    separate border-plus-shadow ring in this world".
+ */
+input[type='email'],
+input[type='password'],
+input[type='tel'],
+input[type='text'],
+input[type='number'],
+input[type='search'],
+select,
+textarea,
+[data-slot='select-trigger'] {
+  border-radius: var(--r-ctrl);
+  box-shadow: none;
+  font-size: 1.0625rem;
+  line-height: 1.6;
 }
 
-.product__page__middle > .grid:not(:has(.product-slider)) {
-  grid-template-columns: minmax(0, 1fr);
+/* Core's filled select renders as a button, so the floor the base rule gives
+ * every input has to be stated for it too. */
+[data-slot='select-trigger'] {
+  min-height: 44px;
 }
 
-.product__single__description:has(.editor__html:empty) {
-  display: none;
+/* Disabled is `--ash` chrome with a `--night` label (DESIGN.md Inputs & Fields);
+ * core fades the whole field to 50% on top of that, which takes the label's
+ * contrast with it. */
+input:disabled,
+select:disabled,
+textarea:disabled,
+[data-slot='select-trigger']:disabled {
+  opacity: 1;
+}
+
+/* The wrapper is the field's visible box... */
+[data-slot='input-group'] {
+  min-height: 44px;
+  border-radius: var(--r-ctrl);
+  border-color: var(--hairline);
+  background-color: var(--panel);
+  box-shadow: none;
+}
+
+/* ...and the control inside it stays borderless and transparent, as core intends,
+ * with the field step's padding rather than its own `px-2.5 py-1`. */
+[data-slot='input-group'] [data-slot='input-group-control'] {
+  padding: 0.625rem 0.75rem;
+  border: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* One ring, on the box: the same 2px ink at a 2px offset every other control
+ * takes, with the control radius pinned so the ring's corner matches the field's.
+ * The control inside draws nothing — neither its own outline nor core's 3px ring
+ * shadow — so the field is never ringed twice. */
+[data-slot='input-group']:has([data-slot='input-group-control']:focus-visible) {
+  border-color: var(--night);
+  border-radius: var(--r-ctrl);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+[data-slot='input-group'] [data-slot='input-group-control']:focus,
+[data-slot='input-group'] [data-slot='input-group-control']:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* A field in error carries the destructive stroke on the box as well, because the
+ * box is the thing a buyer sees. */
+[data-slot='input-group']:has([data-slot='input-group-control'][aria-invalid='true']) {
+  border-color: var(--destructive);
+}
+
+/* An affix that holds a button. Core pulls it 0.25rem past the field's own border
+ * and then pads it, so the password reveal overhung the box by 4px and dragged
+ * the field's right edge out of line with its siblings. It sits flush instead,
+ * and its button is a 44x44 target — DESIGN's floor for a standalone control, and
+ * the field's own height — so the icon lands 22px from the border, exactly where a
+ * 20px glyph with the field step's 12px padding would sit. */
+[data-slot='input-group'] > [data-slot='input-group-addon']:has(> button) {
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+[data-slot='input-group'] > [data-slot='input-group-addon']:has(> button) > button {
+  min-width: 44px;
+  min-height: 44px;
 }

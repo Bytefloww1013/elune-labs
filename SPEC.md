@@ -2,9 +2,9 @@
 
 ## 1. Executive Summary & Destination
 
-A simple e-commerce storefront selling peptides, SARMs, and nootropics ("research-use-only" products), built on EverShop 2.2.1 + PostgreSQL, deployed and operated entirely via Docker Compose. Brand: **Elune Labs**. The initial version is deliberately minimal: stock EverShop commerce engine, a custom lightly-styled theme, manual crypto payment (no gateway), an 18+ age gate with research-use disclaimers, and a small placeholder catalog seeded via the REST API.
+A simple e-commerce storefront selling research reference peptides in five categories (GLPs, Bioregulators, Recovery, GH Releasing, Other) — "research-use-only" products — built on EverShop 2.2.1 + PostgreSQL, deployed and operated entirely via Docker Compose. Brand: **Elune Labs**. The initial version is deliberately minimal: stock EverShop commerce engine, a custom lightly-styled theme, manual crypto payment (no gateway), an 18+ age gate with research-use disclaimers, and a small placeholder catalog seeded via the REST API.
 
-**Destination (map epic `elune-labs-tvg`):** a working store at `http://localhost:3000` with admin at `/admin`, running from one `docker compose up -d`, where a customer can browse 3 categories, place an order, and the owner can confirm manual crypto payment and mark it paid in the admin panel.
+**Destination (map epic `elune-labs-tvg`):** a working store at `http://localhost:3000` with admin at `/admin`, running from one `docker compose up -d`, where a customer can browse the five categories, place an order, and the owner can confirm manual crypto payment and mark it paid in the admin panel.
 
 **Non-goals (v1):** payment gateway automation (hosted processor / BTCPay), email marketing, analytics integrations, multi-currency, custom logo design, automated backup infrastructure (documented `pg_dump` only), VPS/TLS deployment (deferred until a host exists), server-side age verification.
 
@@ -21,13 +21,15 @@ A simple e-commerce storefront selling peptides, SARMs, and nootropics ("researc
   - Theme/build note: changes to mounted theme code require `docker compose exec app npm run build` (image bakes core at build; CMD is `npm run start`; migrations run automatically on start).
 
 - **FR-2 Storefront commerce flow**
-  - Home, category listing (Peptides, SARMs, Nootropics), product pages, cart.
+  - Home, category listing (the five categories — GLPs, Bioregulators, Recovery, GH Releasing, Other), product pages, cart.
   - Single-page checkout in stock order: Contact information → Shipping address + shipping method → Payment → Place order → success page.
   - Guest checkout enabled (default).
 
 - **FR-3 Manual crypto payment**
   - Orders are placed with `payment_status = pending` (EverShop built-in offline/COD behavior; admin "Capture" marks paid).
-  - Payment step shows order total plus wallet address blocks for **BTC, USDT (TRC-20), ETH** (placeholder addresses until owner supplies real wallets) and instructs the customer to send payment and paste the transaction ID (TXID) into the order note field.
+  - Payment step shows order total plus wallet address blocks for **BTC (Bitcoin, native SegWit), USDT (Ethereum, ERC-20), ETH (Ethereum, ERC-20)** (placeholder addresses until owner supplies real wallets) and instructs the customer to send payment and paste the transaction ID (TXID) into the order note field.
+  - **USDT is accepted on Ethereum (ERC-20), not on TRON.** The `crypto_wallet_usdt` setting holds an Ethereum address (`^0x[0-9a-fA-F]{40}$`); the retired TRON (`TRC-20`) value and its `T…` placeholder cannot be reused. The rail **fails closed**: a value that is unset or not a valid Ethereum address resolves to null and the row renders as unavailable with no Copy control, never as a payable address. Until the owner configures a real Ethereum address the storefront shows USDT as unavailable, which is the expected state.
+  - The payment step never states or implies when a payment will be detected, credited or confirmed; the order stays `pending` until the owner captures it, and no surface may promise otherwise.
   - Owner verifies payment on-chain in the admin panel and clicks Capture → `payment_status = paid`; the system records an offline payment transaction and order activity.
   - COD/offline wording (display name, instructions) must be customizable so it reads as crypto instructions, not "cash on delivery".
   - **Invariant: an order must not be fulfilled before `payment_status = paid`.** Capture is the only pending→paid path.
@@ -39,10 +41,12 @@ A simple e-commerce storefront selling peptides, SARMs, and nootropics ("researc
 
 - **FR-5 Theme (custom, minimal)**
   - Created with `evershop theme:create`; package.json carries the `theme:*` npm scripts.
-  - Surface: Elune Labs wordmark header, coherent palette/typography, category accents, footer disclaimer block, age-gate modal styling. No bespoke React components beyond these touch points.
+  - Surface: Elune Labs header identity, coherent palette/typography, category accents, footer disclaimer block, age-gate modal styling. No bespoke React components beyond these touch points.
+  - **Design migration in progress (2026-09-17):** the visual world is being replaced with the "Lunar Plates" system specified in root `DESIGN.md`, and the landing route is being reproduced from the owner-approved `docs/design/mockups/elune-landing-mockup-v5.html`. Root `DESIGN.md` governs the visual specification; this FR governs scope (presentation-only, no engine logic touched).
 
 - **FR-6 Catalog seeding**
-  - A re-runnable seed script (kept in the repo, e.g. `scripts/seed-catalog.*` with its JSON data list) authenticates to the admin REST API and creates 3 categories and 12–15 placeholder products (names, prices, per-size simple products e.g. 5 mg/10 mg vials, placeholder images).
+  - A re-runnable seed script (kept in the repo, e.g. `scripts/seed-catalog.*` with its JSON data list) authenticates to the admin REST API and creates the five categories and the placeholder products (names, prices, per-size simple products e.g. 5 mg/10 mg vials, placeholder images).
+  - It also seeds the three CMS pages the header and footer link to — `/faqs`, `/shipping`, `/contact` — idempotently, filling only unset settings so a re-run cannot revert an owner's edits.
   - Re-run must be safe: skip/update existing by `url_key`/`sku` instead of duplicating.
 
 - **FR-7 Admin operations**
@@ -67,7 +71,7 @@ A simple e-commerce storefront selling peptides, SARMs, and nootropics ("researc
 | 4 | `elune-labs-tvg.4` Catalog seeding (research) | **Scripted REST seeding**, JSON product list in repo | `npm run seed` = demo shoes data, dev-only, no custom hook; direct SQL undocumented; manual admin entry non-reproducible. Variants modeled as separate simple products per size. |
 | 5 | `elune-labs-tvg.5` Theme | **Custom theme via `theme:create`, minimal surface** | User trade-off: brand feel accepted, theme maintenance on upgrades acknowledged. Marketplace (SweetDream Bakery) rejected as mismatched. |
 | 6 | `elune-labs-tvg.6` VPS topology | **Deferred** — portable compose now | Caddy-vs-Traefik decided when host + domain exist; backups documented only. |
-| 7 | `elune-labs-tvg.7.1` Store parameters | **USD; flat rate per order; BTC + USDT (TRC-20) + ETH** address blocks | Placeholder addresses swapped for real wallets at setup. |
+| 7 | `elune-labs-tvg.7.1` Store parameters | **USD; flat rate per order; BTC + USDT (Ethereum, ERC-20) + ETH** address blocks | Placeholder addresses swapped for real wallets at setup. The TRON (TRC-20) USDT rail was retired in favour of Ethereum ERC-20; the legacy TRON value is not reusable and leaves the rail unavailable until an Ethereum address is set. |
 | 8 | `elune-labs-tvg.7.2` Checkout capabilities (research) | Use **built-in COD/offline method + core shipping provider**; close the crypto wording/TXID gap via small payment-method extension or COD theme override | EverShop 2.2.1 already provides pending→Capture confirmation, offline transaction records, flat/price-tier/weight-tier rates with free-over-`$X` support — no new machinery beyond payment presentation. |
 
 ## 4. Domain Model & Data Schemas
@@ -129,30 +133,35 @@ Advisory only: not an auth boundary; never enforced server-side; never blocks `/
 
 ### Seed data file (repo artifact, consumed by seed script)
 
+The five categories are the catalog's own keys. The live file is `scripts/catalog-data.json`; this is
+its shape.
+
 ```json
 {
   "categories": [
-    { "name": "Peptides", "url_key": "peptides" },
-    { "name": "SARMs", "url_key": "sarms" },
-    { "name": "Nootropics", "url_key": "nootropics" }
+    { "name": "GLPs", "url_key": "glps" },
+    { "name": "Bioregulators", "url_key": "bioregulators" },
+    { "name": "Recovery", "url_key": "recovery" },
+    { "name": "GH Releasing", "url_key": "gh-releasing" },
+    { "name": "Other", "url_key": "other" }
   ],
   "products": [
     {
       "name": "BPC-157 5mg",
       "sku": "BPC157-5MG",
       "price": 39.99,
-      "category": "peptides",
+      "category": "recovery",
       "qty": 100
     }
   ]
 }
 ```
 
-Validation: `price` numeric > 0; `url_key` kebab-case; admin password ≥ 8 chars with ≥ 1 letter + 1 digit; product counts — 3 categories, 12–15 products total.
+Validation: `price` numeric > 0; `url_key` kebab-case; admin password ≥ 8 chars with ≥ 1 letter + 1 digit; product counts — **five categories**, and every product attached to one of them. (An earlier draft of this section named a three-category trio — Peptides, SARMs, Nootropics — that the catalogue never shipped; the five keys above are the catalog.)
 
 ### Wallet/instruction configuration seam (input to design)
 
-Crypto payment presentation data (3 address strings + per-coin networks + instructions text) must live in one swappable place — store settings or config file — not scattered in templates. Exact mechanism is a design decision (ADR candidate) constrained by: owner can replace placeholder addresses without code changes.
+Crypto payment presentation data (3 address strings + per-coin networks + instructions text) must live in one swappable place — store settings or config file — not scattered in templates. Exact mechanism is a design decision (ADR candidate) constrained by: owner can replace placeholder addresses without code changes. **Networks are fixed as Bitcoin (native SegWit), USDT on Ethereum (ERC-20) and Ethereum (ERC-20)**; the USDT rail is Ethereum, not TRON, and the settings value must be an Ethereum (`0x…`) address. A value that does not match is treated as unconfigured, and the rail renders unavailable rather than payable.
 
 ## 5. API & Interface Specifications
 
@@ -190,7 +199,7 @@ Error handling: REST errors return 4xx with an error payload; token expiry → 4
 Lean, manual-first (v1 has no test framework):
 
 - **Bring-up smoke (documented checklist):** clean `docker compose up -d` → `GET http://localhost:3000` 200 → `/admin` 200 → login works.
-- **Seed verification (in the seed script):** after run, assert 3 categories exist and product count is within 12–15; exit non-zero with the offending payload on any API failure.
+- **Seed verification (in the seed script):** after run, assert the five categories exist and every product is attached to one of them; exit non-zero with the offending payload on any API failure.
 - **Checkout E2E (manual or REST-scripted):** add product to cart → complete checkout with flat-rate shipping → order appears in admin as pending-payment → Capture → `payment_status = paid` → offline transaction recorded.
 - **Compliance checks:** fresh browser context shows 18+ modal; confirm → cookie set; reload → no modal; footer + a product page contain the RUO string; `/admin` and API routes unaffected by the gate.
 - **Persistence check:** `docker compose down && docker compose up -d` → catalog, order, and settings survive.

@@ -18,22 +18,22 @@ import React from 'react';
  *
  * So the section is titled as external research on the COMPOUND, and states
  * before the list what it does and does not document. The global RUO footer is
- * not sufficient cover: this is adjacent to one specific purchasable item, so the
- * qualification is adjacent too.
+ * not sufficient cover: this is adjacent to one specific purchasable item, so
+ * the qualification is adjacent too.
  *
  * It is also kept structurally unlike the specification table — no ruled cells,
  * no borders, nothing resembling the analytical record — so the two cannot be
- * mistaken for one another.
+ * mistaken for one another (DESIGN.md, About This Compound).
  *
  * The heading is "About this compound" rather than "Product Description" on
  * purpose. Core's ProductSingleDescription renders its own "Product Description"
  * <h3> into this same area; it is hidden only while the product row has no
- * description (global.scss hides `.product__single__description:has(...:empty)`).
- * Reusing that heading would put two identical headings on the page the moment
- * an operator filled the description field in admin.
+ * description (catalog.scss hides `.product__single__description` when its
+ * editor body is empty, and with a description present the two headings would
+ * otherwise be identical).
  *
  * The class `product__single__description` is likewise never used here — that is
- * the class global.scss keys the hide on, so reusing it would hide this too.
+ * the class the hide is keyed on, so reusing it would hide this too.
  */
 export default function ProductDescription({
   product
@@ -46,22 +46,20 @@ export default function ProductDescription({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="mb-3 text-xl font-semibold tracking-tight">About this compound</h2>
+    <section className="about mt-8">
+      <h2 className="h3">About this compound</h2>
 
       {narrative.summary.map((paragraph, index) => (
-        <p key={index} className="mt-3 max-w-[70ch] leading-relaxed text-foreground first:mt-0">
+        <p key={index} className="mt-3 max-w-[70ch] leading-relaxed first:mt-0">
           {paragraph}
         </p>
       ))}
 
       {narrative.literature && narrative.literature.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-sm font-semibold text-foreground">
-            Published research on this compound
-          </h3>
+          <h3 className="about__subheading">Published research on this compound</h3>
           {/* States what the list is and is not, before the list is read. */}
-          <p className="mt-1 max-w-[70ch] text-sm leading-relaxed text-muted-foreground">
+          <p className="about__note muted mt-1 max-w-[70ch]">
             These are published studies describing the compound itself. They document the
             external research literature — not this product, not the batch supplied, and not any
             analysis of it. No certificate of analysis is published for any product in this
@@ -74,14 +72,14 @@ export default function ProductDescription({
             {narrative.literature.map((ref) => (
               <li key={ref.url} className="text-sm leading-relaxed">
                 <a
+                  className="about__citation"
                   href={ref.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
                 >
                   {ref.title}
                 </a>
-                <span className="block text-muted-foreground">{ref.source}</span>
+                <span className="muted block">{ref.source}</span>
               </li>
             ))}
           </ul>

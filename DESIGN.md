@@ -1,6 +1,6 @@
 ---
 name: "Elune Labs Design System (Lunar Plates)"
-description: "Light-only storefront design system — cool lunar neutrals, midnight ink, one lime accent, five category accents, one bounded night region. Proposed target system; not shipped."
+description: "Light-only storefront design system — cool lunar neutrals, midnight ink, one lime accent, five category accents, one bounded night region. Approved target system; migration in progress."
 colors:
   snow: "#F7F8FA"
   panel: "#FFFFFF"
@@ -198,9 +198,13 @@ components:
 
 # Design System: Elune Labs (Lunar Plates)
 
-**Document status:** Proposed target system, not shipped. Every visual value below is derived from the
-approved v5 landing prototype (`docs/design/mockups/elune-landing-mockup-v5.html`) and its normative prose
-(`docs/design/mockups/DESIGN-mockup-v5.md`), extended to project-wide surfaces that the prototype does not
+**Document status:** Migration in progress. The owner selected the exact v5 landing prototype as the winning
+direction on 2026-09-17 (see *The v5 Landing Exception* below), the specification here is settled, and the
+migration into `themes/elune` is underway. No part of this document is a claim that the theme already renders
+this world, and nothing is verified until the implemented pages have been reviewed. Every visual value below
+is derived from the approved v5 landing prototype (`docs/design/mockups/elune-landing-mockup-v5.html`) and its
+normative prose (`docs/design/mockups/DESIGN-mockup-v5.md`), extended to project-wide surfaces that the
+prototype does not
 render. Where this file describes how a surface behaves, that is a specification of what the surface must
 do, not a report of what the theme already does. Nothing here is a statement that the theme in
 `themes/elune` already renders this world.
@@ -218,8 +222,11 @@ do, not a report of what the theme already does. Nothing here is a statement tha
   The admin console is core-rendered and outside this theme; the age gate never blocks it or any API route.
 - **Decisions closed in this document:** the display face (Manrope), the single bounded `--night` region,
   the beam accent's scope, the value ribbon as the value-props component, the night-cap hero photograph,
-  differentiated radii, the dark-band review-card shadow, the directed review set, and the payment rail.
-  An earlier draft carried these as owner-confirmable decisions; they are resolved here and are not open.
+  differentiated radii, the dark-band review-card shadow, the directed review set, and the payment rails —
+  Bitcoin, **USDT on Ethereum (ERC-20)** and Ethereum. An earlier draft carried these as owner-confirmable
+  decisions; they are resolved here and are not open. **The v5 landing's own layout, type, footer, mono usage,
+  claims and caveat placement are settled too**, by the owner's 2026-09-17 instruction; they are recorded as a
+  scoped exception in the next section and are not open to redesign.
 
 ## Overview
 
@@ -262,7 +269,85 @@ them:
 - **The record omits what it cannot source.** `themes/elune/src/data/productSpecs.ts` is the only record source, and a
   field that is not sourced renders no row at all.
 - **Claims are operational.** Every statement the storefront makes about itself must be true today and
-  supportable on request.
+  supportable on request — except where the owner has directed otherwise on the landing route, which is
+  recorded as a scoped exception below and nowhere else.
+
+## The v5 Landing Exception
+
+**Recorded from the owner's instruction, 2026-09-17: the exact v5 landing wins.** The owner selected
+`docs/design/mockups/elune-landing-mockup-v5.html` as the reference the landing route reproduces, and directed
+that this document stop ruling against it. Where this document and that prototype disagree **on the landing
+route**, the prototype governs. The exception is scoped to the landing route and to the seven items below, and
+to nothing else.
+
+| # | v5 governs on the landing | The rule it supersedes there |
+|---|---|---|
+| 1 | **Layout.** The band order and count, the grids, the gutters and the paddings as the prototype renders them. | The 8px unit is a rhythm for the other routes; the landing's own spacing is the prototype's. |
+| 2 | **Type.** The literal sizes and weights as rendered — nav 15.5px, small print 13.5px, spec labels 14.5px, cart count 11px, review meta 13.6px, sheet foot link 14px. | "No surface may declare a size that is not a step" resolves off-step literals onto steps; the step table governs every route except the landing. |
+| 3 | **Footer.** The four-column grid (`1.4fr 1fr 1fr 1fr`), its three link lists, and the **Payment** column listing Bitcoin, **USDT (ERC-20)** and Ethereum. | The superseded centred page-link row and the superseded rail label. |
+| 4 | **Mono.** The prototype's mono usage as rendered, including the inline `.mono` span around the prose word "everyone" in the hero lede. | The Mono-Is-Data Rule's "no mono span around a word that is not a value" — which still binds every other route. |
+| 5 | **Claims.** The hero lede and the ribbon's five statements, verbatim as the prototype renders them: "Tracked & discreet, flat rate shipping" · "Bitcoin, USDT (ERC-20), and Ethereum Accepted" · "Batch tracking for each vial" · "Best in class factory direct pricing" · "Unbeatable delivery rate. Zero issues." | "Unsupportable claims are not normalised into the system" and the claim rules' veto over superlatives — on the landing route only. |
+| 6 | **Reviews.** The three directed review cards in the night band, their heading, their quotes, their name/city/date meta and their order photographs, as rendered — plus the transparency foot **verbatim**, including "Collected from completed orders and published unedited." | The publication gate ("no review card renders until …"), the "no-purity-caveat-here" ruling, and any correction of the transparency foot's collection-method claim. |
+| 7 | **Caveat placement.** The purity caveat sentence renders as the band's closing foot line, directly under the transparency foot. | "renders directly below the plate sheet" — the landing's own position is the approved one. |
+
+**What the exception does not do.**
+
+- **It does not touch accessibility.** `<main>`, one `<h1>` per page, heading order without level skips, real
+  alt text, the 44px target floor, the focus ring, and the AA contrast floor hold on the landing exactly as
+  they hold everywhere else. The prototype's own structural defects — sections as direct body children with no
+  `<main>`, card titles and footer column labels as `<h3>` with no `<h2>` above them — are corrected in the
+  build, and correcting them changes no visual value in the table above.
+- **It does not carry into the global system.** A ribbon statement, a superlative or an inline mono prose span
+  is approved *on the landing route*; none of it becomes a token, a component default or a pattern another
+  route may copy. The next route that wants one needs its own owner instruction.
+- **It does not extend to the product, category, cart, checkout, confirmation or account routes**, which take
+  the token layer, the step table, the card anatomies and the claim rules unchanged.
+- **It does not make any of the supplied copy evidence.** See the next subsection.
+
+### Owner-selected copy is not evidence
+
+The landing's hero lede, its five ribbon statements, the three review quotes with their names, cities, dates
+and order photographs, and the transparency foot were **supplied and selected by the owner**. They render
+because the owner directed that they render. That direction is a decision about *what the page shows*; it is
+not, and must not be read as, any of the following:
+
+- **Not consent evidence.** Nothing here records that the three reviewers consented to publication. No consent
+  record exists in this repository, and none may be inferred from the fact that the cards ship.
+- **Not order evidence.** Nothing here links any quote to a real order, a real payment or a real shipment. It
+  is not a record that any of those three orders happened.
+- **Not quality evidence.** Nothing here records that any claim was tested, measured or checked. "Unbeatable
+  delivery rate. Zero issues.", "Best in class factory direct pricing", "affordable bulk pricing for everyone"
+  and "Batch tracking for each vial" are **copy the owner chose to run**, and the storefront now makes them.
+  No source, measurement or audit for any of them exists in this repository, and this document does not supply
+  one, soften them, or claim they are substantiated.
+- **Not a review process.** No editorial, legal or compliance review of this copy is recorded here, and none
+  is implied. Only the owner's instruction to render it is on record. Any future claim that this copy was
+  reviewed, consented, verified or tested is unsupported until an actual artifact says so.
+
+**Factual substantiation risk, listed explicitly.** These strings are statements of fact made to customers,
+and each carries a risk that should be visible to whoever maintains them rather than buried in a caveat.
+Being owner-selected, fixed, or merely present in a prototype does not make any of them non-claims, and a code
+comment that hedges one does not neutralize what the page tells a visitor.
+
+| String (landing, owner-selected) | What it asserts | Evidence in this repository |
+|---|---|---|
+| "Collected from completed orders and published unedited." (transparency foot) | That a collection method exists and that reviews came from completed orders — i.e. real, completed transactions | **None.** No collection record, order link or consent record exists. |
+| "Batch tracking for each vial" (ribbon) | That every vial is tracked by batch | **None.** Neither `catalog-data.json` nor `productSpecs.ts` carries a batch or lot field. |
+| "Unbeatable delivery rate. Zero issues." (ribbon) | A superlative comparative delivery claim | **None.** No delivery data, and the claim is a comparison against unnamed competitors. |
+| "Best in class factory direct pricing" (ribbon) | A comparative pricing ranking | **None.** No comparable pricing data; "best in class" is a ranking nobody here established. |
+| "affordable bulk pricing for everyone" (hero lede) | Unbounded affordability and volume terms | **None.** The catalogue has no bulk tier and no price-tier data. |
+| "Vials arrived sealed, labeled…", "shipping is quick" and the like (quotes) | Specific product, packing and delivery-speed outcomes per order | **None.** No order linkage, no substantiation per order. |
+
+**The consequence is a live, accepted risk, recorded here rather than resolved.** The owner directed these
+strings onto the page knowing they describe an operation the repository cannot evidence, and that decision is
+theirs to make. What this document adds is that the risk is *named*: none of these statements is independently
+verified, none may be described as substantiated or reviewed, and each is something a customer could
+reasonably rely on. If any of them is ever challenged, the honest answer starts from this table.
+
+This is the honest reading of the exception and it is binding: the exception changes what the landing renders,
+never what this repository can prove about it. Where a document, a comment or a commit message could be read
+as asserting consent, order linkage, measurement or review for this material, it is wrong and must be
+corrected rather than relied on.
 
 ## Colors
 
@@ -445,9 +530,10 @@ letterspaced uppercase kickers anywhere except a notice's inside caption.
 **Type is a token, weight is a choice.** Sizes come from the step table and nothing else; the weight is
 picked per surface from Manrope's variable range. Off-step literal sizes left in the landing prototype
 (nav 15.5px, small print 13.5px, spec labels 14.5px, cart count 11px, button 16px, review meta 13.6px,
-sheet foot link 14px) resolve onto the nearest step when the component is rebuilt — `label-sm`, `micro`,
-`micro`, `caption`, `label`, `mono`, `label-sm` respectively. No
-surface may declare a size that is not a step.
+sheet foot link 14px) are **kept on the landing route**, which the owner approved as rendered (see The v5
+Landing Exception, item 2). On every **other** route those literals resolve onto the nearest step when the
+component is rebuilt — `label-sm`, `micro`, `micro`, `caption`, `label`, `mono`, `label-sm` respectively. No
+other surface may declare a size that is not a step.
 
 ### Hierarchy
 
@@ -479,9 +565,11 @@ lede, 48ch for the hero lede, 64ch for the band's transparency foot, 24ch for th
 **The Mono-Is-Data Rule.** JetBrains Mono appears only on chemical data (CAS number, molecular formula,
 molecular weight, sequence), prices, counts, measures, and identifiers (SKU, lot, wallet address, TXID,
 review date). It never carries a label, a heading, a button, a link's prose, or body text. If a string is a
-word rather than a value, it is not mono. The prototype violated this once — it wrapped the prose word
-"everyone" in the lede's inline mono span — and the rule is restated here as binding for every surface, with
-no exception. The only `.mono` spans permitted inside prose are figures and identifiers.
+word rather than a value, it is not mono. **This binds every route except the landing**, where the owner
+approved the prototype's own mono usage — including the inline `.mono` span around the prose word "everyone"
+in the hero lede — as rendered (see The v5 Landing Exception, item 4). That span is landing copy, not a
+pattern: no other route may wrap a prose word in mono, and outside the landing the only `.mono` spans
+permitted inside prose are figures and identifiers.
 
 **The Steps-Are-The-Scale Rule.** Sizes come from the step table above; the weight is chosen per surface from
 Manrope's variable range. Display sits at 250 and headline at 300 — the whisper register is the signature of
@@ -554,7 +642,8 @@ the bottom with `margin-top: auto`, so the price row aligns across the row).
 
 **The light side is flat; hairlines and tone do the separating.** Depth on snow is tonal — snow → mist →
 white panel — plus a 1px hairline at every edge. Nothing else on the light side casts a shadow: not a card,
-not a menu panel, not a hover, not the checkout's TXID card, which explicitly cancels both shadow and ring.
+not a menu panel, not a hover, not the checkout's TXID capture panel, which explicitly cancels both shadow and
+ring.
 There are no gradients, no glow, and no backdrop blur anywhere except the age gate's scrim.
 
 **The dark side carries exactly one shadow.** The review card on the night band is lifted with
@@ -573,7 +662,7 @@ single shadow in the whole system, on the modal. The modal keeps its shadow; the
 - **Dark-band review card** (`0 8px 24px rgba(0, 0, 0, .22)`): the review card on the night band, and
   nothing else on that band.
 - **None** (`shadow-none`, `ring-0`): the explicit resting state for panels that would otherwise inherit a
-  core shadow — the TXID card, the wallet panel, the shop menu panel, every light-side card.
+  core shadow — the TXID capture panel, the wallet rail panel, the shop menu panel, every light-side card.
 
 ### Named Rules
 
@@ -655,13 +744,14 @@ Components are plain, text-led and named by their shipped file. Every value come
   the links are optically centred. Left: the approved header lockup at 48px display height, `width: auto`,
   aspect preserved, `alt` empty beside an accessible brand name on the link. Centre: the destination list.
   Right: the cart pill, one filled pill, and — below 900px — the mobile disclosure.
-- **Destinations:** Home · New releases · Shop · FAQs · Shipping · Contact us. Six destinations, each bound
-  to a route that exists. The prototype's header carries seven and includes **Payments**, which is **not** a
-  destination here and must not be added: the theme has no `/payments` route, and a link to a page that does
-  not exist is worse than no link. Payment is taken by hand — how an order is paid, which rail is accepted,
-  and what happens after live in prose the owner can maintain, plus the FAQ page and checkout, not in a page
-  this theme cannot render. The footer's payment column is titled `Payment` (singular) and lists rails as
-  plain mono text, so it is a list of methods rather than a promise of a page. The Shop disclosure holds the
+- **Destinations:** Home · New releases · Shop · FAQs · Shipping · Contact us, plus **Payments** — seven, as
+  the v5 prototype renders them (see The v5 Landing Exception). Six are bound to the routes named above;
+  **Payments is bound to `/faqs`**, not to a `/payments` page, because no such page exists and no link may
+  point at a page that does not. The destination is truthful: the FAQs page carries the "How do I pay?" block
+  that explains the manual crypto flow, so a visitor asking how to pay lands on the answer. It is a real link,
+  never an inert `#` anchor and never a fragment. Payment is taken by hand — how an order is paid, which rail
+  is accepted, and what happens after live in prose the owner can maintain, plus the FAQs page and checkout,
+  not in a page this theme cannot render. The Shop disclosure holds the
   five categories in fixed domain order (`glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`).
 - **Shop disclosure:** a native `<details>`/`<summary>` holding a hairline panel on `--panel`, `--r-card`,
   no shadow, rows at `--r-ctrl`. Each category row carries its mono count and clears the 44px touch target.
@@ -725,9 +815,11 @@ Five card families, one vocabulary: a surface, a hairline, a shade of radius, no
   order photograph as a direct sibling of the caption, 20px below it, 4:3, `object-fit: cover`, 14px inner
   radius, 1px `--night-rule` edge, `--night` background. The photograph is an order shot, never a face
   avatar; monogram discs are gone and may not return.
-- **Flush panel.** The checkout wallet panel, the TXID card, a notice block, the shop menu panel: a
-  `--panel` surface on a hairline, `--r-ctrl` for form-bearing panels and `--r-card` for menus, shadow none,
-  ring zero.
+- **Flush panel.** The checkout wallet panel, the TXID capture panel, a notice block, the shop menu panel: a
+  `--panel` surface on a hairline, shadow none, ring zero. Radius follows the panel's job: **`--r-ctrl` (8px)
+  for every form-bearing or control-bearing panel** — the wallet rail list and the TXID field among them, since
+  both carry controls and sit in a form — and `--r-card` (16px) for menus, which are navigation surfaces
+  rather than form ones. A payment panel is never `--r-card`.
 - **No empty frames, ever.** A catalogue card is complete on name, form, size and price; the cutaway is
   authored, not a photograph; and the image element renders only where an image actually exists. There is no
   placeholder box, no grey rectangle, and no "image coming soon".
@@ -737,8 +829,10 @@ Five card families, one vocabulary: a surface, a hairline, a shade of radius, no
 - **Shape:** `--snow`, hairline top rule, `padding-block: 56px 40px`.
 - **Grid:** `1.4fr 1fr 1fr 1fr` at a 32px gap — brand column then three link columns: **Catalogue** (All
   products, New releases, and the five categories), **Information** (Home, FAQs, Shipping, Contact us),
-  **Payment** (Bitcoin, USDT (TRC-20), Ethereum) — the three rails the storefront accepts, set as plain
-  mono text and **not** as links, because no per-rail page exists. Every destination that existed in the superseded
+  **Payment** (Bitcoin, USDT (ERC-20), Ethereum) — the three rails the storefront accepts. The v5 prototype
+  renders all three as links and the owner approved that treatment: each is an `<a href="/faqs">`, pointing at
+  the page that explains how payment works, and none points at a per-rail page, because none exists. USDT is
+  **Ethereum (ERC-20)** — see Crypto Payment Panel. Every destination that existed in the superseded
   centre-aligned page row is present here; only the arrangement changed.
 - **Brand column:** the approved mark at 44px height with 18px below it, then one plain line of positioning.
   The mark is decorative (`alt=""`, `aria-hidden`), so the brand is announced exactly once — through the
@@ -851,14 +945,30 @@ A modal on the first storefront visit: advisory only, 30-day cookie, client-side
 ### Crypto Payment Panel
 
 The payment step shows the order total above a definition list of wallet addresses — **Bitcoin (native
-SegWit), USDT (TRC-20), and Ethereum (ERC-20)** — inside one `--panel` card on a hairline, radius `--r-card`,
-shadow none, ring zero.
+SegWit), USDT (Ethereum, ERC-20), and Ethereum (ERC-20)** — inside one `--panel` card on a hairline, radius
+`--r-ctrl` (8px), shadow none, ring zero. The panel is form-bearing — it carries a copy control and sits beside
+the TXID field — so it takes the control radius, not the card radius; the same applies to the TXID panel. See
+**Flush panel** under Cards for the rule this follows.
 
-- **Rail:** USDT is **TRC-20** (TRON). Product and checkout truth — `PRODUCT.md` and the payment ADR in
-  `docs/design/8-2-ui-compliance-payment.md` — plus the admin-editable settings keys
-  (`crypto_wallet_usdt`, network label `TRON — TRC-20`) govern here. An earlier prototype draft printed
-  `USDT (ERC-20)` in the trust ribbon and the footer; that string is wrong and is corrected everywhere it
-  appeared in copy.
+- **Rail — USDT is Ethereum (ERC-20).** The storefront accepts USDT on Ethereum, not on TRON. Network label:
+  `USDT — Ethereum (ERC-20)`. This is the owner's decision and it is global: the same label and the same rail
+  govern the checkout panel, the value ribbon, the footer and every other surface. The superseded TRON
+  (`TRC-20`) reading is retired; it may not reappear in copy, a label, a placeholder or a test.
+- **The rail fails closed.** `crypto_wallet_usdt` resolves only when the stored value is a 40-hex-digit
+  Ethereum address (`^0x[0-9a-fA-F]{40}$`). Anything else — unset, a legacy TRON `T…` value, or an old
+  placeholder — resolves to null, and the row renders as unavailable: the plain sentence **"Not configured —
+  contact us before sending."** in place of an address, with **no Copy control**. An empty value disables the
+  rail; it never falls back to a default. The consequence is deliberate and expected: **the shipped storefront
+  shows USDT as unavailable until the owner saves a real Ethereum address**, because the stored value is the
+  retired TRON placeholder.
+- **The old TRON settings cannot be reused.** Nothing about a TRON configuration carries over — not the
+  address, not the placeholder sentinel, not the admin label. Migrating the rail means configuring a new
+  **Ethereum** address through the admin console (Settings → Payment) or `POST /api/settings`; the owner must
+  hold an Ethereum wallet that can receive USDT on ERC-20, and the address is pasted as `0x…`. There is no
+  conversion path and no fallback rail: until that happens, customers pay by Bitcoin or Ethereum only.
+- **Fail-closed is the whole rule.** No surface may render a placeholder address as if it were payable, mark
+  an unconfigured rail as available, or print a "coming soon" state. An unavailable rail says it is
+  unavailable, and the other two rails stay fully usable.
 - **Addresses:** mono at the mono step, `overflow-wrap: anywhere` so they break across lines, each row with a
   small pill-labelled "Copy" control whose hit area is at least 44px.
 - **Copy fallback:** the storefront is served over plain http on a LAN/tailnet address, where
@@ -868,6 +978,9 @@ shadow none, ring zero.
   with the destructive treatment reserved for a genuine validation failure.
 - **Manual only:** no gateway, no card fields, no automated on-chain verification UI. Addresses and
   instructions are edited in the admin console and take effect immediately.
+- **No confirmation guarantee.** The panel and its instructions never promise that payment will be detected,
+  credited or confirmed within any time; the order sits at `pending` until the owner captures it, and no
+  surface may say otherwise. Manual verification instructions must not imply an automated check.
 - **No certificate or verification affordance** appears beside a payment row. A lot or batch identifier,
   where the catalogue carries one, is plain product data — never proof, never a link to a document that does
   not exist.
@@ -973,29 +1086,35 @@ decoration on top of the page — **the ribbon *is* the features component**.
   component, not a degraded one.
 - **No responsive rules:** a ticker is width-agnostic, so the ribbon needs none of the ledger's six override
   blocks.
-- **Copy rule — this is the load-bearing part.** A ribbon statement is a claim the storefront makes about its
-  own operation, so it must be **true today, operationally supportable on request, and reviewed for
-  compliance before production**. Three consequences are binding:
+- **Copy rule — this is the load-bearing part, and the landing is a recorded exception to it.** A ribbon
+  statement is a claim the storefront makes about its own operation, so outside the landing it must be **true
+  today, operationally supportable on request, and reviewed for compliance before production**. Three
+  consequences are binding on every route except the landing route:
   1. **Owner-supplied copy is not automatically approved copy.** A statement supplied for the band is
      reviewed against this section before it renders.
-  2. **Unsupportable claims are not normalised into the system.** Three candidate strings are **not
-     approved copy** and do not render anywhere: "Unbeatable delivery rate. Zero issues." (a superlative
-     delivery claim with no source in this repository, contradicting the inherited no-speed-claims rule);
-     "Best in class factory direct pricing" (a comparative superlative — published, comparable pricing is a
-     fact this storefront can state, while "best in class" is a ranking nobody here has established); and
-     "affordable bulk pricing for everyone" (an unbounded affordability and volume claim — the catalogue has
-     no bulk tier and no price-tier data at all today). None of the three may be softened into a variant
-     that still makes the superlative, and none may be reintroduced as "owner copy".
-  3. **A batch-tracking statement does not render today.** Neither `scripts/catalog-data.json` nor
-     `themes/elune/src/data/productSpecs.ts` carries a batch or lot field. It may render only after a real
-     field exists; even then, stating an identifier's existence is allowed while implying published evidence
-     is not — no certificate, per-batch document, confirmation affordance or "verified" label.
-- **Approved statement set** — the four statements the band renders, each supportable from this repository
-  today: **flat-rate shipping**; **Bitcoin, USDT (TRC-20) and Ethereum accepted**; **form, storage and the
-  purity declaration carried on every product**; and **prices in USD with no account required**. The
-  prototype's ribbon is **rebuilt** against this list rather than treated as production truth: its copy is
-  owner-supplied layout filler, and a statement appearing there is not evidence that the statement is true.
-  The band accepts new statements through the copy rule above, and nothing else.
+  2. **Unsupportable claims are not normalised into the system.** Three candidate strings — "Unbeatable
+     delivery rate. Zero issues." (a superlative delivery claim with no source in this repository,
+     contradicting the inherited no-speed-claims rule); "Best in class factory direct pricing" (a comparative
+     superlative — published, comparable pricing is a fact this storefront can state, while "best in class"
+     is a ranking nobody here has established); and "affordable bulk pricing for everyone" (an unbounded
+     affordability and volume claim — the catalogue has no bulk tier and no price-tier data at all today) —
+     may **not** be copied onto another route, may not be softened into a variant that still makes the
+     superlative, and may not be cited as "owner copy" to justify their use elsewhere. They render on the
+     landing route only, because the owner directed exactly that (see The v5 Landing Exception).
+  3. **A batch-tracking statement is landing-only today.** "Batch tracking for each vial" renders on the
+     landing route by the same direction, and **neither `scripts/catalog-data.json` nor
+     `themes/elune/src/data/productSpecs.ts` carries a batch or lot field** — so the statement is owner-selected
+     copy, not a fact this repository can demonstrate. It may not be copied to another route, and no surface
+     may imply published evidence behind it: no certificate, per-batch document, confirmation affordance or
+     "verified" label. If a real batch field is ever added, stating an identifier's existence becomes
+     supportable; implying evidence still does not.
+- **What the band renders.** In the shipped landing the ribbon carries the owner's five statements verbatim,
+  as the v5 prototype renders them: **"Tracked & discreet, flat rate shipping"**, **"Bitcoin, USDT (ERC-20),
+  and Ethereum Accepted"**, **"Batch tracking for each vial"**, **"Best in class factory direct pricing"** and
+  **"Unbeatable delivery rate. Zero issues."** The rail named in the second statement is now correct as
+  written — USDT is Ethereum (ERC-20) — but the other four are owner-selected copy, and the storefront making
+  a statement is not evidence that the statement is true. Any other route that wants one of these statements
+  takes it through the copy rule above, and nothing else.
 
 ### Hero & Plate Sheet
 
@@ -1010,18 +1129,26 @@ The homepage's first viewport, and the clearest statement of the thesis: object 
   than rewritten if the owner ever wants a number in it.
 - **Headline:** "Research peptides. Direct from the source. Uncompromising purity." — three beats, sentence
   case, whisper weight.
-- **Lede:** it names the mechanism — the purity declaration, transparent pricing, and a frictionless order —
-  and the only mono span inside it is the `≥99%` figure, kept at the prose size. The figure is a
-  declaration carried on every product; it is never restated as a verification, and it never implies that a
-  batch was tested, accepted or rejected — no batch or lot record exists to point at.
+- **Lede — landing copy, owner-selected.** It names the purity declaration, the pricing and the order
+  process, and it carries two inline `.mono` spans as the v5 prototype renders them: the `≥99%` figure and the
+  prose word "everyone". The `≥99%` figure is a declaration carried on every product; it is never restated as
+  a verification, and it never implies that a batch was tested, accepted or rejected — no batch or lot record
+  exists to point at. The mono span around "everyone", and the lede's "affordable bulk pricing for everyone"
+  claim, are **owner-selected copy rendered on the landing route** under The v5 Landing Exception: they do not
+  become a system pattern, they do not license an inline mono prose span or a bulk-pricing claim on any other
+  route, and nothing in this repository substantiates the claim. The catalogue carries no bulk tier and no
+  price-tier data.
 - **Plate 01** (`0.96fr`): the hero plate sheet described under Cards, with the branded vial photograph at
   its native 3:4, framed by `object-fit: cover` alone at every width — no transform, no crop hack, no
   letterbox seam against `--snow`, and no ≤640px aspect-ratio override. Alt text describes the actual
   subject: a sealed glass vial with a midnight-navy crimp cap and the Elune Labs label, lyophilized powder
   at the base, on a pale seamless ground.
-- **Purity caveat (required):** the caption carries the `≥99%` declaration, so the sentence "The purity
-  value is a product specification, not a batch test result." renders directly below the plate sheet, where
-  the figure is actually read.
+- **Purity caveat (required):** the sentence "The purity value is a product specification, not a batch test
+  result." renders wherever the `≥99%` declaration is read. On the **landing route** the approved position is
+  the band's closing foot line — the last line of the night band, directly under the reviews' transparency
+  foot, as the v5 prototype renders it (see The v5 Landing Exception). On the **product route** it renders
+  directly below the specification table. The superseded placement — directly below the plate sheet — is not
+  what the owner approved and is not built.
 - **Why this asset:** the cap's midnight navy is the palette's own ink family, and the label puts the
   approved mark at product scale in the first viewport. The earlier teal-cap asset is superseded.
 
@@ -1030,12 +1157,20 @@ The homepage's first viewport, and the clearest statement of the thesis: object 
 Three directed reviews, on the night band, above the footer. This is a **scoped, recorded exception** to the
 no-fabricated-social-proof rule and to a surface brief that forbade testimonials; the exception covers this
 section and nothing else — no invented metrics, no partner logos, no press marks, no star ratings, no
-purchase counts anywhere.
+purchase counts anywhere else.
 
-The supplied quotes, names, dates and photographs are **pre-production testimonial material**, not proof of
-completed orders. No review card or "From recent orders" heading renders until each quote has documented
-customer consent, order linkage, attribution and truth review. The three-card treatment remains the approved
-visual pattern; publication remains gated by evidence.
+**The section renders.** The owner directed the three cards to ship as the v5 prototype renders them — quotes,
+names, cities, dates and order photographs — and that direction is recorded in The v5 Landing Exception. The
+superseded rule that held the cards behind a publication gate is lifted, and no surface may re-introduce a
+gate, hide the section, or describe it as blocked or prohibited.
+
+**What the section is not.** The supplied quotes, names, dates and photographs are **owner-selected
+testimonial material**. Their presence is not proof of completed orders, not evidence of customer consent, and
+not evidence that anything in them was checked. No consent record, order link or truth review exists in this
+repository for any of the three, and none may be inferred, fabricated or asserted in a comment, a document or
+a commit message. The privacy treatment below is a design rule the cards follow; it is not a consent record.
+The transparency foot's collection claim is owner-selected copy and shares this status — see *Owner-selected
+copy is not evidence* for the full list and the risk it carries.
 
 - **Band:** the single permitted `--night` region, carrying the cratered-disc motif and the reviews. Heading
   "From recent orders." at the headline step, max 24ch.
@@ -1047,16 +1182,23 @@ visual pattern; publication remains gated by evidence.
   no verification adjective.
 - **Privacy:** first name plus last initial, city plus state abbreviation, month and year. No faces, no
   avatars, no full names.
-- **Transparency foot:** the closing line names the collection method and the moderation policy — the
-  method is generated from the method actually in force, never hard-coded, so the line says what was really
-  done rather than asserting a default. Until a method is recorded, the line states only that reviews are
-  published unedited with names shortened to first name and last initial; it may print "collected from
-  completed orders" only when order linkage is verified for every published review. It sits at the micro
-  step in `--night-muted`, 64ch, 28px below the grid.
-- **No purity caveat here, because no purity figure is here.** The caveat sentence renders where the `≥99%`
-  declaration actually appears — directly below the product specification table and below the hero plate
-  caption — and a copy inside a band that shows no figure would separate the caveat from its subject. The
-  band's only prose is the transparency line.
+- **Transparency foot — verbatim v5 string, and it is a claim.** The closing line renders exactly as the
+  prototype words it and the owner directed it: **"Collected from completed orders and published unedited.
+  Names shortened to first name and last initial."** It sits at the micro step in `--night-muted`, 64ch, 28px
+  below the grid.
+  **This is owner-selected copy, not a verified statement.** Nothing in this repository records a collection
+  method, a completed order, an order link or a consent record for these three reviews, so the first sentence
+  is an **unsubstantiated factual claim about the store's own operation**, and it is not independently verified.
+  It is not a moderation policy the code can be read as enforcing, and no comment, document or commit message
+  may treat it as substantiated or inoffensive merely because it is a fixed string or because nearby code
+  caveats it. The second sentence (names shortened to first name and last initial) is the privacy treatment the
+  cards in fact follow.
+- **Purity caveat — landing position.** On the landing route the caveat sentence renders as the band's closing
+  foot line, directly under the transparency foot, as the v5 prototype renders it and the owner approved. The
+  superseded rule forbade a caveat in this band; that rule is lifted for the landing route. The statement
+  itself is unchanged and still required: "The purity value is a product specification, not a batch test
+  result." Placing it here is a response to the hero's `≥99%` declaration — the figure is read in the first
+  viewport, and the sentence qualifies it on the same page.
 - **Motif:** one authored SVG only — concentric crater rings and four dots, drawn in `currentColor` at 16%
   opacity, bleeding off the band's right edge, `aria-hidden`, `pointer-events: none`, resized and
   repositioned at ≤640px. It is the only ornament in the system; there is no illustration set.
@@ -1069,13 +1211,13 @@ unchanged from the canon; only the world is new. One region was added — the ni
 not as a reordering of it.
 
 1. Announcement bar — RUO line + USD/guest line.
-2. Sticky header — brand lockup, destinations + Shop disclosure, cart, one filled pill.
+2. Sticky header — brand lockup, seven destinations + Shop disclosure, cart, one filled pill.
 3. Hero + Plate 01 — the thesis.
 4. Value ribbon — the storefront's commitments, as a ticker.
 5. Categories — one strip, five cells, in fixed domain order.
 6. Catalogue plates — four plates at 4-up under a section head (heading + text link).
-7. Night band — motif and, only after the publication gate is met, three reviews plus transparency foot.
-8. Footer — brand, three link columns, base row.
+7. Night band — motif, the three reviews, the transparency foot and the purity caveat as its closing line.
+8. Footer — brand, three link columns (Catalogue · Information · Payment), base row.
 
 Global versus composition, stated once: **the section order, the band set and the region rhythm are
 homepage composition** and are not generalised to other routes. **The tokens, the type steps, the radii, the
@@ -1163,8 +1305,9 @@ These are not design preferences; they are the rules that let the storefront exi
 - Purity is the literal **`≥99%`** declaration on every product — a specification, not a result. It is never
   a measured figure, never a per-batch number, and never accompanied by a certificate affordance. Every
   surface that shows the figure carries the caveat sentence "The purity value is a product specification,
-  not a batch test result." directly beneath it — under the specification table and under the hero plate
-  caption — never in a footnote and never detached from what it qualifies.
+  not a batch test result." directly beneath it — under the specification table on the product route, and as
+  the night band's closing foot line on the landing route — never in a footnote and never detached from what
+  it qualifies.
 - **Manual crypto only**, by hand, with the buyer pasting a TXID. No card fields, no gateway widget, no
   automated verification claim.
 - **The age gate is advisory.** A cookie, not a boundary. Never enforced server-side, never blocking `/admin`
@@ -1178,12 +1321,17 @@ These are not design preferences; they are the rules that let the storefront exi
 - No fabricated social proof: no invented metrics, partner logos, press marks, ratings or counts. The three
   directed reviews are the sole exception and are governed by Review Entries.
 - No speed or superlative claims without a source — including "unbeatable", "zero issues", "fastest",
-  "guaranteed" and "best in class". A storefront statement must be supportable on request, and owner-supplied
-  copy is reviewed before it renders.
+  "guaranteed" and "best in class". On every route but the landing, a storefront statement must be
+  supportable on request and owner-supplied copy is reviewed before it renders. **The landing route is the
+  one recorded exception:** the hero lede and the five ribbon statements render as the owner directed, appear
+  in The v5 Landing Exception, and are owner-selected copy rather than substantiated claims — no source,
+  measurement or review for them exists in this repository, and none may be asserted. They are not portable:
+  no other route may adopt them, and none of them may be cited as precedent or as a general permission.
 - **Sourcing and operational copy is classified before it publishes.** The direct-from-source value
   proposition is owner-mandated and stays; every operational or sourcing statement around it is classified as
   supportable, owner-confirmed or unapproved before it renders, and unapproved copy does not ship. Cold-chain
-  claims and in-house packing claims are neither sourced nor confirmed, so they do not appear.
+  claims and in-house packing claims are neither sourced nor confirmed, so they do not appear. The landing's
+  owner-selected statements are a recorded exception to this classification, not an output of it.
 - Nothing implies human use: no dosing, protocols, cycle advice, medical or weight-loss claims, no
   body-composition framing, no before/after or body imagery. The GLP category is a research reference
   category like any other and carries no weight-management language. Plain language does not relax this.
@@ -1206,8 +1354,10 @@ These are not design preferences; they are the rules that let the storefront exi
 
 **Where compliance text lives.** The RUO string appears twice within one screen on the landing page (the
 announcement bar and the footer base) around the night band, the product page carries its own notice, and the
-purity caveat sits under the specification table on the product page and under the hero plate caption on the
-homepage — the two places the figure itself is read. Compliance text is never the quietest thing on the page: it holds at
+purity caveat sits under the specification table on the product page and — on the landing route — as the night
+band's closing foot line beneath the reviews, which is the approved v5 position. The figure the caveat
+qualifies (`≥99%`) is read in the landing's hero, so the sentence renders on the landing page and on the
+product page, never detached from the figure it qualifies. Compliance text is never the quietest thing on the page: it holds at
 least the micro step, at least AA contrast, and it is never dimmed below the footer's own body text.
 
 ### Assets & Identity
@@ -1295,17 +1445,29 @@ pass, because half-migrated tokens are worse than either world.
    unchanged.
 9. **Notices.** Retire the amber notice exception and its literal warm values; both notices move onto tokens.
 10. **Type.** Retire the four-weight static scale and the Tailwind text-size overrides it needed; the step
-    table here is the scale, and body is the 1.0625rem step.
+    table here is the scale, and body is the 1.0625rem step. The landing route keeps the prototype's own
+    literal sizes (The v5 Landing Exception, item 2); every other route resolves onto the steps.
 11. **Layout.** Retire the previous container, gutter, section and breakpoint set; the shell, the section
     rhythm and the 1080/900/640/400 breakpoints above replace them, and the old header reflow point is
-    superseded by the 900px collapse.
-12. **Footer.** Retire the centred page-link row and the centred compliance lines; the three-column grid plus
-    the base row replaces them, with every destination preserved.
-13. **Copy corrections in the same pass.** The review ribbon and the footer payment list must print
-    **USDT (TRC-20)**; any `USDT (ERC-20)` string in copy is corrected. One core-rendered payment-method label
-    is line-clamped, which would clip the network suffix, so that clamp is lifted for the rail list and
-    `USDT (TRC-20)` always prints in full. The unapproved delivery superlative is removed rather than carried.
-    The hero lede's mono span wraps only `≥99%`, never a prose word, and its punctuation is corrected.
+    superseded by the 900px collapse. The landing route keeps the prototype's own band order, grids, gutters
+    and paddings (The v5 Landing Exception, item 1).
+12. **Footer.** Retire the centred page-link row and the centred compliance lines; the four-column grid
+    (brand plus three link columns) and the base row replace them, with every destination preserved.
+13. **Copy corrections in the same pass — USDT is Ethereum (ERC-20).** The trust ribbon, the footer Payment
+    list, the checkout rail list and every other surface print **USDT (ERC-20)**, and the admin network label
+    reads `USDT — Ethereum (ERC-20)`. The superseded `USDT (TRC-20)` / `TRON — TRC-20` strings are corrected
+    wherever copy carries them, including the seeded FAQ answer. One core-rendered payment-method label is
+    line-clamped, which would clip the network suffix, so that clamp is lifted for the rail list and the
+    network suffix always prints in full.
+    **Rail migration is a configuration step, not a copy edit:** the stored `crypto_wallet_usdt` value is a
+    retired TRON placeholder, and it cannot be reused. The USDT row must be switched to an Ethereum address —
+    a real `0x…` address the owner configures in the admin console — and until that happens the rail resolves
+    to null and renders as unavailable rather than as a payable address. No placeholder address may be
+    presented as payable on any surface.
+    **Landing copy follows the v5 instruction rather than the older corrections:** the hero lede and the five
+    ribbon statements render as the owner directed, including the inline mono span around "everyone" and the
+    delivery and pricing superlatives. The unapproved-superlative removal recorded in earlier drafts does not
+    apply to the landing route; on other routes it still does.
     **Status feedback keeps its existing mechanism:** where core already surfaces a toast, the toast stays;
     inline plain text is added only where the design requires the message beside its control — the payment
     panel's copy control and the TXID field — rather than replacing the toast everywhere.
@@ -1317,16 +1479,27 @@ pass, because half-migrated tokens are worse than either world.
     existing inline icon-library usage is replaced by the four authored SVG paths (chevron, cart, burger, long
     arrow) and the library import plus its dependency go in the same commit. The superseded teal-cap hero
     asset is removed once the night-cap photograph is wired, so no orphan image stays in the tree.
-15. **Downstream artifacts.** `.impeccable/design.json` is regenerated from this document, and the homepage
+15. **Navigation destinations.** The header carries the seven v5 destinations, with **Payments bound to
+    `/faqs`** (the page that answers "How do I pay?"), and the footer's Payment column entries
+    (Bitcoin · USDT (ERC-20) · Ethereum) are links to `/faqs` as well. This supersedes the earlier ruling that
+    the Payments destination "must not be added": the destination is restored because a truthful page exists
+    for it, and the restriction that replaces the old one is that no destination may point at a route that
+    does not (`/payments` does not, and must not be linked).
+16. **Downstream artifacts.** `.impeccable/design.json` is regenerated from this document, and the homepage
     surface brief under `themes/elune/.impeccable/surfaces/` is amended in the same pass: its single-dark-
-    region constraint is resolved as **one** dark region carrying the motif and the directed reviews, and its
-    no-testimonials constraint is marked superseded by owner direction. `PRODUCT.md`'s rail label is already
-    correct (`TRON - TRC-20`), so only its stale brand-asset path is corrected. Without these steps the briefs
-    ban what the page renders.
-16. **This document's own promotion is later work.** `DESIGN.md` is replaced by this file, and the pointers
+    region constraint is resolved as **one** dark region carrying the motif and the directed reviews, its
+    no-testimonials constraint and its publication gate are marked superseded by owner direction, its pending
+    D1/D2/D3 markers are resolved, and the v5 landing exception is recorded in it. `PRODUCT.md`'s rail label
+    becomes `USDT — Ethereum (ERC-20)`, and its stale brand-asset path is corrected. Without these steps the
+    briefs ban what the page renders.
+17. **This document's own promotion is later work.** `DESIGN.md` is replaced by this file, and the pointers
     to it from `PRODUCT.md` and the design briefs are updated, when the implementation lands. The swap is
     recorded here as implementation work and is deliberately **not** done in this pass, so the shipped
     specification and the proposed one cannot be confused while the build is unmigrated.
+18. **Nothing in this pass is shipped until it is reviewed.** The migration status is *in progress*: the
+    documents, the surface brief and the sidecar describe the target, and the implemented pages are verified
+    against it by review after the build. No document may claim a surface is verified, reviewed or shipped
+    before that review has actually happened.
 
 **Deliberately absent.** No hero video, icon library, animation library, new dependency, newsletter or email-
 capture band, analytics or third-party tracker in the purchase path, illustration set beyond the two
@@ -1370,17 +1543,22 @@ cold-chain or in-house packing that a drop-shipper cannot control.
 - **Don't** make a verification claim. No "tested", "verified", "certified", "accredited", no testing status,
   no certificate affordance, no link to a document that does not exist.
 - **Don't** render a measured purity percentage, a per-batch figure, or `≥99%` styled as a result.
-- **Don't** print "Unbeatable delivery rate. Zero issues." or any other unsourced superlative. Make the claim
-  supportable first, or leave it out.
+- **Don't** print "Unbeatable delivery rate. Zero issues.", "Best in class factory direct pricing", "Batch
+  tracking for each vial" or any other unsourced superlative **on a route other than the landing**. On the
+  landing route the owner directed those exact statements and they render as approved copy (The v5 Landing
+  Exception) — that direction is the whole of the permission, it does not make the claims substantiated, and
+  no other route may adopt them. Elsewhere, make the claim supportable first, or leave it out.
 - **Don't** imply published evidence from a lot or batch identifier; it is a plain product attribute.
 - **Don't** present the three directed reviews as a precedent: no new invented metrics, partner logos, press
-  marks, ratings, counts, avatars or faces anywhere else.
+  marks, ratings, counts, avatars or faces anywhere else. And don't describe the shipped reviews as consented,
+  order-linked, reviewed or verified — none of that is recorded anywhere.
 - **Don't** add dosing, protocols, cycle advice, medical, body-composition or weight-loss framing, or
   before/after and body imagery. The GLP category carries no weight-management language.
 - **Don't** paint `--accent` with a category hue — it is the hover/selected **surface** slot. Category hues
   mark identity only, and a real category never renders a fallback hue.
-- **Don't** use mono as costume: no mono prose, no mono headings, no mono buttons, and no mono span around a
-  word that is not a value.
+- **Don't** use mono as costume **outside the landing route**: no mono prose, no mono headings, no mono
+  buttons, and no mono span around a word that is not a value. The landing's own mono usage, including the
+  inline span around "everyone", is the approved exception and travels nowhere else.
 - **Don't** put an eyebrow or kicker above a headline, or number something "01 / 02 / 03" unless the number is
   the catalogue's own plate identity.
 - **Don't** use a uniform radius, exceed 32px, or add a third shadow.
@@ -1402,7 +1580,16 @@ cold-chain or in-house packing that a drop-shipper cannot control.
 - [ ] **RUO framing is absolute.** The exact string on every page and every product, and no dosing, medical,
       weight-loss or body framing anywhere. The GLP category carries no weight-management language.
 - [ ] **Claims are supportable.** Every statement about shipping, delivery, pricing or the catalogue is true
-      today; owner-supplied copy has been reviewed; no superlative without a source.
+      today; owner-supplied copy has been reviewed; no superlative without a source. **The landing route is
+      the one exception**: its hero lede and five ribbon statements are owner-selected copy rendered by
+      direction, and their presence there neither substantiates them nor licenses them elsewhere — a new
+      surface takes the rule, not the exception, and the exception is requested from the owner if it is wanted.
+- [ ] **No invented provenance.** The surface does not assert that a testimonial was consented, order-linked,
+      reviewed, tested or verified unless an artifact in this repository says so. Copy the owner chose to run
+      is owner-selected copy, and that is all. The landing's owner-selected strings are inventoried with their
+      substantiation risk in *Owner-selected copy is not evidence*; a string being fixed, owner-supplied or
+      wired into a component does not make it a claim the surface can stand behind, and a code comment that
+      hedges it does not either.
 - [ ] **Mono only for data.** Codes, chemical values, prices, counts, measures and identifiers. Everything
       else is Manrope.
 - [ ] **Tokens come from the token home.** No hardcoded hex or radius in a component; new values are declared

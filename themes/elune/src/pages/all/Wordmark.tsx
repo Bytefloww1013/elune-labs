@@ -1,35 +1,30 @@
-import BrandMark from './BrandMark.js';
 import React from 'react';
 
 /**
- * Wordmark — the brand lockup, and the only brand mark in the header. The core
- * EverShop demo logo that would otherwise sit beside it is suppressed in
- * pages/all/Logo.tsx.
+ * The header lockup: the approved raster brand mark, at 48px display height.
  *
- * Rebuilt 2026-09-11 with the mark and from weights that actually exist. It
- * previously asked for `font-extrabold` and `font-black` against a loaded set
- * topping out at 700, so the browser synthesized two heavier weights — recorded
- * as drift in DESIGN.md and a real reason the lockup looked uneven. Now both
- * halves sit at 700 and the distinction is carried by colour, which is the
- * brand's actual device: ELUNE in graphite, LABS in ochre.
+ * This replaces the generated crescent (`BrandMark.tsx`) the theme shipped
+ * before the v5 redesign. The mark is a pure-black raster with no vector source,
+ * so it is never recoloured, filtered or tinted — the palette keeps its ink
+ * near-neutral precisely so the black mark sits natively beside the type.
  *
- * The tracking is 0.18em rather than the previous 0.28em. Wide tracking on
- * uppercase adds a trailing space after the final letter, which pushes the
- * lockup off-centre against whatever follows it; the negative right margin
- * removes exactly that much space again so the mark sits optically flush. This
- * is the same class of detail as the underline offset — the part of the type
- * that is drawn rather than inherited.
+ * `website_header_logo_transparent.png` is 378×188 (ink bbox 354×177, ≈2:1), the
+ * highest-resolution asset in the kit, so 48px is a downscale with no
+ * pixelation. `width`/`height` carry the intrinsic ratio so the header never
+ * reflows while the image loads; the stylesheet sets the displayed height.
+ *
+ * The image is decorative: the link carries the accessible name, so the brand is
+ * announced once rather than twice.
  */
 export default function Wordmark() {
   return (
-    <a
-      href="/"
-      className="inline-flex items-center gap-2.5 no-underline text-foreground select-none py-1"
-    >
-      <BrandMark className="h-[1.45rem] w-[1.45rem] shrink-0 text-brand-ochre" />
-      <span className="font-sans font-bold tracking-[0.18em] -mr-[0.18em] text-xl text-foreground">
-        ELUNE<span className="text-brand-ochre ml-1.5">LABS</span>
-      </span>
+    <a className="brand" href="/" aria-label="Elune Labs — home">
+      <img
+        src="/assets/brand/website_header_logo_transparent.png"
+        alt=""
+        width={378}
+        height={188}
+      />
     </a>
   );
 }

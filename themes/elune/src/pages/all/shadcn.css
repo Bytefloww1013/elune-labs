@@ -94,56 +94,193 @@
   }
 }
 
-/* Elune Labs — light storefront tokens (2026-09-11).
- * Single token home: warm near-white paper ground, warm graphite ink, one
- * confident evergreen accent, and five muted category accents.
- * Light only — no dark surface exists anywhere in this storefront. */
+/* Elune Labs — Lunar Plates tokens (2026-09-17).
+ *
+ * The single token home for the whole storefront: cool lunar neutrals, midnight
+ * ink as the only chromatic authority, one vivid accent spent exactly three
+ * times, and five category identity hues. Light only — no dark surface exists
+ * anywhere in this storefront, on any surface, now or later.
+ *
+ * Declared here as raw values and bound to Tailwind in tailwind.css
+ * `@theme inline`; a component that needs a value adds a token here rather than
+ * a literal, and no hex literal appears in any component.
+ *
+ * Every warm value of the superseded cream-and-tan world is retired by slot, not
+ * repainted: the paper ground, the three sandy hover/selected/secondary
+ * surfaces, the three warm hairlines, the ochre brand token, the ochre
+ * GH-releasing accent and the five warm-graphite ink/grey tokens are gone. The
+ * five chart tokens are deleted rather than re-derived — four of them duplicated
+ * the ring or a category accent (one of them the banned ochre) and nothing in
+ * the theme consumed them. Error UI reads `--destructive` directly. */
 :root {
-  /* Ground and ink */
-  --background: #faf9f7;                       /* Warm paper near-white */
-  --foreground: #1f1d1a;                       /* Warm graphite ink */
+  /* Surfaces — cool lunar neutrals, never warm paper. */
+  --snow: #f7f8fa;        /* page canvas; never cream, never pure white */
+  --panel: #ffffff;       /* cards, menus, sheets, strips, fields, popovers */
+  --mist: #eceff3;        /* band, hover/selected fill, muted panel */
+  --hairline: #dbdfe6;    /* every 1px edge on the light side */
 
-  /* Primary action */
-  --primary: #14604a;                          /* Deep evergreen */
-  --primary-foreground: #ffffff;
+  /* Ink — the single chromatic authority: text, fills, ring, caret and the
+   * band's ground. Nothing else competes for that role. */
+  --night: #16233c;
+  --slate: #5a6479;       /* secondary text only — nav at rest, ledes, spec
+                           * labels, footer headings, meta, scrollbar thumb */
+  --ash: #b7bdc9;         /* disabled chrome, the plate sheet's edge, the
+                           * arrow's rest state, the text link's rest underline */
 
-  /* Secondary brand accent — named for the brand, NOT the shadcn `--accent`
-   * hover surface. tailwind.css maps `--color-accent: var(--accent)`, and core
-   * ui/* uses that as the hover/selected SURFACE for menus, selects and rows;
-   * painting it ochre would tint every hover state. Brand ochre is separate. */
-  --brand-ochre: #8a5a1c;                      /* Warm ochre — wordmark/details */
-  --accent: #f2efe9;                           /* shadcn hover surface (warm) */
-  --accent-foreground: #1f1d1a;
+  /* The one vivid accent. Spent exactly three times: the document selection
+   * background, a badge fill (`.chip--beam`) and the 3px quote bar. Never a
+   * button fill, never a region background, never body text, never a hover. */
+  --beam: #cff26f;
 
-  /* Surfaces */
-  --card: #ffffff;                             /* Panels sit above the ground */
-  --card-foreground: #1f1d1a;
-  --popover: #ffffff;
-  --popover-foreground: #1f1d1a;
-  --secondary: #f2efe9;                        /* Warm recessed surface */
-  --secondary-foreground: #1f1d1a;
-  --muted: #f2efe9;
-  --muted-foreground: #6b6558;                 /* Warm grey — AA on the ground */
+  /* The night band set. */
+  --night-muted: #c3cee4; /* secondary text on the band, tinted from the hue */
+  --night-rule: #33415f;  /* rules and edges on the band */
+  /* The review card's surface, declared with a resolved literal first and the
+   * derived value second, so the card still paints in an engine without
+   * color-mix() support. */
+  --night-surface: #394459;
+  --night-surface: color-mix(in srgb, var(--night) 85%, #fff 15%);
 
-  /* Structure */
-  --border: #e5e0d8;                           /* Warm hairline */
-  --divider: #e5e0d8;
-  --input: #e5e0d8;
-  --ring: #14604a;
-  --destructive: #a32a1f;                      /* Deep red — AA with white text */
-  --destructive-foreground: #ffffff;
-  --radius: 0.5rem;
+  /* Category identity, keyed to the catalog's url_key. Deep and cool so each is
+   * legible as text on the canvas and on the panel. */
+  --accent-glps: #1f6fa8;
+  --accent-bioregulators: #4a3a9c;
+  --accent-recovery: #0f6e68;
+  --accent-gh-releasing: #7a3e86;
+  --accent-other: #4e5870;
 
-  /* Category accents (keyed by the category url_key).
-   * Deep and muted so each is legible as text on the light ground and none
-   * falls back to the default accent. */
-  --accent-glps: #1c5f96;                      /* Deep blue */
-  --accent-bioregulators: #6b4f9e;             /* Muted violet */
-  --accent-recovery: #0f6b6b;                  /* Deep teal */
-  --accent-gh-releasing: #9a6414;              /* Warm ochre */
-  --accent-other: #5c6270;                     /* Slate */
+  /* Semantic state. `--destructive` survives the warm-colour purge because it is
+   * a state, not decoration; folding it into that purge would leave error UI
+   * colourless. */
+  --destructive: #a32a1f;
+  --destructive-foreground: var(--snow);
 
-  /* Typography */
-  --font-sans: 'Source Sans 3', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
+  /* Radii — differentiated on purpose. A uniform radius is banned, and 32px is
+   * the ceiling. */
+  --r-pill: 999px;        /* buttons, badges, chips, pills, count badge, scrollbar thumb */
+  --r-ctrl: 8px;          /* inputs and inline controls, form-bearing panels, menu rows */
+  --r-card: 16px;         /* cards, menus, the category strip, the review card */
+  --r-sheet: 32px;        /* the hero plate sheet */
+  --r-inner: 14px;        /* the hero figure and the review order photograph */
+  --r-focus: 2px;         /* the focus ring's own corner radius */
+
+  /* Motion. Entrances and hovers only; the ribbon's constant-speed drift is
+   * deliberately not on this token, because a continuous loop has no ease to
+   * share. */
+  --ease: cubic-bezier(0.16, 0.84, 0.44, 1);
+
+  /* Layout. One shell, one page gutter, one header height, one announcement bar.
+   * The 8px unit is the layout rhythm in DESIGN.md rather than a variable, so it
+   * is not declared here. */
+  --shell: 1200px;
+  --page-gutter: 48px;
+  --page-gutter-sm: 32px;
+  --nav: 74px;
+  --announce: 38px;
+
+  /* Faces. Manrope replaces the four-weight static sans for everything, JetBrains
+   * Mono carries data (the existing subset is reused). Both self-hosted woff2
+   * from the theme's static directory: no third-party request, no CDN. */
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---------------------------------------------------------------------------
+   * Type steps. Sizes come from this table and nothing else; the weight is
+   * chosen per surface from Manrope's variable range, which is why no step
+   * carries a weight here. The variable file's weight axis defaults to 200, so a
+   * surface that inherits a size without a weight states `font-weight: 400`.
+   * ------------------------------------------------------------------------- */
+  --text-display: clamp(2.5rem, 4.6vw, 4rem);
+  --text-display--line-height: 1.06;
+  --text-display--letter-spacing: -0.022em;
+
+  --text-headline: clamp(1.75rem, 2.9vw, 2.5rem);
+  --text-headline--line-height: 1.12;
+  --text-headline--letter-spacing: -0.018em;
+
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.3;
+  --text-title--letter-spacing: -0.01em;
+
+  --text-lede: 1.125rem;
+  --text-lede--line-height: 1.62;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.6;
+
+  --text-label: 1rem;
+  --text-label--line-height: 1.4;
+
+  --text-label-sm: 0.9375rem;
+  --text-label-sm--line-height: 1.4;
+
+  --text-name: 0.9375rem;
+  --text-name--line-height: 1.35;
+
+  --text-micro: 0.8125rem;
+  --text-micro--line-height: 1.4;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.3;
+  --text-caption--letter-spacing: 0.03em;
+
+  --text-caption-mono: 0.75rem;
+  --text-caption-mono--line-height: 1.3;
+  --text-caption-mono--letter-spacing: 0.03em;
+
+  --text-mono: 0.8125rem;
+  --text-mono--line-height: 1.5;
+  --text-mono--letter-spacing: 0.015em;
+
+  --text-price: 1.0625rem;
+  --text-price--line-height: 1.2;
+  --text-price--letter-spacing: 0.01em;
+
+  --text-quote: 1.05rem;
+  --text-quote--line-height: 1.55;
+
+  /* Role aliases — kept and repointed, never deleted. Core-rendered surfaces
+   * (cart, checkout, account, popovers, menus) inherit the new world through
+   * these slots, so none of them needs bespoke work. A single missed slot leaves
+   * old ink live on cards, popovers and secondary surfaces. */
+  --background: var(--snow);
+  --foreground: var(--night);
+  --card: var(--panel);
+  --card-foreground: var(--night);
+  --popover: var(--panel);
+  --popover-foreground: var(--night);
+  --primary: var(--night);
+  --primary-foreground: var(--snow);
+  /* `--accent` is a *surface* slot: the hover/selected fill for core menus,
+   * selects and rows. Painting it with a category hue would tint every hover
+   * state, so it stays neutral. */
+  --accent: var(--mist);
+  --accent-foreground: var(--night);
+  --secondary: var(--mist);
+  --secondary-foreground: var(--night);
+  --muted: var(--mist);
+  --muted-foreground: var(--slate);
+  --border: var(--hairline);
+  --divider: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--night);
+
+  /* The legacy radius base stays declared as a compatibility alias resolving to
+   * the control radius, because core-derived utilities compute their corners
+   * from it and deleting it would collapse them to square corners on every
+   * surface this theme does not own. It is not re-based to 16px: every
+   * theme-owned component names --r-pill, --r-ctrl, --r-card, --r-sheet or
+   * --r-inner explicitly instead of inheriting. */
+  --radius: var(--r-ctrl);
+
+  /* Sidebar aliases keep resolving through the role tokens; nothing in this
+   * chain is deleted. */
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }

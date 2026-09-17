@@ -189,7 +189,7 @@ docker compose exec app node scripts/seed-catalog.mjs \
 
 1. Log in with the step-4 credentials.
 2. **Settings → store**: name `Elune Labs`, currency `USD` (single-currency invariant — nothing else gets enabled).
-3. **Settings → payment**: enable the built-in offline/COD method (`codPaymentStatus` toggle); set display name to something like `Cryptocurrency (manual transfer)` — it must **not** read "cash on delivery" (FR-3); paste the wallet instructions text with the BTC / USDT (TRC-20) / ETH address blocks (placeholder addresses per ADR #7; owner swaps real wallets here — no code change).
+3. **Settings → payment**: enable the built-in offline/COD method (`codPaymentStatus` toggle); set display name to something like `Cryptocurrency (manual transfer)` — it must **not** read "cash on delivery" (FR-3); paste the wallet instructions text with the **BTC / USDT (Ethereum, ERC-20) / ETH** address blocks (placeholder addresses per ADR #7; owner swaps real wallets here — no code change). The USDT field takes an **Ethereum** address (`0x…`, 40 hex digits) and nothing else: the retired TRON (`TRC-20`) address cannot be reused, and while the field holds a non-Ethereum value the USDT row renders as unavailable rather than as a payable address. See 8-2 §3.
 4. **Settings → shipping**: default zone → core provider → flat rate per order (set the dollar amount; SPEC §5 — one flat rate, no tiers in v1).
 5. Payment confirmation flow lives in **Orders**: open a pending order → verify the customer's TXID on-chain → **Capture** → `payment_status` flips to `paid`. This is the only pending→paid path (payment invariant, SPEC §6).
 

@@ -1,11 +1,12 @@
 # Elune Labs
 
-EverShop 2.2.1 storefront for research chemicals (peptides, SARMs, nootropics).
-Custom dark-violet theme, crypto-on-delivery payments, RUO compliance disclaimers,
-age gate, and TXID capture at checkout.
+EverShop 2.2.1 storefront for research reference peptides in five categories.
+Custom theme (design system is being migrated — see `DESIGN.md`), crypto-on-delivery payments,
+RUO compliance disclaimers, age gate, and TXID capture at checkout.
 
-For the full architecture, extensions, and field-change guide see
-[docs/DEVELOPER.md](docs/DEVELOPER.md).
+For the full architecture, extensions, and field-change guide see `ARCHITECTURE.md`,
+`IMPLEMENTATION.md` and the design docs under `docs/design/` (`8-1-deployment.md`,
+`8-2-ui-compliance-payment.md`, `8-3-catalog-orders.md`). The visual system is `DESIGN.md`.
 
 ## Runbook
 
@@ -120,7 +121,7 @@ curl -s -c /tmp/cookies.txt "http://localhost:$PORT/admin/user/login" \
 # update wallet addresses (effective immediately, no restart)
 curl -s -b /tmp/cookies.txt "http://localhost:$PORT/api/settings" \
   -H "Content-Type: application/json" \
-  -d '{"crypto_wallet_btc":"bc1q...","crypto_wallet_usdt":"T...","crypto_wallet_eth":"0x...","crypto_wallet_instructions":"Send the order total, then paste your TXID."}'
+  -d '{"crypto_wallet_btc":"bc1q...","crypto_wallet_usdt":"0x...","crypto_wallet_eth":"0x...","crypto_wallet_instructions":"Send the order total, then paste your TXID."}'
 ```
 
 Verify from the outside (no auth needed):
@@ -130,10 +131,31 @@ curl -s "http://localhost:$PORT/api/graphql" -H "Content-Type: application/json"
   -d '{"query":"{ setting { codDisplayName cryptoWalletBtc cryptoWalletUsdt cryptoWalletEth cryptoWalletInstructions } }"}'
 ```
 
+`cryptoWalletUsdt` returns the stored value **only** when it is a 40-hex-digit
+Ethereum address (`0x...`); anything else -- unset, a legacy TRON `T...` value,
+or a placeholder -- resolves to `null` and the checkout row renders as
+unavailable with no Copy control. This is deliberate: an unconfigured rail must
+never be shown as payable.
+
 Bootstrapped state: `codPaymentStatus=1`,
-`codDisplayName="Crypto Payment (BTC / USDT / ETH)"`, and the four
-`crypto_wallet_*` keys hold placeholder values -- replace the placeholders
-with real addresses before going live.
+`codDisplayName="Crypto Payment (BTC / USDT / ETH)"`, and the wallet keys hold
+placeholders -- replace them with real addresses before going live.
+
+**USDT is Ethereum (ERC-20), not TRON.** The retired TRON (`TRC-20`) value
+cannot be reused, and the database still holds it, so **USDT will show as
+unavailable at checkout until an Ethereum address is saved** -- that is the
+expected state, not a failure. To bring the rail up:
+
+1. Open `/admin/setting/payments`.
+2. Replace the USDT field with an Ethereum address (`0x` + 40 hex characters)
+   for a wallet that can receive USDT on ERC-20. The field rejects anything else.
+3. Save, then reload the checkout payment step -- the address appears with no
+   rebuild and no restart.
+
+There is no conversion path and no fallback rail: until then, customers pay by
+Bitcoin or Ethereum only. Nothing on the payment step promises when a transfer
+will be detected or confirmed -- an order stays `pending` until the owner
+verifies it on-chain and captures it.
 
 ## Seed the catalog
 
@@ -147,8 +169,9 @@ docker compose exec app sh -c '
 '
 ```
 
-Creates 3 categories (peptides, sarms, nootropics) and 15 products with prices.
-Idempotent -- safe to re-run. See [docs/DEVELOPER.md](docs/DEVELOPER.md#seed-catalog) for details.
+Creates the five categories (glps, bioregulators, recovery, gh-releasing, other) and 14 products with prices.
+Idempotent -- safe to re-run. See `docs/design/8-3-catalog-orders.md` §2 for the data contract and
+`ARCHITECTURE.md` §4 for how the seed fits the system.
 
 ## Build workflow
 
@@ -256,4 +279,4 @@ docker compose up -d --wait
   Setting type.
 - **scripts/** -- seed catalog, DAG cutter (read-only bind mount).
 
-See [docs/DEVELOPER.md](docs/DEVELOPER.md) for the full guide.
+See `ARCHITECTURE.md` for the subsystem map and `IMPLEMENTATION.md` for the build order.

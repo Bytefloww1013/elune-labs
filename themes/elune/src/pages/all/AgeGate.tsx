@@ -1,6 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// Age gate — advisory only, client-side by design (design 8-2 §2, SPEC ADR #3).
+/**
+ * Age gate — advisory only, client-side by design (design 8-2 §2, SPEC ADR #3).
+ *
+ * The behaviour is the shipped contract and is unchanged: a 30-day cookie, focus
+ * moved into the panel and trapped there, body scroll locked with `.elune-lock`,
+ * and a refusal that leaves the site. What changed is the world it renders in —
+ * the sheet is now `--snow` on `--night` ink with a hairline and the system's one
+ * light-side shadow, the notice is a `--mist` panel like every other notice block
+ * (the old amber carve-out is retired), and the two controls are one compact
+ * filled pill plus a plain text link, so the region keeps a single filled pill.
+ *
+ * Copy is normative and comes from docs/design/8-2-ui-compliance-payment.md §2.3
+ * verbatim: a visual restyle does not invent, shorten or rewrite compliance copy.
+ * Declining is an anchor rather than a scripted redirect — same destination, and
+ * it works before hydration.
+ */
 export default function AgeGate() {
   const [show, setShow] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
@@ -52,51 +67,36 @@ export default function AgeGate() {
     setShow(false);
   };
 
-  const leave = () => {
-    window.location.href = 'https://www.google.com';
-  };
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="age-gate-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 p-4"
-    >
-      <div
-        ref={panel}
-        className="w-full max-w-lg rounded-lg border border-border bg-card p-6 md:p-8 text-card-foreground shadow-lg shadow-foreground/5"
-      >
-        <h2 id="age-gate-title" className="mb-4 text-2xl font-bold tracking-tight text-foreground">
+    <div className="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+      <div className="age-gate__sheet" ref={panel}>
+        <h2 id="age-gate-title" className="h3">
           Are you 18 or older?
         </h2>
-        <div className="mb-5 rounded border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950 leading-relaxed">
-          <strong className="text-amber-900 font-semibold block uppercase tracking-wider text-[0.75rem] mb-1">
-            Research Chemical Notice
-          </strong>
-          Compounds offered by Elune Labs are supplied exclusively for <strong>in-vitro laboratory research and analytical evaluation</strong>. They are strictly not for human consumption, clinical application, or therapeutic use.
+
+        <div className="age-gate__notice">
+          <strong className="age-gate__notice-label">Research Chemical Notice</strong>
+          Elune Labs products are sold as{' '}
+          <strong>research chemicals for laboratory research use only</strong>. They are not food,
+          dietary supplements, or drugs, and are{' '}
+          <strong>not intended for human consumption</strong>.
         </div>
-        <p className="mb-6 text-sm text-muted-foreground leading-relaxed">
-          By continuing you confirm that you are at least 18 years of age and that you will handle these materials as laboratory reference compounds only.
+
+        <p className="age-gate__confirm">
+          By entering, you confirm that you are at least 18 years old and accept our terms of sale.
         </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={enter}
-            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors duration-150 cursor-pointer"
-          >
-            I am 18 or older — Continue
+
+        <div className="age-gate__actions">
+          <button type="button" className="btn btn--sm" onClick={enter}>
+            I am 18 or older — Enter
           </button>
-          <button
-            type="button"
-            onClick={leave}
-            className="rounded-md border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors duration-150 cursor-pointer"
-          >
-            Decline & Exit
-          </button>
+          <a className="tlink" href="https://www.google.com">
+            Cancel — Leave
+          </a>
         </div>
-        <p className="mt-5 text-xs text-muted-foreground">
-          Saved in a client session cookie for 30 days.
+
+        <p className="age-gate__foot">
+          This notice is advisory and stored only in a browser cookie for 30 days.
         </p>
       </div>
     </div>

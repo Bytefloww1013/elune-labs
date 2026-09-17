@@ -344,16 +344,17 @@ export async function assertSeed(data) {
 // pages title themselves from their own name.
 //
 // `favicon` is checked by core's PageInfo resolver BEFORE its
-// public/favicon.ico fallback, and HeadTags passes a `.svg` straight through
+// public/favicon.ico fallback, and HeadTags passes the value straight through
 // rather than routing it through the sharp image endpoint — so pointing it at
-// the theme's own /assets/favicon.svg is what puts the brand mark in the tab.
-// It stays an editable setting: the owner can replace it in the admin console
-// with no rebuild.
+// the theme's own brand mark is what puts it in the tab. The mark is the
+// approved PNG family (the generated crescent SVG is gone, and no path to it
+// survives); it stays an editable setting the owner can replace in the admin
+// console with no rebuild.
 const STORE_SETTINGS = {
   storeName: 'Elune Labs',
   storeDescription:
     'Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.',
-  favicon: '/assets/favicon.svg'
+  favicon: '/assets/brand/favicons/favicon-512x512.png'
 };
 
 export async function applyStoreSettings() {
@@ -446,7 +447,7 @@ const FAQ_BLOCKS = [
   ),
   heading('How do I pay?'),
   para(
-    'Checkout shows the order total and wallet addresses for Bitcoin, USDT on TRC-20 and Ethereum. Send the total to one of them, then paste the transaction ID — the TXID — into the field provided at checkout. Payment is confirmed by hand: the transaction is checked on-chain, and the order is dispatched only after that confirmation.'
+    'Checkout shows the order total and wallet addresses for Bitcoin, USDT (ERC-20) and Ethereum. Send the total to one of them, then paste the transaction ID — the TXID — into the field provided at checkout. A rail with no address configured says so instead of showing one; if that is the rail you wanted to use, ask us before sending. Payment is confirmed by hand: the transaction is checked on-chain, and the order is dispatched only after that confirmation.'
   ),
   heading('When does my order ship, and how?'),
   para(

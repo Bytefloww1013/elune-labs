@@ -106,15 +106,15 @@ The 2.2.1 source confirms `POST /api/user/token/refresh` exists and accepts `{re
 
 After all creates/updates, the script asserts:
 
-1. **3 categories exist** with expected `url_key` values (`peptides`, `sarms`, `nootropics`).
-2. **15 products exist** — every SKU in `catalog-data.json` must resolve to an existing product (query per SKU via GraphQL).
+1. **The five categories exist** with the expected `url_key` values (`glps`, `bioregulators`, `recovery`, `gh-releasing`, `other`).
+2. **Every product exists** — every SKU in `catalog-data.json` must resolve to an existing product (query per SKU via GraphQL).
 3. **Each product is attached** to its declared category — query the product's category membership via admin GraphQL.
 4. **Exit code non-zero** with a per-item failure list on any mismatch. Printed to stderr, one line per failure.
 
 ```text
 SEED FAILURE — 2 issues found:
   ✗ SKU BPC157-5MG: not found after create
-  ✗ Category 'nootropics': expected url_key 'nootropics', got none (product 4 not attached)
+  ✗ Category 'recovery': expected url_key 'recovery', got none (product 4 not attached)
 ```
 
 ---
@@ -150,7 +150,15 @@ SEED FAILURE — 2 issues found:
 
 ### Full Placeholder Catalog
 
-**3 categories, 15 products, $19.99–$79.99, qty 100 each.**
+> **Superseded (design-time artifact).** The catalog below is the **design-stage draft**. The live file that
+> ships is `scripts/catalog-data.json` and it differs: **five categories** (`glps`, `bioregulators`, `recovery`,
+> `gh-releasing`, `other`), **14 peptides-only products**, prices **$29.99–$79.99**, qty 100 each. The
+> design-stage SARMs and Nootropics categories and their products were dropped — the storefront sells research
+> reference peptides only, and the five categories in PRODUCT.md are the catalog. The JSON below is kept as the
+> record of what the design stage proposed; where it disagrees with `scripts/catalog-data.json`, the live file
+> wins.
+
+**Draft shape — 3 categories, 15 products, $19.99–$79.99, qty 100 each (do not build from this list).**
 
 ```json
 {
@@ -372,11 +380,22 @@ The store owner performs this sequence for each paid order:
 2. **Read TXID** → from the "Note" field (order.shipping_note).
 3. **Verify on-chain** → open a block explorer for the relevant network:
    - **BTC:** paste TXID in [mempool.space](https://mempool.space) or [blockchain.com](https://blockchain.com); confirm ≥ 1 confirmation, amount matches `grand_total`.
-   - **USDT (TRC-20):** paste TXID in [Tronscan](https://tronscan.org); confirm transferred amount (USDT is 6-decimal; amount should match `grand_total × 10⁶`).
+   - **USDT (Ethereum, ERC-20):** paste TXID in [etherscan.io](https://etherscan.io); confirm the transfer is a **USDT (ERC-20) token transfer** — not a native ETH transfer to the same address — with amount matching `grand_total` (USDT is 6-decimal; the transferred amount should match `grand_total × 10⁶`). Allow ≥ 12 confirmations.
    - **ETH:** paste TXID in [etherscan.io](https://etherscan.io); confirm ≥ 12 confirmations, amount matches `grand_total`.
 4. **Click "Capture Payment"** → button is only rendered when `paymentStatus.code === 'pending' && paymentMethod === 'cod'`.
 5. **Status changes to Paid** → payment_status = "paid"; offline transaction recorded.
 6. **Fulfill** → create shipment via admin → mark shipped. **Never before step 5** (enforced by EverShop: CaptureButton only renders when status is `pending` + `cod`; capture route rejects non-pending orders).
+
+**Two things this checklist does not do, and no documentation may claim it does.** Verification is performed by
+hand by the owner: nothing here is automated, and no surface may state that a payment is detected, credited or
+confirmed automatically. And this checklist is a procedure, not a guarantee — an order stays `pending` until
+step 4 actually happens.
+
+**Rail change — USDT is Ethereum (ERC-20), not TRON.** The step-3 explorer for USDT is **Etherscan**
+(Tronscan is no longer part of the procedure), and the payout address for that rail is an Ethereum wallet. The
+retired TRON address cannot be reused: while `crypto_wallet_usdt` holds it, the checkout renderer resolves the
+rail to `null` and shows USDT as unavailable, so no customer can send to it. See 8-2 §3.1 for the resolver rule
+and the owner's configuration step.
 
 ---
 

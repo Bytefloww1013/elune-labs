@@ -7,11 +7,15 @@ import {
 } from '@components/frontStore/checkout/CheckoutContext.js';
 import { _ } from '@evershop/evershop/lib/locale/translate/_';
 import { Copy } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import '../../components/frontStore/checkout/checkout.scss';
 
-// Clipboard copy with user feedback. The storefront is served over plain http
-// on a LAN/tailnet address, where `navigator.clipboard` does not exist, so the
-// textarea + execCommand path is the real one for most visitors.
+// Clipboard copy with user feedback. The storefront is served over plain http on
+// a LAN/tailnet address, where `navigator.clipboard` does not exist, so the
+// textarea + execCommand path is the real one for most visitors. It reports
+// whether a copy actually happened: a payment address the buyer believes they
+// copied but did not is worse than one they retype, so a failure says so in
+// plain text under the row as well as in the toast.
 async function copyAddress(address: string) {
   try {
     if (navigator.clipboard?.writeText) {
@@ -24,23 +28,115 @@ async function copyAddress(address: string) {
       scratch.style.opacity = '0';
       document.body.appendChild(scratch);
       scratch.select();
-      document.execCommand('copy');
+      const copied = document.execCommand('copy');
       document.body.removeChild(scratch);
+      if (!copied) {
+        throw new Error('execCommand("copy") reported failure');
+      }
     }
     toast.success(_('Address copied to clipboard'));
+    return true;
   } catch {
     toast.error(_('Could not copy the address. Select it manually.'));
+    return false;
   }
 }
 
+interface CashOnDeliverySetting {
+  codDisplayName: string;
+  cryptoWalletBtc: string | null;
+  cryptoWalletUsdt: string | null;
+  cryptoWalletEth: string | null;
+  cryptoWalletInstructions: string | null;
+}
+
+// The payment step's body. Every address arrives already checked against its own
+// rail's shape by the elune-payments resolver, so a rail whose stored value is
+// missing, is one of the seeded placeholders (`TPLACEHOLDER_REPLACE_ME`,
+// `0xPLACEHOLDER_REPLACE_ME`, `bc1qPLACEHOLDER_REPLACE_ME`) or belongs to another
+// network (a TRON USDT address) is null here: that row says it is not configured
+// and offers nothing to copy, rather than presenting a destination nobody can be
+// paid at.
+function WalletRails({ setting }: { setting: CashOnDeliverySetting }) {
+  const { data: cart } = useCartState();
+  const [failedRail, setFailedRail] = useState<string | null>(null);
+  const rails = [
+    {
+      id: 'btc',
+      label: _('BTC — Bitcoin (native SegWit)'),
+      address: setting.cryptoWalletBtc
+    },
+    {
+      id: 'usdt',
+      label: _('USDT — Ethereum (ERC-20)'),
+      address: setting.cryptoWalletUsdt
+    },
+    {
+      id: 'eth',
+      label: _('ETH — Ethereum (ERC-20)'),
+      address: setting.cryptoWalletEth
+    }
+  ];
+
+  return (
+    <div className="checkout-wallets">
+      <div className="checkout-wallets__total">
+        <span className="checkout-wallets__total-label">{_('Order total')}</span>
+        <span className="mono checkout-wallets__total-value">
+          {cart?.grandTotal?.text}
+        </span>
+      </div>
+      <dl className="checkout-wallets__list">
+        {rails.map(({ id, label, address }) => (
+          <div className="checkout-wallets__row" key={id}>
+            <dt className="checkout-wallets__label">
+              <span>{label}</span>
+              {address && (
+                <button
+                  type="button"
+                  className="checkout-wallets__copy"
+                  aria-label={_('Copy ${label} address', { label })}
+                  onClick={async () =>
+                    setFailedRail((await copyAddress(address)) ? null : id)
+                  }
+                >
+                  <Copy aria-hidden="true" />
+                  {_('Copy')}
+                </button>
+              )}
+            </dt>
+            <dd className="checkout-wallets__value">
+              {address ? (
+                <span className="mono checkout-wallets__address">
+                  {address}
+                </span>
+              ) : (
+                <span className="checkout-wallets__unavailable">
+                  {_('Not configured — contact us before sending.')}
+                </span>
+              )}
+              {failedRail === id && (
+                <p className="checkout-wallets__copy-error">
+                  {_(
+                    'Copy failed — select the address and copy it manually.'
+                  )}
+                </p>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {setting.cryptoWalletInstructions && (
+        <p className="checkout-wallets__instructions">
+          {setting.cryptoWalletInstructions}
+        </p>
+      )}
+    </div>
+  );
+}
+
 interface CashOnDeliveryMethodProps {
-  setting: {
-    codDisplayName: string;
-    cryptoWalletBtc: string;
-    cryptoWalletUsdt: string;
-    cryptoWalletEth: string;
-    cryptoWalletInstructions: string;
-  };
+  setting: CashOnDeliverySetting;
 }
 
 export default function CashOnDeliveryMethod({
@@ -64,69 +160,7 @@ export default function CashOnDeliveryMethod({
           <span>{setting.codDisplayName}</span>
         </div>
       ),
-      formRenderer: () => {
-        const { data: cart } = useCartState();
-        const wallets: Array<{ label: string; address?: string }> = [
-          {
-            label: _('BTC — Bitcoin (native SegWit)'),
-            address: setting.cryptoWalletBtc
-          },
-          {
-            label: _('USDT — TRON (TRC-20)'),
-            address: setting.cryptoWalletUsdt
-          },
-          {
-            label: _('ETH — Ethereum (ERC-20)'),
-            address: setting.cryptoWalletEth
-          }
-        ];
-        return (
-          <div className="w-full space-y-4 py-3 text-left">
-            <div className="rounded-md border border-border bg-card p-4">
-              <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-                <span className="text-muted-foreground">{_('Order total')}</span>
-                <span className="text-lg font-semibold text-foreground">
-                  {cart?.grandTotal?.text}
-                </span>
-              </div>
-              <dl className="mt-4 space-y-4">
-                {wallets.map((wallet) => {
-                  const address = wallet.address;
-                  return address ? (
-                    <div key={wallet.label}>
-                      <dt className="flex items-center justify-between gap-3">
-                        <span className="text-sm font-medium text-foreground">
-                          {wallet.label}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          type="button"
-                          onClick={() => copyAddress(address)}
-                          aria-label={_('Copy ${label} address', {
-                            label: wallet.label
-                          })}
-                        >
-                          <Copy className="size-4" />
-                          {_('Copy')}
-                        </Button>
-                      </dt>
-                      <dd className="mt-1 font-mono text-sm text-foreground break-all">
-                        {address}
-                      </dd>
-                    </div>
-                  ) : null;
-                })}
-              </dl>
-            </div>
-            {setting.cryptoWalletInstructions && (
-              <p className="text-sm text-muted-foreground">
-                {setting.cryptoWalletInstructions}
-              </p>
-            )}
-          </div>
-        );
-      },
+      formRenderer: () => <WalletRails setting={setting} />,
       checkoutButtonRenderer: () => {
         const { checkout } = useCheckoutDispatch();
         const { loadingStates, orderPlaced } = useCheckout();

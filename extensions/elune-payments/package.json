@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "swc ./src -d dist --copy-files --strip-leading-paths"
+    "build": "swc ./src -d dist --copy-files --strip-leading-paths",
+    "test": "node --test tests/"
   }
 }

@@ -1,0 +1,241 @@
+/*
+ * Elune Labs — catalog, product and category presentation (DESIGN.md).
+ *
+ * Scoped additions to the token layer, loaded once for the whole storefront by
+ * `CatalogCss.tsx` in the head area. The one thing that lives here is rules
+ * that must reach markup this theme does not own — core's product page
+ * (`.product__detail`, `.product__single__*`), core's category route
+ * (`.category__*`) and the CMS page shell (`.cms-page`). Utilities cannot
+ * target an element whose class list is emitted by core.
+ *
+ * Everything else on these routes is built from registered utilities and the
+ * shared primitives (.h2 .h3 .lede .muted .mono .chip .tlink .btn .section), so
+ * no type step, colour or radius is restated here. These rules are unlayered on
+ * purpose, exactly as the theme's own primitives are, so they win over core's
+ * `@layer utilities` classes.
+ */
+
+/* ── product page ────────────────────────────────────────────────────────── */
+
+/*
+ * The two blocks core renders for content this store does not have. The catalog
+ * ships no product imagery (`scripts/catalog-data.json` seeds empty image
+ * arrays) and no description bodies, so core drew its ProductNoThumbnail
+ * placeholder in a 562x384 frame and a "Product Description" heading above an
+ * empty editor body.
+ *
+ * The left column is collapsed whole rather than just the placeholder box: it is
+ * a fixed track in core's `grid md:grid-cols-2`, so hiding only the box leaves a
+ * dead half-page beside the price and the record. Both rules key off
+ * `.product-slider`, react-slick's root class, which core's Media renders only
+ * when the product genuinely has images — so a product that ships photography
+ * lays out exactly as core does, with no override to unwind, and the authored
+ * vial cutaway in the catalogue plate is what carries the object at browse
+ * scale.
+ */
+.product__detail__left:not(:has(.product-slider)) {
+  display: none;
+}
+
+.product__page__middle > .grid:not(:has(.product-slider)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.product__single__description:has(.editor__html:empty) {
+  display: none;
+}
+
+/* The route title takes the headline step at the whisper weight. Core sets it
+ * with `text-2xl md:text-3xl font-semibold` and `capitalize`; the catalogue's
+ * names are exact strings, so `capitalize` is dropped with it. */
+.product__detail .product__single__name {
+  font-size: var(--text-headline);
+  line-height: var(--text-headline--line-height);
+  letter-spacing: var(--text-headline--letter-spacing);
+  font-weight: 300;
+  text-transform: none;
+  text-wrap: balance;
+}
+
+/* Figures. Prices and identifiers render in the mono face at the price step
+ * with tabular numerals (DESIGN.md, Mono-Is-Data + Browser Surfaces). */
+.product__detail .product__single__price span {
+  font-family: var(--font-mono);
+  font-size: var(--text-price);
+  line-height: var(--text-price--line-height);
+  letter-spacing: var(--text-price--letter-spacing);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.product__detail .product__single__attributes dd {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The analytical record: 11px vertical padding per row, a 40% label column and
+ * a 16px gap before the value column. Cells keep the base table's 1px hairline
+ * border, so the record reads as a ruled label sheet. */
+.product__single__spec__table th,
+.product__single__spec__table td {
+  padding-block: 11px;
+  vertical-align: top;
+}
+
+.product__single__spec__table th {
+  width: 40%;
+  padding-right: 16px;
+  text-align: left;
+  font-weight: 400;
+}
+
+.product__single__spec__table td {
+  padding-left: 16px;
+}
+
+/* About This Compound: deliberately un-ruled, so it cannot be mistaken for the
+ * specification record beside it. */
+.about__subheading {
+  font-size: var(--text-label-sm);
+  line-height: var(--text-label-sm--line-height);
+  font-weight: 600;
+}
+
+.about__note {
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+}
+
+.about__citation {
+  color: var(--slate);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--ash);
+  text-underline-offset: 4px;
+}
+
+.about__citation:hover {
+  color: var(--night);
+  text-decoration-color: var(--night);
+}
+
+/* ── the catalogue plate grid ────────────────────────────────────────────── */
+
+/* `.product__grid` is ProductList's own container class (core's `layoutClass`
+ * for grid layout), so this one rule is every catalogue grid in the storefront:
+ * the category routes, search results, /all and /new-releases. Core fills the
+ * container with `grid-cols-N md:grid-cols-2 lg:grid-cols-4 gap-6` and asks
+ * some routes for three columns; a catalogue of plates reads at four, on the
+ * system's 20px gutter and its own breakpoints (4 up, 2 at ≤1080, 1 at ≤640 —
+ * DESIGN.md, Migration), not Tailwind's 768/1024 defaults. */
+.product__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* The category heading takes the headline step in ink, like every other section
+ * header — and the accent stays inside the cards, never on the header. */
+.category__info .category__name {
+  font-size: var(--text-headline);
+  line-height: var(--text-headline--line-height);
+  letter-spacing: var(--text-headline--letter-spacing);
+  font-weight: 300;
+  text-wrap: balance;
+}
+
+@media (max-width: 1080px) {
+  .product__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .product__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── the catalogue's controls (filter rail + sort) ───────────────────────── */
+
+/*
+ * Core draws the sort direction toggle as a bare `<button>` sized by its 20px
+ * icon (`lucide w-5 h-5`): it measured 20×20 on the live category route, under
+ * both the 24px minimum target and the system's 44px control floor. The button
+ * takes the floor; the icon keeps its 20px inside it.
+ */
+.product-sorting .sort-direction .sort-direction-btn {
+  width: 44px;
+  height: 44px;
+}
+
+/*
+ * The price rail's thumb: a 24px disc inside a 44px hit area, so the pointer
+ * target is the system's control size without a 44px disc on a 240px rail.
+ * `box-shadow: none` is load-bearing — core's thumb carries Tailwind's
+ * `shadow-sm` and the light side is flat. The sort `<select>` trigger and the
+ * filter fields already sit at the 44px floor through the global control rule,
+ * so no size is restated for them.
+ */
+.price__filter [data-slot='slider-thumb'] {
+  width: 24px;
+  height: 24px;
+  border-color: var(--night);
+  background-color: var(--panel);
+  box-shadow: none;
+}
+
+/* The thumb's padding box is 22px (24px disc − 2 × 1px border), and the pseudo
+ * extends 11px past each edge: 22 + 11 + 11 = the 44px target exactly, hence
+ * −11px rather than −10px. */
+.price__filter [data-slot='slider-thumb']::after {
+  content: '';
+  position: absolute;
+  inset: -11px;
+}
+
+/*
+ * No focus ring is declared for the thumb itself: base-ui makes the inner
+ * `input[type='range']` the focusable node, and the global input rule already
+ * paints the ring there.
+ */
+.price__filter [data-slot='slider-thumb'] input {
+  box-shadow: none;
+}
+
+.price__filter [data-slot='slider-track'] {
+  background-color: var(--mist);
+}
+
+/* ── CMS routes (/faqs, /shipping, /contact) ─────────────────────────────── */
+
+/* Core's CMS shell sets its own title with `text-3xl md:text-4xl font-bold`.
+ * The prose is owner-authored content and stays untouched; the heading is
+ * chrome, and chrome takes the step table. The measure is capped at the
+ * system's 72ch maximum. */
+.cms-page .cms__page__heading {
+  font-size: var(--text-headline);
+  line-height: var(--text-headline--line-height);
+  letter-spacing: var(--text-headline--letter-spacing);
+  font-weight: 300;
+  text-wrap: balance;
+}
+
+.cms-page {
+  max-width: 72ch;
+}
+
+/*
+ * Headings the owner writes inside CMS prose (`.prose`, e.g. "What it costs" on
+ * /shipping) are chrome exactly as the page title is. Core's prose scale draws
+ * an `h2` at 25.5px/700 and h3/h4 heavier still, so the section headings
+ * outranked the title above them. They take the section step — `.h3`:
+ * `--text-title` at the whisper weight — and keep the owner's wording and
+ * measure untouched.
+ */
+.cms-page .prose :is(h2, h3, h4) {
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
+  font-weight: 400;
+  text-wrap: balance;
+}
