@@ -4,7 +4,15 @@ import { Image } from '@components/common/Image.js';
 import { toast } from '@components/common/ui/Sonner.js';
 import { AddToCart } from '@components/frontStore/cart/AddToCart.js';
 import { _ } from '@evershop/evershop/lib/locale/translate/_';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
+
+// Overlapping saveCart can drop sibling items. Queue the mutation; keep busy local.
+let cartMutation = Promise.resolve();
+function serializeCartMutation<T>(task: () => Promise<T>): Promise<T> {
+  const next = cartMutation.then(task, task);
+  cartMutation = next.then(() => {}, () => {});
+  return next;
+}
 
 interface ProductListItemData {
   productId: number;
@@ -140,6 +148,7 @@ export function ProductListItemRender({
   delay?: number;
 }) {
   const [isAdding, setIsAdding] = useState(false);
+  const queued = useRef(false);
   const spec = getProductSpec(product.sku);
   const sizeMatch = product.name.match(/^(.*?)\s+(\d+(?:\.\d+)?\s?(?:mg|mcg|g|ml|iu))$/i);
   const size = sizeMatch ? sizeMatch[2] : null;
@@ -158,11 +167,20 @@ export function ProductListItemRender({
         delay === undefined ? '' : ' rise'
       }`}
       style={entrance}
+      data-product-sku={product.sku}
     >
       <div className="flex items-center justify-between gap-3 px-1 pt-0.5 pb-2.5">
         {index ? <span className="chip">Plate {String(index).padStart(2, '0')}</span> : null}
-        <span className="mono ml-auto" style={{ color: accentColor }}>
-          {product.sku}
+        <span className="ml-auto text-sm font-medium" style={{ color: accentColor }}>
+          {urlKey
+            ? ({
+                glps: 'GLPs',
+                bioregulators: 'Bioregulators',
+                recovery: 'Recovery',
+                'gh-releasing': 'GH Releasing',
+                other: 'Other'
+              } as const)[urlKey]
+            : null}
         </span>
       </div>
 
@@ -223,20 +241,40 @@ export function ProductListItemRender({
                 <button
                   type="button"
                   className="btn btn--sm"
-                  disabled={!state.canAddToCart || state.isLoading || isAdding}
+                  disabled={!state.canAddToCart || isAdding}
                   aria-busy={isAdding}
                   onClick={async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setIsAdding(true);
+                    // A queued card is not `isAdding` yet; this stops its own
+                    // repeat clicks from stacking extra adds without marking
+                    // any sibling busy.
+                    if (queued.current) return;
+                    queued.current = true;
                     try {
-                      await actions.addToCart();
+                      await serializeCartMutation(async () => {
+                        setIsAdding(true);
+                        try {
+                          await actions.addToCart();
+                        } finally {
+                          setIsAdding(false);
+                        }
+                      });
                     } finally {
-                      setIsAdding(false);
+                      queued.current = false;
                     }
                   }}
                 >
-                  {isAdding ? _('Adding...') : _('Add to cart')}
+                  {/* Both words stay in the pill so the swap cannot resize it —
+                    * the idle one hides while the add is in flight. */}
+                  <span className="btn__labels">
+                    <span className="btn__label btn__label--idle">
+                      {_('Add to cart')}
+                    </span>
+                    <span className="btn__label btn__label--pending">
+                      {_('Adding...')}
+                    </span>
+                  </span>
                 </button>
               )}
             </AddToCart>

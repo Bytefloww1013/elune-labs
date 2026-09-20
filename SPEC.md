@@ -45,7 +45,7 @@ A simple e-commerce storefront selling research reference peptides in five categ
   - **Design migration in progress (2026-09-17):** the visual world is being replaced with the "Lunar Plates" system specified in root `DESIGN.md`, and the landing route is being reproduced from the owner-approved `docs/design/mockups/elune-landing-mockup-v5.html`. Root `DESIGN.md` governs the visual specification; this FR governs scope (presentation-only, no engine logic touched).
 
 - **FR-6 Catalog seeding**
-  - A re-runnable seed script (kept in the repo, e.g. `scripts/seed-catalog.*` with its JSON data list) authenticates to the admin REST API and creates the five categories and the placeholder products (names, prices, per-size simple products e.g. 5 mg/10 mg vials, placeholder images).
+  - A re-runnable seed script (kept in the repo, e.g. `scripts/seed-catalog.*` with its JSON data list) authenticates to the admin REST API and creates the five categories and the placeholder products (names, prices, per-size simple products e.g. 5 mg/10 mg vials, placeholder images). Size-paired SKUs share a native EverShop Size variant group; each child remains its own SKU, price, and stock.
   - It also seeds the three CMS pages the header and footer link to — `/faqs`, `/shipping`, `/contact` — idempotently, filling only unset settings so a re-run cannot revert an owner's edits.
   - Re-run must be safe: skip/update existing by `url_key`/`sku` instead of duplicating.
 
@@ -68,7 +68,7 @@ A simple e-commerce storefront selling research reference peptides in five categ
 | 1 | `elune-labs-tvg.1` Payments | **Manual crypto** (wallet + TXID, admin confirms) | No crypto gateway exists for EverShop; hosted processors (NOWPayments/Cryptomus) need custom extension + KYC + fees and can drop high-risk vendors; BTCPay sidecar = heavy ops. Stripe/PayPal ban this vertical. Automate only when volume justifies. |
 | 2 | `elune-labs-tvg.2` Docker layout (research) | **Pinned `evershop/evershop:2.2.1` + `postgres:16`**, app-side volumes, `pg_isready` healthcheck | Stock compose omits media/public/.evershop/.log volumes and healthchecks; `latest` == `next` == 2.2.1 today — pin for upgrade control. |
 | 3 | `elune-labs-tvg.3` Age gate | **Client-side 18+ modal + cookie**; RUO disclaimers footer + product pages | Standard niche practice, hours not days; server middleware rejected for v1 (bypassable-by-design accepted; revisit only on legal requirement). |
-| 4 | `elune-labs-tvg.4` Catalog seeding (research) | **Scripted REST seeding**, JSON product list in repo | `npm run seed` = demo shoes data, dev-only, no custom hook; direct SQL undocumented; manual admin entry non-reproducible. Variants modeled as separate simple products per size. |
+| 4 | `elune-labs-tvg.4` Catalog seeding (research) | **Scripted REST seeding**, JSON product list in repo | `npm run seed` = demo shoes data, dev-only, no custom hook; direct SQL undocumented; manual admin entry non-reproducible. Size-paired SKUs share a native Size variant group; each child remains a simple product. |
 | 5 | `elune-labs-tvg.5` Theme | **Custom theme via `theme:create`, minimal surface** | User trade-off: brand feel accepted, theme maintenance on upgrades acknowledged. Marketplace (SweetDream Bakery) rejected as mismatched. |
 | 6 | `elune-labs-tvg.6` VPS topology | **Deferred** — portable compose now | Caddy-vs-Traefik decided when host + domain exist; backups documented only. |
 | 7 | `elune-labs-tvg.7.1` Store parameters | **USD; flat rate per order; BTC + USDT (Ethereum, ERC-20) + ETH** address blocks | Placeholder addresses swapped for real wallets at setup. The TRON (TRC-20) USDT rail was retired in favour of Ethereum ERC-20; the legacy TRON value is not reusable and leaves the rail unavailable until an Ethereum address is set. |
@@ -97,7 +97,7 @@ EverShop owns the persistence schema (products, categories, carts, orders, setti
 }
 ```
 
-Variants (5 mg/10 mg) are modeled as **separate simple products**, not variant groups — fewest moving parts for a placeholder catalog.
+Size-paired SKUs (BPC-157, TB-500, CJC-1295 No DAC) remain **independent simple products** and share a native EverShop Size variant group; unpaired SKUs stay ungrouped.
 
 ### Category (creation payload — REST `POST /api/categories`)
 

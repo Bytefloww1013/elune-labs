@@ -38,6 +38,8 @@
     {
       "name": "BPC-157 5mg",
       "sku": "BPC157-5MG",
+      "family": "bpc-157",
+      "size": "5mg",
       "price": 39.99,
       "category": "recovery",
       "qty": 100
@@ -45,6 +47,8 @@
     {
       "name": "BPC-157 10mg",
       "sku": "BPC157-10MG",
+      "family": "bpc-157",
+      "size": "10mg",
       "price": 59.99,
       "category": "recovery",
       "qty": 100
@@ -52,6 +56,8 @@
     {
       "name": "TB-500 5mg",
       "sku": "TB500-5MG",
+      "family": "tb-500",
+      "size": "5mg",
       "price": 49.99,
       "category": "recovery",
       "qty": 100
@@ -59,6 +65,8 @@
     {
       "name": "TB-500 10mg",
       "sku": "TB500-10MG",
+      "family": "tb-500",
+      "size": "10mg",
       "price": 79.99,
       "category": "recovery",
       "qty": 100
@@ -73,6 +81,8 @@
     {
       "name": "CJC-1295 (No DAC) 5mg",
       "sku": "CJC1295-5MG",
+      "family": "cjc-1295-no-dac",
+      "size": "5mg",
       "price": 44.99,
       "category": "gh-releasing",
       "qty": 100
@@ -80,6 +90,8 @@
     {
       "name": "CJC-1295 (No DAC) 10mg",
       "sku": "CJC1295-10MG",
+      "family": "cjc-1295-no-dac",
+      "size": "10mg",
       "price": 69.99,
       "category": "gh-releasing",
       "qty": 100

@@ -11,16 +11,25 @@ import { pathToFileURL } from 'node:url';
 // documented `docker compose exec app node scripts/seed-catalog.mjs` works
 // without hand-passing EVERSHOP_BASE_URL.
 const BASE_URL = process.env.EVERSHOP_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`;
-// Defaults are this deployment's seeded admin (docs/DEVELOPER.md § Seed
-// catalog), so the documented container run needs no env. Override with
-// ADMIN_EMAIL / ADMIN_PASSWORD.
-const EMAIL = process.env.ADMIN_EMAIL ?? 'admin@elunelabs.example';
-const PASSWORD = process.env.ADMIN_PASSWORD ?? 'ChangeMe123';
+const EMAIL = process.env.ADMIN_EMAIL;
+const PASSWORD = process.env.ADMIN_PASSWORD;
+
+// Credentials travel in a POST body, so refuse plain HTTP to anything but
+// loopback before the first byte leaves the process.
+function requireSecureBaseUrl() {
+  const url = new URL(BASE_URL);
+  const loopback = url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '[::1]';
+  if (url.protocol !== 'https:' && !(url.protocol === 'http:' && loopback)) {
+    throw new Error('EVERSHOP_BASE_URL must use HTTPS unless it targets loopback');
+  }
+}
 
 let accessToken = null;
 
 // POST /api/user/tokens {email, password} -> data.accessToken (8-3 §1).
 export async function login() {
+  if (!EMAIL || !PASSWORD) throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD are required');
+  requireSecureBaseUrl();
   const res = await fetch(`${BASE_URL}/api/user/tokens`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -201,7 +210,7 @@ export async function upsertProduct({ name, sku, price, qty }) {
   if (existing) {
     const res = await apiFetch(`/api/products/${existing.uuid}`, {
       method: 'PATCH',
-      body: JSON.stringify({ price, qty, status: 1 })
+      body: JSON.stringify({ price, qty, status: 1, stock_availability: qty > 0 ? 1 : 0 })
     });
     const json = await res.json().catch(() => null);
     if (!res.ok) throw new Error(`patch '${sku}' failed: HTTP ${res.status} ${JSON.stringify(json)}`);
@@ -252,6 +261,181 @@ export async function attachProduct(category, product) {
   console.log(`product '${product.sku}': attached to '${category.url_key}'`);
   return json?.data ?? null;
 }
+
+// Reconcile native Size variants after every product exists. Family identity
+// lives in catalog-data.json; existing groups are recognized by their assigned
+// children and Size attribute membership, so no parent product or schema field
+// is needed.
+export async function reconcileVariants(data) {
+  const families = new Map();
+  for (const product of data.products.filter((p) => p.family)) {
+    families.set(product.family, [...(families.get(product.family) ?? []), product]);
+  }
+  const groupedSkus = [...families.values()].flat().map((p) => p.sku);
+  const pool = await db();
+  const client = await pool.connect();
+  try {
+    await client.query('begin');
+    await client.query(`select pg_advisory_xact_lock(hashtext('elune-catalog-variants'))`);
+
+    const attributeResult = await client.query(
+      `insert into attribute
+         (attribute_code, attribute_name, type, display_on_frontend)
+       values ('size', 'Size', 'select', false)
+       on conflict (attribute_code) do update
+         set attribute_name = excluded.attribute_name,
+             display_on_frontend = excluded.display_on_frontend
+       returning attribute_id, type`
+    );
+    const sizeAttribute = attributeResult.rows[0];
+    if (sizeAttribute.type !== 'select') throw new Error("attribute 'size' exists but is not select");
+
+    await client.query(
+      `insert into attribute_group_link (attribute_id, group_id)
+       values ($1, 1)
+       on conflict (attribute_id, group_id) do nothing`,
+      [sizeAttribute.attribute_id]
+    );
+    const sizeGroups = await client.query(
+      `select variant_group_id
+         from variant_group
+        where attribute_group_id = 1
+          and attribute_one = $1
+          and attribute_two is null
+          and attribute_three is null
+          and attribute_four is null
+          and attribute_five is null
+        for update`,
+      [sizeAttribute.attribute_id]
+    );
+    const sizeGroupIds = new Set(sizeGroups.rows.map((group) => group.variant_group_id));
+
+    await client.query(
+      `update product set variant_group_id = null
+        where not (sku = any($1::varchar[])) and variant_group_id is not null`,
+      [groupedSkus]
+    );
+    await client.query(
+      `delete from product_attribute_value_index pavi
+        using product p
+        where p.product_id = pavi.product_id
+          and pavi.attribute_id = $1
+          and not (p.sku = any($2::varchar[]))`,
+      [sizeAttribute.attribute_id, groupedSkus]
+    );
+
+    const options = new Map();
+    for (const size of ['5mg', '10mg']) {
+      const existing = await client.query(
+        `select attribute_option_id
+           from attribute_option
+          where attribute_id = $1 and option_text = $2
+          order by attribute_option_id`,
+        [sizeAttribute.attribute_id, size]
+      );
+      if (existing.rowCount > 1) throw new Error(`Size option '${size}' is duplicated`);
+      const optionId = existing.rows[0]?.attribute_option_id ?? (await client.query(
+        `insert into attribute_option (attribute_id, attribute_code, option_text)
+         values ($1, 'size', $2)
+         returning attribute_option_id`,
+        [sizeAttribute.attribute_id, size]
+      )).rows[0].attribute_option_id;
+      options.set(size, optionId);
+    }
+
+    for (const [family, declared] of families) {
+      const skus = declared.map((p) => p.sku);
+      const products = await client.query(
+        `select product_id, sku, variant_group_id
+           from product
+          where sku = any($1::varchar[])
+          order by product_id
+          for update`,
+        [skus]
+      );
+      if (products.rowCount !== declared.length) throw new Error(`family '${family}' is missing products`);
+
+      const assignedGroupIds = [...new Set(products.rows.map((p) => p.variant_group_id).filter(Boolean))];
+      let groupId = null;
+      if (assignedGroupIds.length) {
+        const candidates = await client.query(
+          `select vg.variant_group_id,
+                  coalesce(array_agg(p.sku order by p.sku) filter (where p.product_id is not null), '{}') members
+             from variant_group vg
+             left join product p on p.variant_group_id = vg.variant_group_id
+            where vg.variant_group_id = any($1::int[])
+              and vg.attribute_group_id = 1
+              and vg.attribute_one = $2
+              and vg.attribute_two is null
+              and vg.attribute_three is null
+              and vg.attribute_four is null
+              and vg.attribute_five is null
+            group by vg.variant_group_id
+            order by vg.variant_group_id`,
+          [assignedGroupIds, sizeAttribute.attribute_id]
+        );
+        groupId = candidates.rows.find((group) => group.members.every((sku) => skus.includes(sku)))?.variant_group_id ?? null;
+      }
+      if (!groupId) {
+        groupId = (await client.query(
+          `insert into variant_group
+             (attribute_group_id, attribute_one, visibility)
+           values (1, $1, true)
+           returning variant_group_id`,
+          [sizeAttribute.attribute_id]
+        )).rows[0].variant_group_id;
+      }
+      sizeGroupIds.add(groupId);
+
+      for (const product of products.rows) {
+        const declaredProduct = declared.find((p) => p.sku === product.sku);
+        const optionId = options.get(declaredProduct.size);
+        if (!optionId) throw new Error(`family '${family}' has unsupported size '${declaredProduct.size}'`);
+        await client.query(
+          `delete from product_attribute_value_index
+            where product_id = $1 and attribute_id = $2
+              and option_id is distinct from $3`,
+          [product.product_id, sizeAttribute.attribute_id, optionId]
+        );
+        await client.query(
+          `insert into product_attribute_value_index
+             (product_id, attribute_id, option_id, option_text)
+           values ($1, $2, $3, $4)
+           on conflict (product_id, attribute_id, option_id) do update
+             set option_text = excluded.option_text`,
+          [product.product_id, sizeAttribute.attribute_id, optionId, declaredProduct.size]
+        );
+      }
+      await client.query(
+        `update product set variant_group_id = $1
+          where product_id = any($2::int[]) and variant_group_id is distinct from $1`,
+        [groupId, products.rows.map((p) => p.product_id)]
+      );
+      await client.query('update variant_group set visibility = true where variant_group_id = $1', [groupId]);
+    }
+
+    if (sizeGroupIds.size) {
+      await client.query(
+        `delete from variant_group vg
+          where vg.variant_group_id = any($1::int[])
+            and vg.attribute_group_id = 1
+            and vg.attribute_one = $2
+            and vg.attribute_two is null
+            and vg.attribute_three is null
+            and vg.attribute_four is null
+            and vg.attribute_five is null
+            and not exists (select 1 from product p where p.variant_group_id = vg.variant_group_id)`,
+        [[...sizeGroupIds], sizeAttribute.attribute_id]
+      );
+    }
+    await client.query('commit');
+  } catch (error) {
+    await client.query('rollback');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
 // Retire every live category/product the data file no longer declares: PATCH
 // status 0, never DELETE, so images and order references survive. Idempotent —
 // a second run finds nothing live to retire. Both reads come from the DB
@@ -289,10 +473,10 @@ export async function prune(data) {
   console.log(`prune: ${retired} row(s) retired`);
   return retired;
 }
-// Post-run asserts (8-3 §1): categories resolve by url_key; every SKU resolves;
-// each product's category is the declared one (Product.category — singular, no
-// 'categories' field in 2.2.1); and nothing live is undeclared (prune guard).
-// Any failure: one stderr line each, exit 1.
+// Post-run asserts: declared categories and SKUs resolve, category attachment and
+// prune invariants hold, native Size variants are exact, and simple fulfillment
+// rows retain their declared SKU, price, stock, and type. Failures throw so the
+// direct runner can close its DB pool before setting a failing exit code.
 export async function assertSeed(data) {
   const failures = [];
   for (const { url_key } of data.categories) {
@@ -326,12 +510,87 @@ export async function assertSeed(data) {
       if (status && !declaredSkus.has(sku)) failures.push(`SKU ${sku}: live but not declared`);
     }
   }
+  const catalogRows = await (await db()).query(
+    `select p.sku, p.price, p.type, p.variant_group_id, i.qty,
+            vg.visibility as variant_group_visibility,
+            vg.attribute_group_id, vg.attribute_one,
+            vg.attribute_two, vg.attribute_three, vg.attribute_four, vg.attribute_five,
+            coalesce(array_agg(pavi.option_text order by pavi.product_attribute_value_index_id)
+              filter (where pavi.product_attribute_value_index_id is not null), '{}') as sizes
+       from product p
+       join product_inventory i on i.product_inventory_product_id = p.product_id
+       left join variant_group vg on vg.variant_group_id = p.variant_group_id
+       left join attribute size_attribute on size_attribute.attribute_code = 'size'
+       left join product_attribute_value_index pavi
+              on pavi.product_id = p.product_id
+             and pavi.attribute_id = size_attribute.attribute_id
+      where p.sku = any($1::varchar[])
+      group by p.product_id, i.product_inventory_id, vg.variant_group_id`,
+    [data.products.map((p) => p.sku)]
+  );
+  const catalogBySku = new Map(catalogRows.rows.map((row) => [row.sku, row]));
+  const familyGroups = new Map();
+  for (const product of data.products) {
+    const row = catalogBySku.get(product.sku);
+    if (!row) {
+      failures.push(`SKU ${product.sku}: missing from variant assertion`);
+      continue;
+    }
+    if (Number(row.price) !== product.price) failures.push(`SKU ${product.sku}: price changed to ${row.price}`);
+    if (Number(row.qty) !== product.qty) failures.push(`SKU ${product.sku}: stock changed to ${row.qty}`);
+    if (row.type !== 'simple') failures.push(`SKU ${product.sku}: expected simple type, got '${row.type}'`);
+    if (!product.family) {
+      if (row.variant_group_id !== null) failures.push(`SKU ${product.sku}: single product is grouped`);
+      if (row.sizes.length) failures.push(`SKU ${product.sku}: single product has Size '${row.sizes.join(', ')}'`);
+      continue;
+    }
+    if (row.sizes.length !== 1 || row.sizes[0] !== product.size) {
+      failures.push(`SKU ${product.sku}: expected Size '${product.size}', got '${row.sizes.join(', ')}'`);
+    }
+    if (!row.variant_group_id) failures.push(`SKU ${product.sku}: variant group missing`);
+    if (!row.variant_group_visibility) failures.push(`SKU ${product.sku}: variant group is hidden`);
+    if (row.attribute_group_id !== 1 || row.attribute_one === null ||
+        row.attribute_two !== null || row.attribute_three !== null ||
+        row.attribute_four !== null || row.attribute_five !== null) {
+      failures.push(`SKU ${product.sku}: variant group does not use only Size in attribute group 1`);
+    }
+    const expectedGroup = familyGroups.get(product.family);
+    if (expectedGroup && expectedGroup !== row.variant_group_id) {
+      failures.push(`family '${product.family}': children do not share one group`);
+    } else {
+      familyGroups.set(product.family, row.variant_group_id);
+    }
+  }
+  const groupIds = [...familyGroups.values()];
+  if (new Set(groupIds).size !== groupIds.length) failures.push('declared families do not have distinct variant groups');
+
+  const nativeCounts = await (await db()).query(
+    `select
+       (select count(*) from attribute where attribute_code = 'size')::int as attributes,
+       (select count(*) from attribute_option ao join attribute a on a.attribute_id = ao.attribute_id
+         where a.attribute_code = 'size' and ao.option_text = '5mg')::int as five_mg_options,
+       (select count(*) from attribute_option ao join attribute a on a.attribute_id = ao.attribute_id
+         where a.attribute_code = 'size' and ao.option_text = '10mg')::int as ten_mg_options,
+       (select count(*) from attribute_group_link agl join attribute a on a.attribute_id = agl.attribute_id
+         where a.attribute_code = 'size' and agl.group_id = 1)::int as group_links,
+       (select count(*) from variant_group vg join attribute a on a.attribute_id = vg.attribute_one
+         where a.attribute_code = 'size' and vg.attribute_group_id = 1
+           and vg.attribute_two is null and vg.attribute_three is null
+           and vg.attribute_four is null and vg.attribute_five is null
+           and not exists (select 1 from product p where p.variant_group_id = vg.variant_group_id))::int as empty_groups`
+  );
+  const counts = nativeCounts.rows[0];
+  if (counts.attributes !== 1) failures.push(`Size attribute count: expected 1, got ${counts.attributes}`);
+  if (counts.five_mg_options !== 1) failures.push(`5mg option count: expected 1, got ${counts.five_mg_options}`);
+  if (counts.ten_mg_options !== 1) failures.push(`10mg option count: expected 1, got ${counts.ten_mg_options}`);
+  if (counts.group_links !== 1) failures.push(`Size/group-1 link count: expected 1, got ${counts.group_links}`);
+  if (counts.empty_groups !== 0) failures.push(`empty Size variant groups: expected 0, got ${counts.empty_groups}`);
   if (failures.length) {
     console.error(`SEED FAILURE - ${failures.length} issues`);
     for (const failure of failures) console.error(`  ✗ ${failure}`);
-    process.exit(1);
+    throw new Error('seed assertions failed');
   }
-  console.log(`asserts: ${data.categories.length} categories, ${data.products.length} products, all attached`);
+  console.log(`asserts: ${data.categories.length} categories, ${data.products.length} products, variants exact`);
 }
 
 // Store identity. Core's page meta reads `storeName` / `storeDescription` and
@@ -602,6 +861,7 @@ export async function run() {
     const upserted = await upsertProduct(product);
     await attachProduct(categories[product.category], upserted);
   }
+  await reconcileVariants(data);
   await prune(data);
   await assertSeed(data);
   await applyCmsPages();
@@ -609,8 +869,12 @@ export async function run() {
 
 // Execute only when run directly; importing (b04.16) must not seed.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  run().catch((error) => {
+  try {
+    await run();
+  } catch (error) {
     console.error(`SEED FAILURE: ${error.message}`);
-    process.exit(1);
-  });
+    process.exitCode = 1;
+  } finally {
+    await closeDb();
+  }
 }

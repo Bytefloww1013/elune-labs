@@ -408,13 +408,16 @@ h1 {
     border-color 0.16s var(--ease);
 }
 
-/* Hover inverts: panel fill, ink label, ink border. Nothing moves, nothing
- * scales, nothing lifts. Pressed is the same appearance, held. */
-.btn:hover,
-.btn:active {
-  background: var(--panel);
-  color: var(--night);
-  border-color: var(--night);
+/* Hover inverts on devices with a real hover pointer. Touch browsers can leave
+ * `:hover` stuck after a tap, so applying the inversion there would repaint the
+ * pill after the add starts. */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover,
+  .btn:active {
+    background: var(--panel);
+    color: var(--night);
+    border-color: var(--night);
+  }
 }
 
 /* Disabled is ash chrome with an ink label, keeping its shape and its label —
@@ -427,11 +430,40 @@ h1 {
   cursor: not-allowed;
 }
 
-/* A pending action keeps its ink fill and its label rather than greying out, so a
- * pending order still reads as the action. */
+/* A pending action keeps the palette it was clicked in rather than greying out,
+ * so a pending order still reads as the action. A pending button is also a
+ * disabled one, and these rules sit after `:disabled` and out-specify it, so the
+ * click itself repaints nothing: at rest the ink fill and label hold, and under
+ * the pointer the hover inversion holds. */
 .btn[aria-busy='true'] {
   background: var(--night);
   color: var(--snow);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn[aria-busy='true']:hover,
+  .btn[aria-busy='true']:active {
+    background: var(--panel);
+    color: var(--night);
+    border-color: var(--night);
+  }
+}
+
+/* The pending word swaps in without resizing the pill: both labels share one grid
+ * cell, so the button is as wide as the wider word in any locale and the swap only
+ * changes which one is visible. Hiding, not removing, is what keeps the width. */
+.btn__labels {
+  display: grid;
+}
+
+.btn__labels > * {
+  grid-area: 1 / 1;
+  justify-self: center;
+}
+
+.btn:not([aria-busy='true']) .btn__label--pending,
+.btn[aria-busy='true'] .btn__label--idle {
+  visibility: hidden;
 }
 
 .btn--sm {
@@ -445,11 +477,12 @@ h1 {
 .tlink .arw {
   transition: transform 0.22s var(--ease);
 }
-
-.btn:hover .arw,
-.btn:active .arw,
-.tlink:hover .arw {
-  transform: translateX(3px);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover .arw,
+  .btn:active .arw,
+  .tlink:hover .arw {
+    transform: translateX(3px);
+  }
 }
 
 /* Text links — a second-path action, never a second button. */

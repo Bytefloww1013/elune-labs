@@ -160,8 +160,7 @@ verifies it on-chain and captures it.
 ## Seed the catalog
 
 The seeder authenticates as admin and needs the correct base URL and credentials.
-Defaults in the script are `localhost:3000` and `admin@evershop.com` -- **neither
-matches this deployment**. Set env vars explicitly:
+It fails closed without `ADMIN_EMAIL` and `ADMIN_PASSWORD`. Set env vars explicitly:
 
 ```bash
 docker compose exec app sh -c '
@@ -210,13 +209,20 @@ Wait for the healthcheck to pass (storefront returns 200) before verifying.
 ### Verify the rebuild
 
 ```bash
+EVERSHOP_ALLOW_MUTATION=1 \
+ADMIN_EMAIL="admin@elunelabs.example" \
+ADMIN_PASSWORD="ChangeMe123" \
 node scripts/smoke-checkout.mjs    # guest checkout end-to-end; exit 0 = pass
 ```
 
-Loads `.env`, verifies the Tailscale storefront emits matching browser-facing
-cart URLs (override with `EVERSHOP_STOREFRONT_URL`), then runs the checkout API
-flow on `http://localhost:3010` (override with `EVERSHOP_BASE_URL`); zero
-dependencies, needs no container exec.
+Fails closed without the mutation opt-in and admin credentials. Loads `.env`
+when present. Guest storefront URL is `EVERSHOP_STOREFRONT_URL` or `HOME_URL`
+(no credentials ride that URL). Checkout API uses `EVERSHOP_BASE_URL`
+(default `http://localhost:3010`, HTTPS unless loopback). Default line is
+`EVERSHOP_CHECKOUT_SKU=BPC157-10MG`. Requires Chromium (`CHROMIUM_PATH` if
+outside Playwright's cache). On Ubuntu AppArmor hosts set
+`CHROMIUM_NO_SANDBOX=1`. The browser step prints `SKIP` unless
+`EVERSHOP_STOREFRONT_URL` (or `HOME_URL`) is loopback.
 
 ## Backup
 
