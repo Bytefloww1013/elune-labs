@@ -399,7 +399,7 @@ Literal off-step sizes from the landing prototype are approved for landing only;
 - **Primary Pill:** Full pill (`--r-pill`), `--night` fill, `--snow` text, 1px transparent border, no shadow, min-height 44px, padding `14px 24px`, icon gap 10px, weight 500 (`label` step).
   - *Hover/Pressed:* Inverts to `--panel` fill, `--night` text, 1px `--night` border. Arrow stays translated 3px. No scaling or lifting.
   - *Budget:* Exactly one primary filled pill per action group (header, hero, card action group, checkout summary).
-- **Compact Variant:** `10px 18px` padding, `label-sm` step, min-height 44px. Header "Shop all" and age gate "Enter".
+- **Compact Variant:** `10px 18px` padding, `label-sm` step, min-height 44px. Header "Shop all", age gate "Enter", and the plate foot row's "Add to cart".
 - **Secondary Actions:** Underlined text link (1px underline, `text-underline-offset: 4px`, `--ash` rest → `--night` hover) with drawn SVG arrow translating 3px. Never a slate-filled button.
 - **Labels:** Destination-naming ("Browse the catalogue", "Shop Recovery", "View compound"). Never "Learn more" or "Submit".
 - **Disabled State:** `--ash` chrome, `--night` text (8.31:1 contrast), `cursor: not-allowed`. Checkout submit maintains ink fill while pending.
@@ -418,7 +418,7 @@ Literal off-step sizes from the landing prototype are approved for landing only;
 
 ### Cards
 - **Catalogue Plate (Product Card):** `--panel` fill, 1px `--hairline`, `--r-card` (16px), 16px padding, flex column. Border turns `--ash` on hover.
-  - *Anatomy:* Head row (plate number neutral pill chip left, mono ID in category accent right) → Authored vial cutaway SVG in `--slate` (`role="img"`, `aria-label="Cutaway diagram of a sealed vial: crimp seal, glass body, lyophilized powder"`) → Product name (`title` step) → Mono form · size line (`--slate`) → Foot row (`margin-top: auto`, hairline top rule, mono price left, "View" text link right; on `/all` grid, renders compact "Add to cart" pill).
+  - *Anatomy:* Head row (plate number neutral pill chip left, mono ID in category accent right) → Authored vial cutaway SVG in `--slate` (`role="img"`, `aria-label="Cutaway diagram of a sealed vial: crimp seal, glass body, lyophilized powder"`) → Product name (`title` step) → Mono form · size line (`--slate`) → Foot row (`margin-top: auto`, hairline top rule): mono price left, and bottom-aligned right the card action group — compact "Add to cart" pill, then "View" text link with drawn SVG arrow. The Add pill is the group's single filled pill; "View" is omitted only when the product has no URL (never a fabricated destination).
 - **Hero Plate Sheet:** `--panel` fill, 1px `--ash` edge, `--r-sheet` (32px), 16px padding.
   - *Anatomy:* Head row (`chip-beam` plate number left, mono ID right) → Body (`.78fr` column with 3:4 photo, 14px inner radius; `1.22fr` column with `<dl>` hairline-separated spec rows, `label-sm` `--slate` labels, ink mono values, 12px vertical padding, no rule under last row) → Foot row (category · strength chip + "View compound" link above hairline).
 - **Category Cell:** Single `--r-card` (16px) container (`overflow: hidden`), 5 cells divided by 1px hairlines.
@@ -502,7 +502,7 @@ Literal off-step sizes from the landing prototype are approved for landing only;
 
 ## 7. Pages & Routes
 
-- **`/all` (Catalogue Grid):** Every product, alphabetical by name, served by `extensions/elune-catalog/`. Renders 4-up grid of catalogue cards carrying price and compact "Add to cart" pill.
+- **`/all` (Catalogue Grid):** Every product, alphabetical by name, served by `extensions/elune-catalog/`. Renders 4-up grid of catalogue cards, each carrying the standard plate foot row (price, compact "Add to cart", "View").
 - **`/new-releases`:** Newest 6 by catalog order, served by `extensions/elune-catalog/`.
 - **CMS Pages (`/faqs`, `/shipping`, `/contact`):** Editable in admin console with no rebuild. Render page prose at lede/body steps inside shell, with no cards, no icon rows, and no decorative panels. Heading-plus-paragraph structure (no CMS disclosures required).
 - **Category Routes:** Catalogue plate grid at 4-up with category heading in `--night` ink. Category accents appear only inside cards (plate ID + product name), never on headers or container fills.

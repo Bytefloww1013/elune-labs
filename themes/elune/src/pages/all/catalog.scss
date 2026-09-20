@@ -133,6 +133,16 @@
   gap: 20px;
 }
 
+.evershop-collection-spotlight__copy-panel .product__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1081px) {
+  .categoryView main.page-width > .grid {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+}
+
 /* The category heading takes the headline step in ink, like every other section
  * header — and the accent stays inside the cards, never on the header. */
 .category__info .category__name {
@@ -147,12 +157,14 @@
   .product__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
 }
 
 @media (max-width: 640px) {
   .product__grid {
     grid-template-columns: minmax(0, 1fr);
   }
+
 }
 
 /* ── the catalogue's controls (filter rail + sort) ───────────────────────── */

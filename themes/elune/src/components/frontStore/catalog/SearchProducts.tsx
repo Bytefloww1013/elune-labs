@@ -4,15 +4,8 @@ import { useSearch } from '@components/frontStore/catalog/SearchContext.js';
 import React from 'react';
 
 /**
- * Theme override of core's SearchProducts. Two deltas, both marked below.
- *
- * 1. The buy pill is off (`showAddToCart={false}`), as on every browse list:
- *    core passes `true` from the search route too, and DESIGN.md allows the
- *    filled pill on /all only, giving the browse card the quiet "View" link.
- * 2. The results grid owns the route's second heading level. Core's search page
- *    runs the `h1` (SearchInfo) straight into the plates' `h3` names, skipping a
- *    level; this `h2` is real text for the outline and nothing for the eye, the
- *    same pattern the theme's own catalogue pages use.
+ * Theme override gives the results grid its missing second heading level so
+ * the route outline runs from SearchInfo's `h1` to product-name `h3`s.
  */
 export function SearchProducts() {
   const { products } = useSearch();
@@ -27,7 +20,6 @@ export function SearchProducts() {
         products={products.items}
         layout="grid"
         gridColumns={4}
-        showAddToCart={false}
       />
       <Area id="searchProductsAfter" noOuter />
     </>

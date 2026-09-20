@@ -26,10 +26,8 @@ interface ProductListItemData {
  * is the body it renders, and the theme binds to the route by folder name.
  *
  * Cards come from the same ProductListItemRender the homepage's catalogue
- * section uses, so a compound looks identical wherever it appears. This is the
- * one grid in the storefront that carries the compact "Add to cart" pill
- * instead of the "View" text link: browsing every compound is where a buyer
- * already knows what they want (DESIGN.md, Cards → Catalogue plate).
+ * section uses, so a compound has the same Add to cart and View actions
+ * wherever it appears.
  *
  * Sorted by name here. The `products` collection returns rows in descending
  * `product_id` — i.e. newest-first — which is exactly what /new-releases wants
@@ -75,7 +73,7 @@ const AllProducts: React.FC<{ products?: { total?: number; items?: ProductListIt
           <h2 className="sr-only">Catalogue</h2>
           <div className="product__grid mt-6 grid">
             {items.map((product) => (
-              <ProductListItemRender key={product.productId} product={product} showAddToCart />
+              <ProductListItemRender key={product.productId} product={product} />
             ))}
           </div>
         </>

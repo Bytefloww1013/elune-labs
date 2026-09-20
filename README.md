@@ -213,8 +213,10 @@ Wait for the healthcheck to pass (storefront returns 200) before verifying.
 node scripts/smoke-checkout.mjs    # guest checkout end-to-end; exit 0 = pass
 ```
 
-Hits the running store on `http://localhost:3010` (override with
-`EVERSHOP_BASE_URL`); zero dependencies, needs no container exec.
+Loads `.env`, verifies the Tailscale storefront emits matching browser-facing
+cart URLs (override with `EVERSHOP_STOREFRONT_URL`), then runs the checkout API
+flow on `http://localhost:3010` (override with `EVERSHOP_BASE_URL`); zero
+dependencies, needs no container exec.
 
 ## Backup
 

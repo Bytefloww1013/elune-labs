@@ -20,7 +20,11 @@
 //     bootstraps zone->method->rate (idempotent: skips when the cart already
 //     resolves available methods).
 
+process.loadEnvFile();
+
 const BASE_URL = process.env.EVERSHOP_BASE_URL ?? 'http://localhost:3010';
+const STOREFRONT_URL = process.env.EVERSHOP_STOREFRONT_URL ??
+  `http://100.123.49.43:${process.env.PORT ?? 3010}`;
 const EMAIL = process.env.ADMIN_EMAIL ?? 'admin@elunelabs.example';
 const PASSWORD = process.env.ADMIN_PASSWORD ?? 'ChangeMe123';
 
@@ -37,7 +41,22 @@ const ADDRESS = {
 };
 
 let accessToken = null;
+async function checkStorefrontUrls() {
+  const res = await fetch(`${STOREFRONT_URL}/`);
+  const html = await res.text();
+  if (!res.ok) throw new Error(`storefront failed: HTTP ${res.status}`);
 
+  const expectedOrigin = new URL(STOREFRONT_URL).origin;
+  const baseUrl = html.match(/"baseUrl":"([^"]+)"/)?.[1];
+  const cartApi = html.match(/"(https?:\/\/[^\"]+\/api\/cart\/mine\/items)"/)?.[1];
+  if (!baseUrl || !cartApi) throw new Error('storefront did not expose its base URL and cart API');
+  for (const [label, value] of [['pageMeta.baseUrl', baseUrl], ['addMineCartItemApi', cartApi]]) {
+    const actualOrigin = new URL(value).origin;
+    if (actualOrigin !== expectedOrigin) {
+      throw new Error(`${label} uses ${actualOrigin}; expected ${expectedOrigin}`);
+    }
+  }
+}
 // POST /api/user/tokens {email, password} -> data.accessToken.
 async function login() {
   const res = await fetch(`${BASE_URL}/api/user/tokens`, {
@@ -154,6 +173,7 @@ async function resolveShippingMethod() {
 }
 
 const steps = [
+  ['storefront URLs match browser origin', () => checkStorefrontUrls()],
   ['admin login', () => login()],
   [
     'find product',

@@ -4,7 +4,7 @@ import { Image } from '@components/common/Image.js';
 import { toast } from '@components/common/ui/Sonner.js';
 import { AddToCart } from '@components/frontStore/cart/AddToCart.js';
 import { _ } from '@evershop/evershop/lib/locale/translate/_';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 interface ProductListItemData {
   productId: number;
@@ -94,10 +94,8 @@ export function VialCutaway() {
  * category where a surface has no plate sequence, with the mono identifier in
  * its category accent on the right) → the authored vial cutaway → the product
  * name at the title step → a mono form · size line in slate → a foot row pushed
- * to the bottom by `mt-auto` above a hairline, carrying the mono price and
- * either the quiet "View" text link (browse: category routes, /new-releases and
- * the homepage's catalogue section) or, on the shoppable `/all` grid, one
- * compact filled "Add to cart" pill.
+ * to the bottom by `mt-auto` above a hairline, carrying the mono price, compact
+ * Add to cart control, and View link when the product has a URL.
  *
  * `index` is what makes the head a plate number (`Plate 02`): the homepage's
  * catalogue section and its hero carry the sequence, and a surface without one
@@ -115,7 +113,6 @@ export function ProductListItemRender({
   product,
   imageWidth,
   imageHeight,
-  showAddToCart = false,
   customAddToCartRenderer,
   index,
   accent,
@@ -142,6 +139,7 @@ export function ProductListItemRender({
    */
   delay?: number;
 }) {
+  const [isAdding, setIsAdding] = useState(false);
   const spec = getProductSpec(product.sku);
   const sizeMatch = product.name.match(/^(.*?)\s+(\d+(?:\.\d+)?\s?(?:mg|mcg|g|ml|iu))$/i);
   const size = sizeMatch ? sizeMatch[2] : null;
@@ -198,7 +196,7 @@ export function ProductListItemRender({
         </p>
       )}
 
-      <div className="mt-auto flex items-end justify-between gap-3 border-t border-hairline px-1 pt-4 pb-0.5">
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-hairline px-1 pt-4 pb-0.5">
         <span className="font-mono text-price tabular-nums">
           {discounted ? (
             <>
@@ -212,42 +210,44 @@ export function ProductListItemRender({
           )}
         </span>
 
-        {showAddToCart && (
-          <div className="product__list__actions">
-            {customAddToCartRenderer ? (
-              customAddToCartRenderer(product)
-            ) : (
-              <AddToCart
-                product={{ sku: product.sku, isInStock: product.inventory.isInStock }}
-                qty={1}
-                onError={(error) => toast.error(error)}
-              >
-                {(state, actions) => (
-                  <button
-                    type="button"
-                    className="btn btn--sm"
-                    disabled={!state.canAddToCart || state.isLoading}
-                    aria-busy={state.isLoading}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      actions.addToCart();
-                    }}
-                  >
-                    {state.isLoading ? _('Adding...') : _('Add to cart')}
-                  </button>
-                )}
-              </AddToCart>
-            )}
-          </div>
-        )}
-
-        {!showAddToCart && product.url && (
-          <a className="tlink" href={product.url}>
-            {_('View')}
-            <Arrow />
-          </a>
-        )}
+        <div className="product__list__actions ml-auto flex shrink-0 flex-nowrap items-center justify-end gap-3">
+          {customAddToCartRenderer ? (
+            customAddToCartRenderer(product)
+          ) : (
+            <AddToCart
+              product={{ sku: product.sku, isInStock: product.inventory.isInStock }}
+              qty={1}
+              onError={(error) => toast.error(error)}
+            >
+              {(state, actions) => (
+                <button
+                  type="button"
+                  className="btn btn--sm"
+                  disabled={!state.canAddToCart || state.isLoading || isAdding}
+                  aria-busy={isAdding}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsAdding(true);
+                    try {
+                      await actions.addToCart();
+                    } finally {
+                      setIsAdding(false);
+                    }
+                  }}
+                >
+                  {isAdding ? _('Adding...') : _('Add to cart')}
+                </button>
+              )}
+            </AddToCart>
+          )}
+          {product.url && (
+            <a className="tlink" href={product.url}>
+              {_('View')}
+              <Arrow />
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );

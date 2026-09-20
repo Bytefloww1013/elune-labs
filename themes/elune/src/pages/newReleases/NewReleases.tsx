@@ -33,9 +33,8 @@ interface ProductListItemData {
  * newest-first is a descending sort on it.
  *
  * There is no publication date on a product, so this is honest about what it
- * is: the newest entries by catalog order, not a dated release feed. Cards are
- * the browse variant — this is a shop window, and the compound's own page is
- * where it is bought (DESIGN.md, Pages & Routes).
+ * is: the newest entries by catalog order, not a dated release feed. Cards use
+ * the storefront's shared catalogue actions.
  */
 const NEW_RELEASE_COUNT = 6;
 
