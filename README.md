@@ -42,32 +42,25 @@ curl -sL -o /dev/null -w 'admin %{http_code}\n' "http://localhost:$PORT/admin"
 
 ## Remote access (tailnet)
 
-Compose publishes the storefront on **every host interface** by default
-(`${BIND_HOST:-0.0.0.0}` in `docker-compose.yml`), so a machine on the same
-tailnet opens it at the host's tailnet address -- on this host:
-
-```
-http://100.123.49.43:3010          # storefront
-http://100.123.49.43:3010/admin    # admin console
-```
-
-(`3010` is this host's `PORT`; use whatever `PORT` resolves to.) To publish on the
-tailnet only -- nothing on the LAN, nothing on `localhost`:
+Compose publishes the storefront on **loopback only** by default
+(`${BIND_HOST:-127.0.0.1}` in `docker-compose.yml`), so nothing reaches the port
+from the LAN or the tailnet directly. Remote access goes through Tailscale
+Serve, which terminates TLS on the tailnet and forwards to the loopback port:
 
 ```bash
-# .env
-BIND_HOST=100.123.49.43
+tailscale serve --bg http://127.0.0.1:3010    # 3010 = this host's PORT
+tailscale serve status                        # prints the https:// node URL
 ```
 
-then `docker compose up -d` to republish. `BIND_HOST` is compose interpolation
-only: the container still listens on `PORT`, and the healthcheck stays on
-`127.0.0.1:$PORT` inside the container. No host firewall is involved (ufw is
-disabled on this host); if one is ever enabled, allow the port on `tailscale0`.
+(`3010` is this host's `PORT`; use whatever `PORT` resolves to.) The node URL is
+`https://<node-name>.<tailnet>.ts.net`. `BIND_HOST` and host `PORT` are Compose
+interpolation only: the app always listens on container port `3000`, and its
+healthcheck stays on `127.0.0.1:3000`. Nothing to open in a host firewall --
+Serve dials the published loopback port itself.
 
-> Tailnet-only means `localhost:$PORT` and the LAN address stop answering: every
-> URL becomes the tailnet one -- the runbook's smoke curls, `EVERSHOP_BASE_URL`
-> for the seed/smoke scripts, and `HOME_URL`. With the default `BIND_HOST=0.0.0.0`
-> both work side by side.
+> Publishing on a real interface instead (`BIND_HOST=<host-ip>`) makes the port
+> reachable outside Serve and needs its own TLS story; loopback + Serve is the
+> supported path.
 
 ### Base URL (`HOME_URL`)
 
@@ -79,24 +72,41 @@ link back to *itself* -- the page loads, nothing else works.
 `docker-compose.yml` therefore passes:
 
 ```yaml
-EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
+EVERSHOP_HOME_URL: "${HOME_URL:-http://localhost:${PORT:-3000}}"
 ```
 
-so the default base URL is this host's tailnet address and port. Override it in
-`.env` when the browse address differs (different tailnet host, LAN IP, tunnel,
-reverse proxy):
+so the default base URL is this host's local address. For tailnet access set the
+Serve node URL in `.env` and **recreate the app** -- the value is read at
+container start, so a restart-free edit alone changes nothing:
 
 ```bash
-# .env
-HOME_URL=https://store.example.com
+# .env -- node name comes from `tailscale serve status` or `tailscale status`
+HOME_URL=https://<node-name>.<tailnet>.ts.net
 ```
 
-Verify the store emits the address you browse from:
+```bash
+docker compose up -d app        # recreates app with the new base URL
+```
+
+Verify both sides emit what the browser actually browses:
 
 ```bash
 PORT="$(sed -n 's/^PORT=//p' .env)"; PORT="${PORT:-3000}"
-curl -s "http://100.123.49.43:$PORT/" | grep -c 'localhost'   # must print 0
+
+# local publication
+curl -sf -o /dev/null -w 'local %{http_code}\n' "http://localhost:$PORT"
+# tailnet publication (Certificates must be enabled for the tailnet)
+curl -sf -o /dev/null -w 'tailnet %{http_code}\n' "https://<node-name>.<tailnet>.ts.net"
+
+# the store must link to the tailnet URL, never to localhost
+curl -s "http://localhost:$PORT/" | grep -c 'localhost'   # must print 0 once HOME_URL is the node URL
+curl -s "http://localhost:$PORT/" | grep -c "<node-name>.<tailnet>.ts.net"   # non-zero
 ```
+
+> `scripts/smoke-checkout.mjs` drives the storefront with a headless browser
+> only when `EVERSHOP_STOREFRONT_URL` (or `HOME_URL`) is loopback. Run it while
+> `HOME_URL` uses the local default, before switching to the public Serve URL.
+> A non-loopback target prints `SKIP` so admin credentials never leave the host.
 
 ## Payment settings (crypto wallets)
 
@@ -164,7 +174,7 @@ It fails closed without `ADMIN_EMAIL` and `ADMIN_PASSWORD`. Set env vars explici
 
 ```bash
 docker compose exec app sh -c '
-  EVERSHOP_BASE_URL="http://localhost:3010"   ADMIN_EMAIL="admin@elunelabs.example"   ADMIN_PASSWORD="ChangeMe123"   node /app/scripts/seed-catalog.mjs
+  ADMIN_EMAIL="admin@elunelabs.example" ADMIN_PASSWORD="ChangeMe123" node /app/scripts/seed-catalog.mjs
 '
 ```
 
@@ -218,7 +228,7 @@ node scripts/smoke-checkout.mjs    # guest checkout end-to-end; exit 0 = pass
 Fails closed without the mutation opt-in and admin credentials. Loads `.env`
 when present. Guest storefront URL is `EVERSHOP_STOREFRONT_URL` or `HOME_URL`
 (no credentials ride that URL). Checkout API uses `EVERSHOP_BASE_URL`
-(default `http://localhost:3010`, HTTPS unless loopback). Default line is
+(default `http://localhost:$PORT`; `3010` on this host, `3000` in the app container; HTTPS unless loopback). Default line is
 `EVERSHOP_CHECKOUT_SKU=BPC157-10MG`. Requires Chromium (`CHROMIUM_PATH` if
 outside Playwright's cache). On Ubuntu AppArmor hosts set
 `CHROMIUM_NO_SANDBOX=1`. The browser step prints `SKIP` unless

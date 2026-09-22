@@ -55,11 +55,12 @@ Single `.env` at repo root (gitignored, `.env.example` committed):
 ```dotenv
 # .env.example — copy to .env, then set DB_PASSWORD
 PORT=3000
-# Published host address: 0.0.0.0 = LAN + tailnet, or one address only
-# (e.g. the tailnet IP 100.123.49.43)
-BIND_HOST=0.0.0.0
-# Browse address baked into absolute links (maps to EVERSHOP_HOME_URL)
-HOME_URL=http://100.123.49.43:3010
+# Interface Docker publishes the storefront on. 127.0.0.1 = loopback only;
+# expose it with `tailscale serve --bg http://127.0.0.1:${PORT}`.
+BIND_HOST=127.0.0.1
+# Public base URL baked into links/emails. Use the https URL clients reach,
+# e.g. https://<node>.<tailnet>.ts.net when fronted by `tailscale serve`.
+HOME_URL=http://localhost:3000
 DB_HOST=database
 DB_PORT=5432
 DB_NAME=evershop
@@ -70,6 +71,7 @@ DB_SSLMODE=disable
 
 - **app** service gets everything via `env_file: .env` (matches the `.env` shape `evershop install` produces upstream).
 - **database** service gets `POSTGRES_USER/DB/PASSWORD` via compose **interpolation** of the same file (compose reads root `.env` automatically).
+- `PORT` in `.env` is the **host** publish port only. The app publishes on loopback by default and the compose `environment:` override pins the *container* port to 3000, so the two cannot drift when the host port is changed (e.g. `PORT=3010`).
 - `DB_HOST=database` is the compose service name — never change it. `DB_SSLMODE=disable` is correct for the on-host compose network (localhost-only exposure).
 
 Fail-fast: the password interpolates as `${DB_PASSWORD:?set DB_PASSWORD in .env}` so `up` aborts with a clear message instead of initializing Postgres with an empty password.
@@ -77,7 +79,7 @@ Fail-fast: the password interpolates as `${DB_PASSWORD:?set DB_PASSWORD in .env}
 ### D4 — Healthchecks and ordering
 
 - `database`: `pg_isready -U $DB_USER -d $DB_NAME` — the stock compose has **no healthcheck at all**; without it the app races Postgres init on first-ever start (the exact failure `depends_on` without condition does not prevent).
-- `app`: small `wget --spider` check. Not upstream, but it makes `docker compose up -d --wait` a single blocking "everything answers" step in the runbook, and gives honest state in `docker compose ps`. `start_period` covers first-start migrations.
+- `app`: small `wget --spider` check against the container's own loopback (`http://127.0.0.1:3000/`) — the container port is pinned to 3000, so the check never depends on the host `PORT`. Not upstream, but it makes `docker compose up -d --wait` a single blocking "everything answers" step in the runbook, and gives honest state in `docker compose ps`. `start_period` covers first-start migrations.
 - `depends_on: database: condition: service_healthy` — long syntax, per FR-1.
 
 ### D5 — Deliberate omissions from the stock compose
@@ -97,16 +99,22 @@ services:
   app:
     image: evershop/evershop:2.2.1        # hard pin; latest == next == 2.2.1 today, pin anyway
     restart: unless-stopped
-    env_file: .env                         # DB_*, PORT, DB_SSLMODE into the container
+    env_file: .env                         # DB_*, DB_SSLMODE into the container (PORT pinned below)
     environment:
       DB_HOST: database                    # belt-and-suspenders: service name wins over .env
-      # Absolute base URL for links/forms/emails; defaults to this host's
-      # tailnet address, override with HOME_URL (see operation notes)
-      EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
+      # Container always listens on 3000. .env PORT is the *host* port only and
+      # is overridden here so the two can never drift apart.
+      PORT: 3000
+      # Absolute base URL the store bakes into links/forms/emails; defaults to
+      # local. Set HOME_URL in .env to the public URL used to reach the store
+      # (e.g. https://<node>.<tailnet>.ts.net behind `tailscale serve`).
+      EVERSHOP_HOME_URL: "${HOME_URL:-http://localhost:${PORT:-3000}}"
     ports:
-      # BIND_HOST = published host address (0.0.0.0 = every interface, i.e.
-      # LAN + tailnet); container listens on $PORT (default 3000)
-      - "${BIND_HOST:-0.0.0.0}:${PORT:-3000}:${PORT:-3000}"
+      # host-addr : host-port : container-port (container always listens on 3000).
+      # BIND_HOST is the address Docker publishes on. Default 127.0.0.1 keeps
+      # the storefront off every network interface — reach it through a local
+      # proxy such as `tailscale serve --bg http://127.0.0.1:${PORT}`.
+      - "${BIND_HOST:-127.0.0.1}:${PORT:-3000}:3000"
     volumes:
       - media-data:/app/media              # product images            (state → named)
       - public-data:/app/public            # built static assets       (state → named)
@@ -119,7 +127,7 @@ services:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:$$PORT/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -158,7 +166,7 @@ RAM: two services ≈ well under the 2 GB EverShop minimum budget; no tuning nee
 
 ## 4. Bootstrap runbook (copy-pasteable)
 
-Prerequisites: Docker Engine with the compose plugin; ~2 GB free RAM; ports 3000 free.
+Prerequisites: Docker Engine with the compose plugin; ~2 GB free RAM; the host `PORT` (default 3000) free; Tailscale on the host (`tailscale serve`) if the store must be reachable from the tailnet.
 
 ```bash
 # 1. Clone
@@ -171,6 +179,13 @@ cp .env.example .env
 # 3. Bring up — blocks until DB is healthy AND the storefront answers
 docker compose up -d --wait
 # first start pulls images, runs migrations automatically; expect ~1 min
+# app publishes on 127.0.0.1:$PORT only — reachable from this host alone
+
+# 3b. Expose it on the tailnet over HTTPS (skip for loopback-only use)
+tailscale serve --bg http://127.0.0.1:3010    # 3010 = this host's PORT
+tailscale serve status                        # prints the https:// node URL
+# then put that https URL in .env as HOME_URL and re-run
+# `docker compose up -d` so links/emails use the public address
 
 # 4. Create the admin user
 #    password policy: >= 8 chars, >= 1 letter, >= 1 digit
@@ -186,6 +201,8 @@ docker compose exec app node scripts/seed-catalog.mjs \
 ```
 
 ### 5. Admin settings walkthrough (`http://localhost:3000/admin`)
+
+Reachable at that loopback URL from the host itself; from another machine use the `tailscale serve` node URL instead (and keep `HOME_URL` in sync, see gotcha 12).
 
 1. Log in with the step-4 credentials.
 2. **Settings → store**: name `Elune Labs`, currency `USD` (single-currency invariant — nothing else gets enabled).
@@ -272,9 +289,10 @@ Rollback = re-pin the old tag and `up -d`. Only safe if the new version's migrat
 9. **Root repo `Dockerfile` ≠ published image** — don't read it as the deployment truth; the published image builds from `docker/Dockerfile` installing the exact npm release.
 10. **First `up` runs migrations automatically** — there is no separate migrate step to run or forget; this is why a pre-upgrade backup is non-negotiable.
 11. **`theme:active` writes `config/default.json`** — in a bare container that file is ephemeral, so a recreate silently reverts the storefront to the default theme. The ro `config/` bind + repo-committed file (D2) is what keeps the theme active across `down`/`up`; don't drop the mount.
+12. **Loopback publish is the default, so the browser must be local** — `BIND_HOST=127.0.0.1` means only this host reaches the storefront; from anywhere else the store is the `tailscale serve` HTTPS URL. Whenever clients reach it over the tailnet, `HOME_URL` **must** be that public URL too, or EverShop bakes `http://localhost:$PORT` into forms and emails and every link resolves back to the client's own machine.
 
 ---
 
 ## 7. Explicitly out of scope (per SPEC non-goals / ADR #6)
 
-VPS/TLS/reverse proxy (Caddy-vs-Traefik decision deferred until a host exists — compose stays portable), automated backup scheduling, app-level replication/HA, CI image builds.
+VPS/TLS/reverse proxy (the tailnet HTTPS ingress is `tailscale serve --bg` against the loopback port, deliberately *not* a compose service — the Caddy-vs-Traefik decision stays deferred until a host exists, and compose stays portable), automated backup scheduling, app-level replication/HA, CI image builds.

@@ -35,7 +35,7 @@ try {
 // Privileged script: it creates carts and orders. Fail closed before any network
 // call unless the mutation opt-in and explicit admin credentials are present,
 // and never send those credentials over plain HTTP to a non-loopback host.
-const BASE_URL = process.env.EVERSHOP_BASE_URL ?? 'http://localhost:3010';
+const BASE_URL = process.env.EVERSHOP_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`;
 const STOREFRONT_URL = process.env.EVERSHOP_STOREFRONT_URL ??
   process.env.HOME_URL ?? BASE_URL;
 const EMAIL = process.env.ADMIN_EMAIL;
@@ -389,7 +389,7 @@ async function checkAddToCartFlash() {
         beforeCount: count(),
         busyBefore: buttons.filter(busy).length,
         disabledBefore: buttons.filter((button) => button.hasAttribute('disabled')).length,
-        sku: chosen.closest('.product__list__item__inner')?.dataset.productSku ?? null,
+        sku: chosen.closest('.product__list__item__inner')?.querySelector(':scope > div .mono')?.textContent.trim() ?? null,
         chosenBusy: false,
         siblings: new Set(),
         siblingVisualChanges: new Set(),

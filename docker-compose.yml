@@ -3,21 +3,26 @@ services:
   app:
     image: evershop/evershop:2.2.1        # hard pin; latest == next == 2.2.1 today, pin anyway
     restart: unless-stopped
-    env_file: .env                         # DB_*, PORT, DB_SSLMODE into the container
+    env_file: .env                         # DB_*, DB_SSLMODE into the container
     environment:
       DB_HOST: database                # belt-and-suspenders: service name wins over .env
       NODE_ENV: production             # extension loader requires this for dist/ branch
+      # Container always listens on 3000. .env PORT is the *host* port only and
+      # is overridden here so the two can never drift apart.
+      PORT: 3000
       # Absolute base URL the store bakes into links/forms/emails. Without it
       # EverShop falls back to http://localhost:$PORT, so a browser on another
       # machine resolves every link to itself and the store is unusable. Default
-      # is this host's tailnet address; override with HOME_URL in .env.
-      EVERSHOP_HOME_URL: "${HOME_URL:-http://100.123.49.43:${PORT:-3000}}"
+      # is local; set HOME_URL in .env to the public URL used to reach the store
+      # (e.g. https://<node>.<tailnet>.ts.net behind `tailscale serve`).
+      EVERSHOP_HOME_URL: "${HOME_URL:-http://localhost:${PORT:-3000}}"
     ports:
-      # host-addr : host-port : container-port (container listens on $PORT).
-      # BIND_HOST is the address Docker publishes on: 0.0.0.0 = every interface
-      # (LAN + tailnet); set the tailnet IP, e.g. 100.123.49.43, to expose the
-      # storefront on the tailnet only. Interpolation-only, not app config.
-      - "${BIND_HOST:-0.0.0.0}:${PORT:-3000}:${PORT:-3000}"
+      # host-addr : host-port : container-port (container always listens on 3000).
+      # BIND_HOST is the address Docker publishes on. Default 127.0.0.1 keeps
+      # the storefront off every network interface — reach it through a local
+      # proxy such as `tailscale serve --bg http://127.0.0.1:${PORT}`. Set
+      # BIND_HOST=0.0.0.0 to publish on all interfaces instead.
+      - "${BIND_HOST:-127.0.0.1}:${PORT:-3000}:3000"
     volumes:
       - media-data:/app/media              # product images            (state → named)
       - public-data:/app/public            # built static assets       (state → named)
@@ -31,7 +36,7 @@ services:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:$$PORT/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
