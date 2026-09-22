@@ -1,43 +1,131 @@
-# Architecture: Elune Labs — EverShop Storefront
+# Architecture: Elune Labs storefront
 
-Derived from `SPEC.md` (requirements epic `elune-labs-tvg.7`) and the design-stage docs in `docs/design/` (beads `elune-labs-tvg.8.1/.2/.3`, all closed). Pinned engine: `evershop/evershop:2.2.1` + `postgres:16`, all Docker.
+Pinned runtime: image `evershop/evershop:2.2.1` and `postgres:16`, one Compose project. The repo adds a theme, two extensions, a catalog seeder, and a checkout smoke. Commerce, order creation, and the COD capture route stay in the image.
 
-## System overview
+## Runtime
 
 ```
-┌────────────────────────────── docker compose ──────────────────────────────┐
-│  app  (evershop/evershop:2.2.1, node:20-alpine, root, CMD npm run start)   │
-│    ├─ themes/elune/      bind rw   ← custom storefront theme (8.2)         │
-│    ├─ extensions/elune-payments/  bind rw  ← wallet-settings GraphQL ext   │
-│    ├─ scripts/           bind ro   ← seed script (8.3)                     │
-│    ├─ config/            bind ro   ← system.theme, extensions registration │
-│    └─ media/public/.evershop/.log → named volumes (copy-up is load-bearing)│
-│  database (postgres:16)  — pg_isready healthcheck, named volume, NO ports  │
-└────────────────────────────────────────────────────────────────────────────┘
-        ↑ depends_on service_healthy (both sides healthchecked, up --wait)
-http://localhost:3000  (storefront)   /admin  (admin panel)
+docker compose
+  app          evershop/evershop:2.2.1
+               NODE_ENV=production, listens on 3000
+               healthcheck wget http://127.0.0.1:3000/
+               published as ${BIND_HOST:-127.0.0.1}:${PORT:-3000}:3000
+               EVERSHOP_HOME_URL=${HOME_URL:-http://localhost:${PORT:-3000}}
+               binds:
+                 ./themes      -> /app/themes       (rw)
+                 ./extensions  -> /app/extensions   (rw)
+                 ./scripts     -> /app/scripts      (ro)
+                 ./config      -> /app/config       (ro)
+               named volumes:
+                 media-data       /app/media
+                 public-data      /app/public
+                 evershop-build   /app/.evershop
+                 log-data         /app/.log
+  database     postgres:16
+               no host ports
+               volume postgres-data
+               healthcheck pg_isready
+  app depends_on database, condition service_healthy
 ```
 
-## Subsystems (detail in linked design docs)
+`config/default.json` selects theme `elune` and enables both extensions. The host `package.json` name is `evershop-docker`; its `workspaces` entry is `themes/*` only. That file is not mounted into the container. The image's own `/app/package.json` is what `npm run build` and `npm run user:create` execute.
 
-### 1. Deployment & Operations — [docs/design/8-1-deployment.md](docs/design/8-1-deployment.md)
-Single `docker-compose.yml`: pinned images, `.env`-driven config with fail-fast `${DB_PASSWORD:?}`, app state in **named volumes** (binds would collect root-owned files and shadow baked build output), source dirs bind-mounted (`themes` rw, `extensions` rw for SWC `dist/`, `scripts`/`config` ro), dual healthchecks, `restart: unless-stopped`, Postgres port not published. Bootstrap runbook: up --wait → user:create → admin settings walkthrough → seed → curl smokes. Ops: theme/extension rebuild via `npm --prefix <dir> run build` (SWC) + `npm run build` (webpack) + restart, `pg_dump` backup (exec -T mandatory), restore, upgrade = tag bump + backup first (migrations irreversible).
+Named volumes are required for `/app/media`, `/app/public`, `/app/.evershop`, and `/app/.log`. Replacing those paths with empty host directories drops the image's copy-up contents.
 
-### 2. Storefront theme + compliance — [docs/design/8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md)
-`theme:create` scaffold `themes/elune` (swc build, not tsc — CSS survives). Presentation-only; `system.theme: "elune"` committed in `config/default.json` (theme survives recreation; no theme:active). Tokens as CSS `:root` vars (Tailwind v4 config-in-CSS). **Design migration in progress:** the theme is being moved from its shipped dark-violet/lavender palette and text wordmark to the "Lunar Plates" world specified in root `DESIGN.md` — cool lunar neutrals, one lime accent, five category accents, one bounded `--night` region, the approved raster identity kit, and a landing route reproduced from `docs/design/mockups/elune-landing-mockup-v5.html`. Until the migration lands, ARCHITECTURE and DESIGN.md describe different states of the tree, and DESIGN.md's document status governs which is authoritative for design. **Age gate**: `pages/all/AgeGate.tsx` master component — every storefront page, structurally excludes `/admin` + `/api` (themes are frontStore-only); cookie `elune_age_ok=1; path=/; max-age=2592000; SameSite=Lax`. **RUO string** "For research use only. Not for human consumption." in footer + product page. Exact copy in doc §2.3/2.4.
+*Source: [`docker-compose.yml`](docker-compose.yml), [`config/default.json`](config/default.json), [`package.json`](package.json)*
 
-### 3. Payment presentation (manual crypto) — [docs/design/8-2 §3–4](docs/design/8-2-ui-compliance-payment.md) + [docs/design/8-3 §3](docs/design/8-3-catalog-orders.md)
-ADR: wallet data lives in **DB settings** (`crypto_wallet_btc/usdt/eth/instructions`) via `POST /api/settings`, surfaced by tiny `elune-payments` GraphQL extension (`extend type Setting` + admin Settings card) — owner swaps placeholder addresses with no code/rebuild/restart. **USDT is Ethereum (ERC-20):** `crypto_wallet_usdt` resolves only when the stored value matches `^0x[0-9a-fA-F]{40}$`, and otherwise resolves to null so the rail renders unavailable rather than payable — the retired TRON `T…` placeholder therefore cannot be reused, and the live storefront shows USDT unavailable until the owner saves a real Ethereum address. COD method enabled + renamed via admin settings (`codPaymentStatus=1`, `codDisplayName="Crypto Payment (BTC / USDT / ETH)"`). Theme master-override `pages/checkout/CashOnDelivery.tsx` renders wallet blocks (drops cash logo/doorstep copy); TXID captured in the stock Order Note re-labeled "Transaction ID (TXID)" (`ShippingNote.tsx` shared override) → `cart.shipping_note` → `order.shipping_note`.
+## Subsystems
 
-### 4. Catalog & order data path — [docs/design/8-3-catalog-orders.md](docs/design/8-3-catalog-orders.md)
-`scripts/seed-catalog.mjs` (Node 20 built-in fetch, zero deps) + `scripts/catalog-data.json`: 5 categories, 14 products ($29.99–$79.99, per-size SKUs, images `[]`). Size-paired SKUs share a native EverShop Size variant group; each child remains its own simple SKU, price, and stock. Also seeds the three CMS pages (`/faqs`, `/shipping`, `/contact`) idempotently, filling only unset settings so it cannot revert owner edits. Auth `POST /api/user/tokens` → Bearer, 401 → re-login. Idempotency: GraphQL GET-before-POST by sku/url_key, PATCH updates, attach via `POST /api/categories/:uuid/products` (idempotent, verified; `category_id` on create payload is ignored in 2.2.1). Post-run asserts + non-zero exit on failure. **Order lifecycle**: cod checkout → `payment_status: pending` → admin reads TXID from order note → verifies on-chain (mempool.space/etherscan) → Capture `POST /api/cod/captures {order_id}` → `paid` + offline transaction row → fulfill only after paid (server-enforced: capture route rejects non-pending). USDT payments are verified on Etherscan, since USDT is accepted on Ethereum (ERC-20) — Tronscan is no longer part of the procedure.
+### Deployment
 
-## Key invariants (from SPEC §6)
-- Fulfillment only after `payment_status = paid`; Capture is the only pending→paid path.
-- Named-volume copy-up is load-bearing: never replace `.evershop`/`public` with empty host binds.
-- Theme/extension presentation only — no checkout/order mutation logic modified; order creation path stock.
-- Seed idempotent by sku/url_key; data file is the single source of truth.
-- Age gate never blocks `/admin` or `/api` (structural, frontStore-only).
+Single Compose file. Postgres is reachable only on the Compose network. The storefront is on loopback unless `BIND_HOST` is changed. Operational steps, backup, and the image upgrade note are in [docs/design/8-1-deployment-grok-unapproved.md](docs/design/8-1-deployment-grok-unapproved.md).
 
-## Known upgrade friction (pinned 2.2.1)
-2.3+ changes COD statuses (`cod_pending/cod_captured`), unifies capture route (`/api/orders/:id/capture`), adds transaction IDs. Upgrade = re-verify seed capture path + theme override. See 8-3 §3.3 divergence table.
+*Source: [`docker-compose.yml`](docker-compose.yml)*
+
+### Storefront theme
+
+`themes/elune` is the active theme. Tokens live in `src/pages/all/shadcn.css` (`:root`) and are mapped for Tailwind v4 in `src/pages/all/tailwind.css`. Global type, selection, caret, and scrollbars are in `src/pages/all/global.scss`. Header, footer, and the age gate are in `src/pages/all/chrome.scss`.
+
+The visual system in the source tree is the light Lunar Plates palette: `--snow` canvas, `--night` ink, one `--beam` accent, and five category hues `--accent-glps`, `--accent-bioregulators`, `--accent-recovery`, `--accent-gh-releasing`, `--accent-other`. Fonts are self-hosted Manrope and JetBrains Mono under `themes/elune/public/assets/fonts/`.
+
+Theme components are EverShop area overrides. Routes the theme cannot register are provided by `elune-catalog`.
+
+| Surface | Implementation |
+|---|---|
+| Every storefront page | `Announce` (`headerTop`), `Wordmark` (`headerMiddleLeft`), `Nav` (`headerMiddleCenter`), `MiniCartIcon` (`headerMiddleRight`), `FooterNav`, `RuoFooter` (`footerBottom`), `AgeGate` (`body`) |
+| Suppressed core header widgets | `Logo`, `SearchBox`, and `CustomerIcon` render `null` so the demo mark, search field, and account icon do not occupy the header. Account routes and `/search` remain core routes. |
+| `/` | `pages/homepage/Elune.tsx` in area `content` |
+| `/all` | Extension route plus `pages/allProducts/AllProducts.tsx`. Alphabetical by name. |
+| `/new-releases` | Extension route plus `pages/newReleases/NewReleases.tsx`. Newest 6 by descending `productId`. |
+| Category pages | Core category route. `CatalogueHeading` inserts a visually hidden `h2`. Product grid is `CategoryProducts`. |
+| Product page | `ProductDescription`, `ProductSpecs`, `RuoNotice` |
+| Checkout | `CashOnDelivery` registers payment method `cod`. `ShippingNote` is the TXID field. |
+| Checkout success | `ConfirmationStatus` and `CustomerInfo` in `checkoutSuccessPageLeft` |
+
+`system.theme` is committed, so the active theme does not depend on `evershop theme:active`.
+
+The design rules those components follow are in [DESIGN-grok-unapproved.md](DESIGN-grok-unapproved.md). Compliance copy and the payment panel are in [docs/design/8-2-ui-compliance-payment-grok-unapproved.md](docs/design/8-2-ui-compliance-payment-grok-unapproved.md).
+
+*Source: [`themes/elune/src/pages/all/shadcn.css`](themes/elune/src/pages/all/shadcn.css), [`config/default.json`](config/default.json)*
+
+### Catalog extension
+
+`extensions/elune-catalog` registers two front-store routes and sets `pageInfo.title` / `description` by merging the GraphQL context key `pageInfo`:
+
+| Method | Path | Theme body |
+|---|---|---|
+| `GET` | `/all` | `themes/elune/src/pages/allProducts/AllProducts.tsx` |
+| `GET` | `/new-releases` | `themes/elune/src/pages/newReleases/NewReleases.tsx` |
+
+Production mode loads `extensions/elune-catalog/dist`.
+
+*Source: [`extensions/elune-catalog/src/pages/frontStore/allProducts/route.json`](extensions/elune-catalog/src/pages/frontStore/allProducts/route.json), [`extensions/elune-catalog/src/pages/frontStore/newReleases/route.json`](extensions/elune-catalog/src/pages/frontStore/newReleases/route.json)*
+
+### Payments
+
+Wallet addresses are rows in EverShop's `setting` table, not files. `elune-payments` extends GraphQL type `Setting` with `cryptoWalletBtc`, `cryptoWalletUsdt`, `cryptoWalletEth`, and `cryptoWalletInstructions`. Resolvers return an address only when `isBitcoinAddress` or `isErc20Address` accepts it. The admin card at area `paymentSetting` validates with the same functions.
+
+The theme does not change order creation. `CashOnDelivery.tsx` calls `registerPaymentComponent('cod', …)` and `checkout()`. The TXID is the stock shipping note (`checkoutData.note` → cart shipping note → `order.shipping_note`). Capture remains `POST /api/cod/captures` with `{ "order_id" }`, a private route in the 2.2.1 image. A successful capture moves `paymentStatus.code` to `paid`. A second capture of the same order returns HTTP 400.
+
+USDT is ERC-20. A TRON address fails the ERC-20 predicate and the rail renders unconfigured.
+
+*Source: [`extensions/elune-payments/src/graphql/types/Setting/CryptoWalletSetting.graphql`](extensions/elune-payments/src/graphql/types/Setting/CryptoWalletSetting.graphql), [`themes/elune/src/pages/checkout/CashOnDelivery.tsx`](themes/elune/src/pages/checkout/CashOnDelivery.tsx), [`scripts/smoke-checkout.mjs`](scripts/smoke-checkout.mjs)*
+
+### Catalog data path
+
+`scripts/catalog-data.json` is the commerce source: 5 categories, 14 products, prices 29.99–79.99, quantity 100. Three families (`bpc-157`, `tb-500`, `cjc-1295-no-dac`) carry `family` and `size` and are grouped into a native Size variant group. Each child stays its own SKU, price, and stock. Unpaired SKUs are not grouped.
+
+Analytical fields are not in the JSON file. They live in `themes/elune/src/data/productSpecs.ts`, keyed by SKU. Narrative copy lives in `themes/elune/src/data/productLiterature.ts`.
+
+The seeder authenticates with `POST /api/user/tokens`, writes through the REST API, and reads the catalog with `pg` (`DB_*`) because this image's product and category GraphQL filters do not honor `sku` / `url_key` and the product connection is capped at 20 rows. CMS pages are created once and then left alone.
+
+Detail is in [docs/design/8-3-catalog-orders-grok-unapproved.md](docs/design/8-3-catalog-orders-grok-unapproved.md).
+
+*Source: [`scripts/catalog-data.json`](scripts/catalog-data.json), [`scripts/seed-catalog.mjs`](scripts/seed-catalog.mjs), [`themes/elune/src/data/productSpecs.ts`](themes/elune/src/data/productSpecs.ts)*
+
+## Invariants in this tree
+
+- Fulfillment after payment is an operational rule. The smoke expects `payment_status` `pending` at checkout and `paid` only after `POST /api/cod/captures`. The theme has no client path that marks an order paid.
+- Age gate reads and writes `elune_age_ok` in the browser. It returns immediately when `pathname` starts with `/admin`. Theme components are not mounted on admin or API routes.
+- The fixed sentence `For research use only. Not for human consumption.` is rendered by `Announce`, `RuoFooter`, and `RuoNotice`.
+- Seed identity is SKU and category `url_key`. Re-runs patch declared products, restore retired categories, and retire rows the file no longer declares. They do not delete rows.
+- Wallet GraphQL fields are null unless the stored value matches that rail. Instructions fall back to a built-in sentence only when the setting row is absent.
+- `checkout.showShippingNote` is `true` in `config/default.json`. The confirmation panel hides the TXID row when that flag is false.
+
+*Source: [`themes/elune/src/pages/all/AgeGate.tsx`](themes/elune/src/pages/all/AgeGate.tsx), [`themes/elune/src/pages/all/Announce.tsx`](themes/elune/src/pages/all/Announce.tsx), [`themes/elune/src/pages/checkoutSuccess/ConfirmationStatus.tsx`](themes/elune/src/pages/checkoutSuccess/ConfirmationStatus.tsx), [`config/default.json`](config/default.json)*
+
+## Process boundaries
+
+| Concern | Where it lives |
+|---|---|
+| Schema, carts, orders, COD capture, admin shell | `evershop/evershop:2.2.1` image |
+| Theme presentation and spec/literature records | `themes/elune` |
+| Wallet shape checks and Setting fields | `extensions/elune-payments` |
+| `/all` and `/new-releases` route registration | `extensions/elune-catalog` |
+| Category, product, variant, CMS, store-name bootstrap | `scripts/seed-catalog.mjs` |
+| Guest checkout regression | `scripts/smoke-checkout.mjs` |
+| Address-shape unit tests | `extensions/elune-payments/tests/walletAddress.test.mjs` (`node --test tests/`) |
+
+`scripts/cut-dag.sh` writes beads issues whose descriptions still mention a three-category catalog and a host-port mapping of `${PORT}:${PORT}`. The Compose file and `catalog-data.json` supersede those descriptions.
+
+*Source: [`extensions/elune-payments/package.json`](extensions/elune-payments/package.json), [`scripts/cut-dag.sh`](scripts/cut-dag.sh)*
