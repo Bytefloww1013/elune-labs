@@ -13,8 +13,9 @@ What is in the tree, and how it is built. Behavior contracts are in [SPEC-grok-u
 | `themes/elune` | Storefront theme. `src/` is TypeScript. `public/` is served assets. `dist/` is SWC output and gitignored. |
 | `extensions/elune-payments` | Wallet settings. `dist/` is loaded when `NODE_ENV=production` and is tracked. |
 | `extensions/elune-catalog` | Routes `/all` and `/new-releases`. `dist/` is tracked. |
-| `scripts/seed-catalog.mjs` | Catalog, variants, store settings, CMS pages. |
-| `scripts/catalog-data.json` | Five categories, fourteen products. |
+| `scripts/seed-catalog.mjs` | Validated catalog, Size index and variants, store settings, CMS pages. |
+| `scripts/catalog-data.json` | Five categories, fourteen products; every product declares a positive milligram Size. |
+| `scripts/catalog-schema.json` | Draft-07 catalog shape, including positive `mg` Size syntax, validated before login. |
 | `scripts/smoke-checkout.mjs` | REST checkout, capture, and one headless add-to-cart check. |
 | `scripts/restart.sh` | `kill -TERM 1` in the app container, sleep 2, `docker compose start app`. No shebang. |
 | `scripts/cut-dag.sh` | Beads issue cutter. The issue bodies still describe `${PORT}:${PORT}` publishing and a peptides/SARMs/nootropics catalog. Do not treat those bodies as the current contract. |
@@ -141,7 +142,7 @@ The theme binds by folder name: `pages/allProducts` and `pages/newReleases`.
 
 ## Seeder
 
-Direct execution is guarded by `import.meta.url === pathToFileURL(process.argv[1]).href`. Importing the module does not seed. `run()` order:
+Direct execution is guarded by `import.meta.url === pathToFileURL(process.argv[1]).href`. Importing the module does not seed. `run()` concurrently loads `catalog-data.json` and `catalog-schema.json`, then calls `validateCatalog(data, schema)` before login or other network access. Schema and cross-row validation must pass before it runs:
 
 1. `login`
 2. `applyStoreSettings`
@@ -154,7 +155,7 @@ Direct execution is guarded by `import.meta.url === pathToFileURL(process.argv[1
 
 Database connection uses `DB_HOST` (default `localhost`), `DB_PORT` (default 5432), `DB_USER`, `DB_PASSWORD`, `DB_NAME`. Inside the app container those variables are set and `DB_HOST` is `database`. If `pg` cannot connect, category and product lookup falls back to a GraphQL scan that cannot see retired rows and cannot see products past the first 20.
 
-`reconcileVariants` inserts attribute code `size` if needed, requires `type = 'select'`, links it to attribute group 1, and builds or reuses a `variant_group` whose only attribute is Size. Option text is the `size` string from the JSON file (`5mg`, `10mg`). Empty Size groups are deleted. Products not in a declared family have `variant_group_id` cleared.
+`reconcileVariants` inserts attribute code `size` if needed, requires `type = 'select'`, links it to attribute group 1, and gives every seeded product exactly the positive milligram Size index declared in the JSON file. Only products with `family` build or reuse a Size-only `variant_group`; standalone products retain a null `variant_group_id` and their Size index. Options and assertions are derived from the catalog rather than a hardcoded list. Size indexes are reconciled only for declared SKUs; undeclared products retain theirs. Empty Size groups are deleted, and option rows are never deleted because orders may reference them. Assertions require each declared option exactly once but allow unrelated legacy options.
 
 CMS page body is an EditorJS envelope:
 
@@ -191,7 +192,7 @@ Steps, in order, each printed `PASS` or `FAIL`:
 9. Payment method `cod`.
 10. Shipping note `TXID: smoke-test-123`.
 11. Checkout body `{ cart_id, customer: { email } }`. Assert pending and the note.
-12. Order item snapshot. For the six known Size SKUs, assert unit price and `variantOptions` Size text.
+12. Order item snapshot. For the six family-member SKUs, assert unit price and `variantOptions` Size text.
 13. `POST /api/cod/captures` and GraphQL `paymentStatus.code === 'paid'`.
 14. Second capture expects HTTP 400.
 15. Capture of a nil UUID expects HTTP 400.

@@ -1,0 +1,120 @@
+{
+  "categories": [
+    {
+      "name": "GLPs",
+      "url_key": "glps"
+    },
+    {
+      "name": "Bioregulators",
+      "url_key": "bioregulators"
+    },
+    {
+      "name": "Recovery",
+      "url_key": "recovery"
+    },
+    {
+      "name": "GH Releasing",
+      "url_key": "gh-releasing"
+    },
+    {
+      "name": "Other",
+      "url_key": "other"
+    }
+  ],
+  "products": [
+    {
+      "name": "BPC-157 5mg",
+      "sku": "BPC157-5MG",
+      "family": "bpc-157",
+      "size": "5mg",
+      "price": 39.99,
+      "category": "recovery",
+      "qty": 100
+    },
+    {
+      "name": "BPC-157 10mg",
+      "sku": "BPC157-10MG",
+      "family": "bpc-157",
+      "size": "10mg",
+      "price": 59.99,
+      "category": "recovery",
+      "qty": 100
+    },
+    {
+      "name": "GHK-Cu 50mg",
+      "sku": "GHKCU-50MG",
+      "size": "50mg",
+      "price": 29.99,
+      "category": "other",
+      "qty": 100
+    },
+    {
+      "name": "Humanin 10mg",
+      "sku": "HUMANIN-10MG",
+      "size": "10mg",
+      "price": 59.99,
+      "category": "bioregulators",
+      "qty": 100
+    },
+    {
+      "name": "Epitalon 10mg",
+      "sku": "EPITALON-10MG",
+      "size": "10mg",
+      "price": 34.99,
+      "category": "bioregulators",
+      "qty": 100
+    },
+    {
+      "name": "Ipamorelin 5mg",
+      "sku": "IPAMORELIN-5MG",
+      "size": "5mg",
+      "price": 42.99,
+      "category": "gh-releasing",
+      "qty": 100
+    },
+    {
+      "name": "CJC-1295 (No DAC) 5mg",
+      "sku": "CJC1295-5MG",
+      "family": "cjc-1295-no-dac",
+      "size": "5mg",
+      "price": 44.99,
+      "category": "gh-releasing",
+      "qty": 100
+    },
+    {
+      "name": "CJC-1295 (No DAC) 10mg",
+      "sku": "CJC1295-10MG",
+      "family": "cjc-1295-no-dac",
+      "size": "10mg",
+      "price": 69.99,
+      "category": "gh-releasing",
+      "qty": 100
+    },
+    {
+      "name": "Semaglutide 25mg",
+      "sku": "SEMAGLUTIDE-25MG",
+      "size": "25mg",
+      "price": 74.99,
+      "category": "glps",
+      "qty": 100
+    },
+    {
+      "name": "Tirzepatide 10mg",
+      "sku": "TIRZEPATIDE-10MG",
+      "family": "tirzepatide",
+      "size": "10mg",
+      "price": 74.99,
+      "category": "glps",
+      "qty": 100
+    },
+    {
+      "name": "Tirzepatide 25mg",
+      "sku": "TIRZEPATIDE-25MG",
+      "family": "tirzepatide",
+      "size": "25mg",
+      "price": 74.99,
+      "category": "glps",
+      "qty": 100
+    }
+  ]
+}

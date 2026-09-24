@@ -2,8 +2,8 @@
 // record rendered on the product page.
 //
 // Keyed by SKU so the record always matches the exact product being viewed.
-// The seeder (scripts/catalog-data.json) carries only commerce fields
-// (name/sku/price/qty/category); every analytical value lives here only.
+// The seeder (scripts/catalog-data.json) carries commerce and variant fields
+// (name/sku/size/family/price/qty/category); analytical values live here only.
 //
 // RULES
 //  - purity is the literal placeholder '≥99%' on every product. It is a

@@ -1,120 +1,767 @@
 {
   "categories": [
-    { "name": "GLPs", "url_key": "glps" },
-    { "name": "Bioregulators", "url_key": "bioregulators" },
-    { "name": "Recovery", "url_key": "recovery" },
-    { "name": "GH Releasing", "url_key": "gh-releasing" },
-    { "name": "Other", "url_key": "other" }
+    {
+      "name": "GLPs",
+      "url_key": "glps"
+    },
+    {
+      "name": "Bioregulators",
+      "url_key": "bioregulators"
+    },
+    {
+      "name": "Recovery",
+      "url_key": "recovery"
+    },
+    {
+      "name": "GH Releasing",
+      "url_key": "gh-releasing"
+    },
+    {
+      "name": "Other",
+      "url_key": "other"
+    }
   ],
   "products": [
     {
-      "name": "Semaglutide 5mg",
-      "sku": "SEMAGLUTIDE-5MG",
-      "price": 54.99,
-      "category": "glps",
+      "name": "ARA-290 10mg",
+      "sku": "ARA10",
+      "size": "10mg",
+      "price": 70.0,
+      "category": "recovery",
       "qty": 100
     },
     {
-      "name": "Tirzepatide 10mg",
-      "sku": "TIRZEPATIDE-10MG",
-      "price": 74.99,
-      "category": "glps",
-      "qty": 100
-    },
-    {
-      "name": "Epitalon 10mg",
-      "sku": "EPITALON-10MG",
-      "price": 34.99,
+      "name": "Adamax 5mg",
+      "sku": "ADA5",
+      "size": "5mg",
+      "price": 90.0,
       "category": "bioregulators",
-      "qty": 100
+      "qty": 100,
+      "family": "adamax"
     },
     {
-      "name": "Humanin 10mg",
-      "sku": "HUMANIN-10MG",
-      "price": 59.99,
+      "name": "Adamax 10mg",
+      "sku": "ADA10",
+      "size": "10mg",
+      "price": 135.0,
       "category": "bioregulators",
-      "qty": 100
+      "qty": 100,
+      "family": "adamax"
     },
     {
-      "name": "BPC-157 5mg",
-      "sku": "BPC157-5MG",
-      "family": "bpc-157",
+      "name": "DSIP 5mg",
+      "sku": "DS5",
       "size": "5mg",
-      "price": 39.99,
-      "category": "recovery",
-      "qty": 100
+      "price": 45.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "dsip"
     },
     {
-      "name": "BPC-157 10mg",
-      "sku": "BPC157-10MG",
-      "family": "bpc-157",
+      "name": "DSIP 10mg",
+      "sku": "DS10",
       "size": "10mg",
-      "price": 59.99,
-      "category": "recovery",
-      "qty": 100
+      "price": 75.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "dsip"
     },
     {
-      "name": "TB-500 5mg",
-      "sku": "TB500-5MG",
-      "family": "tb-500",
+      "name": "Kisspeptin-10 5mg",
+      "sku": "KS5",
       "size": "5mg",
-      "price": 49.99,
-      "category": "recovery",
-      "qty": 100
+      "price": 50.0,
+      "category": "other",
+      "qty": 100,
+      "family": "kisspeptin-10"
     },
     {
-      "name": "TB-500 10mg",
-      "sku": "TB500-10MG",
-      "family": "tb-500",
+      "name": "Kisspeptin-10 10mg",
+      "sku": "KS10",
       "size": "10mg",
-      "price": 79.99,
-      "category": "recovery",
-      "qty": 100
+      "price": 80.0,
+      "category": "other",
+      "qty": 100,
+      "family": "kisspeptin-10"
     },
     {
-      "name": "Ipamorelin 5mg",
-      "sku": "IPAMORELIN-5MG",
-      "price": 42.99,
-      "category": "gh-releasing",
-      "qty": 100
-    },
-    {
-      "name": "CJC-1295 (No DAC) 5mg",
-      "sku": "CJC1295-5MG",
-      "family": "cjc-1295-no-dac",
+      "name": "Oxytocin Acetate 5mg",
+      "sku": "OT5",
       "size": "5mg",
-      "price": 44.99,
-      "category": "gh-releasing",
-      "qty": 100
+      "price": 45.0,
+      "category": "other",
+      "qty": 100,
+      "family": "oxytocin-acetate"
     },
     {
-      "name": "CJC-1295 (No DAC) 10mg",
-      "sku": "CJC1295-10MG",
-      "family": "cjc-1295-no-dac",
+      "name": "Oxytocin Acetate 10mg",
+      "sku": "OT10",
       "size": "10mg",
-      "price": 69.99,
-      "category": "gh-releasing",
-      "qty": 100
+      "price": 70.0,
+      "category": "other",
+      "qty": 100,
+      "family": "oxytocin-acetate"
     },
     {
-      "name": "Semax 10mg",
-      "sku": "SEMAX-10MG",
-      "price": 39.99,
+      "name": "PE-22-28 5mg",
+      "sku": "PE-5",
+      "size": "5mg",
+      "price": 50.0,
+      "category": "other",
+      "qty": 100,
+      "family": "pe-22-28"
+    },
+    {
+      "name": "PE-22-28 10mg",
+      "sku": "PE-10",
+      "size": "10mg",
+      "price": 80.0,
+      "category": "other",
+      "qty": 100,
+      "family": "pe-22-28"
+    },
+    {
+      "name": "PT-141 10mg",
+      "sku": "P41",
+      "size": "10mg",
+      "price": 60.0,
       "category": "other",
       "qty": 100
     },
     {
+      "name": "Selank 5mg",
+      "sku": "SK5",
+      "size": "5mg",
+      "price": 45.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "selank"
+    },
+    {
       "name": "Selank 10mg",
-      "sku": "SELANK-10MG",
-      "price": 39.99,
+      "sku": "SK10",
+      "size": "10mg",
+      "price": 70.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "selank"
+    },
+    {
+      "name": "Semax 5mg",
+      "sku": "SX5",
+      "size": "5mg",
+      "price": 45.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "semax"
+    },
+    {
+      "name": "Semax 10mg",
+      "sku": "SX10",
+      "size": "10mg",
+      "price": 70.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "semax"
+    },
+    {
+      "name": "SS-31 10mg",
+      "sku": "2S10",
+      "size": "10mg",
+      "price": 100.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "ss-31"
+    },
+    {
+      "name": "SS-31 50mg",
+      "sku": "2S50",
+      "size": "50mg",
+      "price": 320.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "ss-31"
+    },
+    {
+      "name": "Thymalin 10mg",
+      "sku": "TY10",
+      "size": "10mg",
+      "price": 64.0,
+      "category": "bioregulators",
+      "qty": 100
+    },
+    {
+      "name": "Thymosin Alpha-1 5mg",
+      "sku": "TA5",
+      "size": "5mg",
+      "price": 105.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "thymosin-alpha-1"
+    },
+    {
+      "name": "Thymosin Alpha-1 10mg",
+      "sku": "TA10",
+      "size": "10mg",
+      "price": 165.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "thymosin-alpha-1"
+    },
+    {
+      "name": "Cartalax 20mg",
+      "sku": "CART20",
+      "size": "20mg",
+      "price": 100.0,
+      "category": "bioregulators",
+      "qty": 100
+    },
+    {
+      "name": "Cerebrolysin 60mg",
+      "sku": "CBL60",
+      "size": "60mg",
+      "price": 70.0,
+      "category": "bioregulators",
+      "qty": 100
+    },
+    {
+      "name": "Acetic Acid Water 5mg",
+      "sku": "AA5",
+      "size": "5mg",
+      "price": 14.0,
+      "category": "other",
+      "qty": 100,
+      "family": "acetic-acid-water"
+    },
+    {
+      "name": "Acetic Acid Water 10mg",
+      "sku": "AA10",
+      "size": "10mg",
+      "price": 16.0,
+      "category": "other",
+      "qty": 100,
+      "family": "acetic-acid-water"
+    },
+    {
+      "name": "Retatrutide 5mg",
+      "sku": "RT5",
+      "size": "5mg",
+      "price": 80.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 10mg",
+      "sku": "RT10",
+      "size": "10mg",
+      "price": 120.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 15mg",
+      "sku": "RT15",
+      "size": "15mg",
+      "price": 140.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 20mg",
+      "sku": "RT20",
+      "size": "20mg",
+      "price": 180.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 30mg",
+      "sku": "RT30",
+      "size": "30mg",
+      "price": 200.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 40mg",
+      "sku": "RT40",
+      "size": "40mg",
+      "price": 220.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Retatrutide 60mg",
+      "sku": "RT60",
+      "size": "60mg",
+      "price": 290.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "retatrutide"
+    },
+    {
+      "name": "Tirzepatide 10mg",
+      "sku": "TR10",
+      "size": "10mg",
+      "price": 60.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Tirzepatide 15mg",
+      "sku": "TR15",
+      "size": "15mg",
+      "price": 73.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Tirzepatide 20mg",
+      "sku": "TR20",
+      "size": "20mg",
+      "price": 95.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Tirzepatide 30mg",
+      "sku": "TR30",
+      "size": "30mg",
+      "price": 130.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Tirzepatide 40mg",
+      "sku": "TR40",
+      "size": "40mg",
+      "price": 165.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Tirzepatide 60mg",
+      "sku": "TR60",
+      "size": "60mg",
+      "price": 230.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "tirzepatide"
+    },
+    {
+      "name": "Eloralintide 5mg",
+      "sku": "ELD5",
+      "size": "5mg",
+      "price": 180.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "eloralintide"
+    },
+    {
+      "name": "Eloralintide 10mg",
+      "sku": "ELD10",
+      "size": "10mg",
+      "price": 340.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "eloralintide"
+    },
+    {
+      "name": "Cagrilintide 5mg",
+      "sku": "CAG5",
+      "size": "5mg",
+      "price": 130.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "cagrilintide"
+    },
+    {
+      "name": "Cagrilintide 10mg",
+      "sku": "CAG10",
+      "size": "10mg",
+      "price": 195.0,
+      "category": "glps",
+      "qty": 100,
+      "family": "cagrilintide"
+    },
+    {
+      "name": "AOD-9604 5mg",
+      "sku": "5AD",
+      "size": "5mg",
+      "price": 100.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "aod-9604"
+    },
+    {
+      "name": "AOD-9604 10mg",
+      "sku": "10AD",
+      "size": "10mg",
+      "price": 165.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "aod-9604"
+    },
+    {
+      "name": "5-AMINO-1MQ 10mg",
+      "sku": "10AM",
+      "size": "10mg",
+      "price": 45.0,
+      "category": "other",
+      "qty": 100,
+      "family": "5-amino-1mq"
+    },
+    {
+      "name": "5-AMINO-1MQ 50mg",
+      "sku": "50AM",
+      "size": "50mg",
+      "price": 85.0,
+      "category": "other",
+      "qty": 100,
+      "family": "5-amino-1mq"
+    },
+    {
+      "name": "CJC-1295 (No DAC) 5mg",
+      "sku": "CND5",
+      "size": "5mg",
+      "price": 90.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "cjc-1295-no-dac"
+    },
+    {
+      "name": "CJC-1295 (No DAC) 10mg",
+      "sku": "CND10",
+      "size": "10mg",
+      "price": 140.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "cjc-1295-no-dac"
+    },
+    {
+      "name": "CJC-1295 (No DAC) 5mg + IPA 5mg 10mg",
+      "sku": "CP10",
+      "size": "10mg",
+      "price": 110.0,
+      "category": "gh-releasing",
+      "qty": 100
+    },
+    {
+      "name": "Ipamorelin 5mg",
+      "sku": "IP5",
+      "size": "5mg",
+      "price": 39.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "ipamorelin"
+    },
+    {
+      "name": "Ipamorelin 10mg",
+      "sku": "IP10",
+      "size": "10mg",
+      "price": 65.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "ipamorelin"
+    },
+    {
+      "name": "Tesamorelin 5mg",
+      "sku": "TSM5",
+      "size": "5mg",
+      "price": 100.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "tesamorelin"
+    },
+    {
+      "name": "Tesamorelin 10mg",
+      "sku": "TSM10",
+      "size": "10mg",
+      "price": 170.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "tesamorelin"
+    },
+    {
+      "name": "Tesamorelin 20mg",
+      "sku": "TSM20",
+      "size": "20mg",
+      "price": 300.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "tesamorelin"
+    },
+    {
+      "name": "MOTS-c 10mg",
+      "sku": "MS10",
+      "size": "10mg",
+      "price": 75.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "mots-c"
+    },
+    {
+      "name": "MOTS-c 20mg",
+      "sku": "MS20",
+      "size": "20mg",
+      "price": 135.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "mots-c"
+    },
+    {
+      "name": "MOTS-c 40mg",
+      "sku": "MS40",
+      "size": "40mg",
+      "price": 220.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "mots-c"
+    },
+    {
+      "name": "IGF-1 LR3 1mg",
+      "sku": "IF1",
+      "size": "1mg",
+      "price": 230.0,
+      "category": "gh-releasing",
+      "qty": 100
+    },
+    {
+      "name": "Sermorelin Acetate 5mg",
+      "sku": "SML5",
+      "size": "5mg",
+      "price": 78.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "sermorelin-acetate"
+    },
+    {
+      "name": "Sermorelin Acetate 10mg",
+      "sku": "SML10",
+      "size": "10mg",
+      "price": 145.0,
+      "category": "gh-releasing",
+      "qty": 100,
+      "family": "sermorelin-acetate"
+    },
+    {
+      "name": "AICAR 100mg",
+      "sku": "AR100",
+      "size": "100mg",
+      "price": 115.0,
       "category": "other",
       "qty": 100
     },
     {
       "name": "GHK-Cu 50mg",
-      "sku": "GHKCU-50MG",
-      "price": 29.99,
+      "sku": "GHKS0",
+      "size": "50mg",
+      "price": 32.0,
       "category": "other",
+      "qty": 100,
+      "family": "ghk-cu"
+    },
+    {
+      "name": "GHK-Cu 100mg",
+      "sku": "GHK100",
+      "size": "100mg",
+      "price": 60.0,
+      "category": "other",
+      "qty": 100,
+      "family": "ghk-cu"
+    },
+    {
+      "name": "AHK-Cu 50mg",
+      "sku": "AHKS0",
+      "size": "50mg",
+      "price": 40.0,
+      "category": "other",
+      "qty": 100
+    },
+    {
+      "name": "BPC-157 5mg",
+      "sku": "BPC5",
+      "size": "5mg",
+      "price": 40.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "bpc-157"
+    },
+    {
+      "name": "BPC-157 10mg",
+      "sku": "BPC10",
+      "size": "10mg",
+      "price": 70.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "bpc-157"
+    },
+    {
+      "name": "TB-500 5mg",
+      "sku": "TB5",
+      "size": "5mg",
+      "price": 90.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "tb-500"
+    },
+    {
+      "name": "TB-500 10mg",
+      "sku": "TB10",
+      "size": "10mg",
+      "price": 150.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "tb-500"
+    },
+    {
+      "name": "BPC 5mg + TB 5mg 10mg",
+      "sku": "BB10",
+      "size": "10mg",
+      "price": 115.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "bpc-tb"
+    },
+    {
+      "name": "BPC 10mg + TB 10mg 20mg",
+      "sku": "BB20",
+      "size": "20mg",
+      "price": 190.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "bpc-tb"
+    },
+    {
+      "name": "BPC 15mg + TB 15mg 30mg",
+      "sku": "BB30",
+      "size": "30mg",
+      "price": 280.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "bpc-tb"
+    },
+    {
+      "name": "BPC 10mg + GHK-Cu 50mg + TB-500 10mg (Glow) 70mg",
+      "sku": "BBG70",
+      "size": "70mg",
+      "price": 170.0,
+      "category": "recovery",
+      "qty": 100
+    },
+    {
+      "name": "BPC 10mg + GHK-Cu 50mg + TB 10mg + KPV 10mg (Klow) 80mg",
+      "sku": "KLOW",
+      "size": "80mg",
+      "price": 180.0,
+      "category": "recovery",
+      "qty": 100
+    },
+    {
+      "name": "KPV 5mg",
+      "sku": "KP5",
+      "size": "5mg",
+      "price": 45.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "kpv"
+    },
+    {
+      "name": "KPV 10mg",
+      "sku": "KP10",
+      "size": "10mg",
+      "price": 60.0,
+      "category": "recovery",
+      "qty": 100,
+      "family": "kpv"
+    },
+    {
+      "name": "Epitalon 10mg",
+      "sku": "ET10",
+      "size": "10mg",
+      "price": 45.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "epitalon"
+    },
+    {
+      "name": "Epitalon 50mg",
+      "sku": "ET50",
+      "size": "50mg",
+      "price": 150.0,
+      "category": "bioregulators",
+      "qty": 100,
+      "family": "epitalon"
+    },
+    {
+      "name": "Glutathione 600mg",
+      "sku": "GTT600",
+      "size": "600mg",
+      "price": 70.0,
+      "category": "other",
+      "qty": 100,
+      "family": "glutathione"
+    },
+    {
+      "name": "Glutathione 1500mg",
+      "sku": "GTT1500",
+      "size": "1500mg",
+      "price": 90.0,
+      "category": "other",
+      "qty": 100,
+      "family": "glutathione"
+    },
+    {
+      "name": "NAD+ 500mg",
+      "sku": "NJ500",
+      "size": "500mg",
+      "price": 70.0,
+      "category": "other",
+      "qty": 100,
+      "family": "nad-plus"
+    },
+    {
+      "name": "NAD+ 1000mg",
+      "sku": "NJ1000",
+      "size": "1000mg",
+      "price": 95.0,
+      "category": "other",
+      "qty": 100,
+      "family": "nad-plus"
+    },
+    {
+      "name": "Melanotan I 10mg",
+      "sku": "MT10",
+      "size": "10mg",
+      "price": 65.0,
+      "category": "other",
+      "qty": 100
+    },
+    {
+      "name": "Melanotan II 10mg",
+      "sku": "ML10",
+      "size": "10mg",
+      "price": 65.0,
+      "category": "other",
+      "qty": 100
+    },
+    {
+      "name": "Pinealon 10mg",
+      "sku": "PN10",
+      "size": "10mg",
+      "price": 60.0,
+      "category": "bioregulators",
       "qty": 100
     }
   ]
