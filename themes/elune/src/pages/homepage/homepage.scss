@@ -536,3 +536,11 @@
     width: 100%;
   }
 }
+
+/* ≤360px: the headline's unbreakable word "Uncompromising" pushes the copy
+   column past the viewport at 320px; 34px fits. */
+@media (max-width: 360px) {
+  .hero__copy .display {
+    font-size: 34px;
+  }
+}

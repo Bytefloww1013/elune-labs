@@ -57,14 +57,14 @@ requireLoopbackOrHttps(BASE_URL, 'EVERSHOP_BASE_URL');
 
 // Default checkout line is a non-representative member of a Size group so the
 // run snapshots a specific child SKU. The configured SKU is used verbatim.
-const CHECKOUT_SKU = process.env.EVERSHOP_CHECKOUT_SKU ?? 'BPC157-10MG';
+const CHECKOUT_SKU = process.env.EVERSHOP_CHECKOUT_SKU ?? 'BPC10';
 const KNOWN_VARIANTS = {
-  'BPC157-5MG': { price: 39.99, size: '5mg' },
-  'BPC157-10MG': { price: 59.99, size: '10mg' },
-  'TB500-5MG': { price: 49.99, size: '5mg' },
-  'TB500-10MG': { price: 79.99, size: '10mg' },
-  'CJC1295-5MG': { price: 44.99, size: '5mg' },
-  'CJC1295-10MG': { price: 69.99, size: '10mg' }
+  BPC5: { price: 40, size: '5mg' },
+  BPC10: { price: 70, size: '10mg' },
+  TB5: { price: 90, size: '5mg' },
+  TB10: { price: 150, size: '10mg' },
+  CND5: { price: 90, size: '5mg' },
+  CND10: { price: 140, size: '10mg' }
 };
 const CUSTOMER_EMAIL = 'test@example.com';
 const TXID = 'TXID: smoke-test-123';
@@ -389,7 +389,7 @@ async function checkAddToCartFlash() {
         beforeCount: count(),
         busyBefore: buttons.filter(busy).length,
         disabledBefore: buttons.filter((button) => button.hasAttribute('disabled')).length,
-        sku: chosen.closest('.product__list__item__inner')?.querySelector(':scope > div .mono')?.textContent.trim() ?? null,
+        sku: chosen.closest('.product__list__item__inner')?.getAttribute('data-product-sku') ?? null,
         chosenBusy: false,
         siblings: new Set(),
         siblingVisualChanges: new Set(),

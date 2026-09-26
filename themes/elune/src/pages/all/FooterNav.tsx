@@ -38,7 +38,7 @@ export default function FooterNav({ categories }: { categories?: { items?: Categ
           height={188}
         />
         <p className="muted">
-          Research reference compounds, catalogued with their specification on record.
+          Research reference compounds, catalogued with specifications on record.
         </p>
       </div>
 

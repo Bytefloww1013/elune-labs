@@ -31,7 +31,7 @@ Out of scope of the code that is here: a payment gateway, an on-chain watcher, e
 - Landing page at `/` (`themes/elune/src/pages/homepage/Elune.tsx`).
 - Category listings for `glps`, `bioregulators`, `recovery`, `gh-releasing`, and `other`, ordered by `CATEGORY_URL_KEYS`.
 - `/all` lists every product, sorted by name in the theme. `/new-releases` lists the six highest `productId` values.
-- Product pages show literature (when the SKU has a narrative), a specification table, and the RUO notice.
+- Product pages show literature (when the SKU has a narrative), a specification table (only when the SKU has a record), and the RUO notice.
 - Guest checkout uses the stock EverShop sequence. The smoke drives it over REST, including both a shipping and a billing address.
 
 *Source: [`themes/elune/src/data/categories.ts`](themes/elune/src/data/categories.ts), [`extensions/elune-catalog/src/pages/frontStore/allProducts/route.json`](extensions/elune-catalog/src/pages/frontStore/allProducts/route.json), [`scripts/smoke-checkout.mjs`](scripts/smoke-checkout.mjs)*
@@ -126,8 +126,8 @@ Out of scope of the code that is here: a payment gateway, an on-chain watcher, e
 ```json
 {
   "name": "BPC-157 5mg",
-  "sku": "BPC157-5MG",
-  "price": 39.99,
+  "sku": "BPC5",
+  "price": 40,
   "qty": 100,
   "status": 1,
   "group_id": 1,
@@ -145,7 +145,7 @@ Out of scope of the code that is here: a payment gateway, an on-chain watcher, e
 ### Product update — `PATCH /api/products/:uuid`
 
 ```json
-{ "price": 39.99, "qty": 100, "status": 1, "stock_availability": 1 }
+{ "price": 40, "qty": 100, "status": 1, "stock_availability": 1 }
 ```
 
 ### Catalog file
@@ -157,17 +157,17 @@ Out of scope of the code that is here: a payment gateway, an on-chain watcher, e
   "categories": [{ "name": "GLPs", "url_key": "glps" }],
   "products": [{
     "name": "BPC-157 5mg",
-    "sku": "BPC157-5MG",
+    "sku": "BPC5",
     "family": "bpc-157",
     "size": "5mg",
-    "price": 39.99,
+    "price": 40,
     "category": "recovery",
     "qty": 100
   }]
 }
 ```
 
-`family` and `size` are optional. Products without them must not end up in a variant group. The live file has five categories and fourteen products.
+`family` and `size` are optional. Products without them must not end up in a variant group. The live file has five categories and 84 products, 22 of which have a specification record in `themes/elune/src/data/productSpecs.ts`; the other 62 render no specification section.
 
 ### Age-gate cookie
 
@@ -195,7 +195,7 @@ Send the order total to one of the addresses above, then paste your transaction 
 | Key | Value |
 |---|---|
 | `storeName` | `Elune Labs` |
-| `storeDescription` | `Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.` |
+| `storeDescription` | `Research reference compounds supplied for laboratory work, with a specification record on the products that have one. For research use only.` |
 | `favicon` | `/assets/brand/favicons/favicon-512x512.png` |
 
 ### Checkout bodies the smoke sends
@@ -203,13 +203,13 @@ Send the order total to one of the addresses above, then paste your transaction 
 Create cart `POST /api/carts`:
 
 ```json
-{ "items": [{ "sku": "BPC157-10MG", "qty": 1 }] }
+{ "items": [{ "sku": "BPC10", "qty": 1 }] }
 ```
 
 Add item `POST /api/cart/:cartId/items` (singular `cart`):
 
 ```json
-{ "sku": "BPC157-10MG", "qty": 1 }
+{ "sku": "BPC10", "qty": 1 }
 ```
 
 Addresses `POST /api/carts/:cartId/addresses`, once with `type: "shipping"` and once with `type: "billing"`:

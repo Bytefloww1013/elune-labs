@@ -1,15 +1,17 @@
 # Elune Labs
 
-EverShop 2.2.1 storefront for research reference compounds in five categories (GLPs, Bioregulators, Recovery, GH Releasing, Other). The storefront theme is `themes/elune`. Payment is manual crypto on the built-in cash-on-delivery method. An age gate and a fixed research-use line ship in the theme.
+EverShop 2.2.1 storefront for research reference compounds. The catalog is [84 products](#seed-the-catalog) in five categories (GLPs, Bioregulators, Recovery, GH Releasing, Other) at $14–$340, quantity 100. The storefront theme is `themes/elune`. Payment is manual crypto on the built-in cash-on-delivery method. An age gate and a fixed research-use line ship in the theme.
 
-Related drafts in this audit:
+Related documents in this audit:
 
-- [ARCHITECTURE-grok-unapproved.md](ARCHITECTURE-grok-unapproved.md)
-- [IMPLEMENTATION-grok-unapproved.md](IMPLEMENTATION-grok-unapproved.md)
-- [docs/design/8-1-deployment-grok-unapproved.md](docs/design/8-1-deployment-grok-unapproved.md)
-- [docs/design/8-2-ui-compliance-payment-grok-unapproved.md](docs/design/8-2-ui-compliance-payment-grok-unapproved.md)
-- [docs/design/8-3-catalog-orders-grok-unapproved.md](docs/design/8-3-catalog-orders-grok-unapproved.md)
-- [DESIGN-grok-unapproved.md](DESIGN-grok-unapproved.md)
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [IMPLEMENTATION.md](IMPLEMENTATION.md)
+- [PRODUCT.md](PRODUCT.md)
+- [DESIGN.md](DESIGN.md)
+- [SPEC.md](SPEC.md)
+- [docs/design/8-1-deployment.md](docs/design/8-1-deployment.md)
+- [docs/design/8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md)
+- [docs/design/8-3-catalog-orders.md](docs/design/8-3-catalog-orders.md)
 
 *Source: [`package.json`](package.json), [`config/default.json`](config/default.json)*
 
@@ -164,12 +166,16 @@ One run, in order:
 
 1. `POST /api/user/tokens` and keep the bearer token. A later 401 logs in once and retries that request once.
 2. Set `storeName`, `storeDescription`, and `favicon` only when each is currently empty.
-3. Upsert the five categories and 14 products in `scripts/catalog-data.json`.
+3. Upsert the five categories and all 84 products in `scripts/catalog-data.json`: 29 multi-size families holding 70 of the rows, plus 14 standalone SKUs.
 4. Attach every product to its category on every run.
-5. Reconcile native Size variant groups for products that declare `family` and `size`.
+5. Reconcile native Size variant groups for products that declare `family` and `size`. Sibling sizes stay separate SKUs, prices, and stock.
 6. Retire live categories and products the data file no longer lists (`PATCH` `status: 0`, never `DELETE`).
 7. Assert the result. A failure prints `SEED FAILURE:` and exits non-zero.
 8. Create CMS pages `/faqs`, `/shipping`, and `/contact` when those `url_key`s are missing. Existing pages are left as saved.
+
+Three image behaviors shape a run. The admin API is rate limited at 120 requests / 60 s, and a full 84-product run issues more than that, so HTTP 429 waits out the advertised `retry-after` / `ratelimit-reset` window (60 s when the header is absent) and retries, up to 10 attempts. `product_description.url_key` is unique regardless of `status`, so before a create the seeder re-keys an undeclared holder of the slug to `<url-key>-retired-<sku>` and lets prune retire it; a declared SKU holding its own slug is a data-file error and fails the run. Catalog lookup reads `product` / `category` straight from Postgres because the GraphQL product connection caps at 20 rows and the category filter ignores `url_key` and filters on `status`.
+
+`scripts/catalog-data.json` carries commerce fields only: `name`, `sku`, `size`, `family`, `price`, `category`, `qty`. It has no `images` key, no batch or lot field, and no analytical values. Specification and literature records live in the theme instead, keyed by SKU (see [PRODUCT.md](PRODUCT.md#catalog)); they cover 22 of the 84 SKUs, so most products render neither section.
 
 Re-running is safe. It does not overwrite CMS copy or a store name, description, or favicon the admin has already set.
 
@@ -219,7 +225,7 @@ node scripts/smoke-checkout.mjs
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | unset | Required. Used for `POST /api/user/tokens` and the capture calls. |
 | `EVERSHOP_BASE_URL` | `http://localhost:${PORT:-3000}` | Checkout API origin. HTTP is allowed only for loopback; otherwise HTTPS. |
 | `EVERSHOP_STOREFRONT_URL` | `HOME_URL`, else the API base | Page whose `baseUrl` must match the browser origin. |
-| `EVERSHOP_CHECKOUT_SKU` | `BPC157-10MG` | Line item. Used verbatim. |
+| `EVERSHOP_CHECKOUT_SKU` | `BPC10` | Line item. Used verbatim. |
 | `CHROMIUM_PATH` | Playwright cache `chrome-linux64/chrome` | Browser binary for the add-to-cart step. |
 | `CHROMIUM_NO_SANDBOX` | unset | Set to `1` on AppArmor hosts. |
 

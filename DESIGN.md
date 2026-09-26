@@ -217,10 +217,10 @@ Implemented by `pages/homepage/Elune.tsx` in area `content`, sort order 10. Shar
 
 Order of regions:
 
-1. Hero copy and, when the catalog contains `BPC157-5MG`, the Plate 01 sheet.
-2. Commitment ribbon (five strings, listed in [8-2-ui-compliance-payment-grok-unapproved.md](docs/design/8-2-ui-compliance-payment-grok-unapproved.md)).
+1. Hero copy and, when the catalog contains `BPC5` (`HERO_SKU` in `Elune.tsx`), the Plate 01 sheet.
+2. Commitment ribbon (five strings, listed in [8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md)).
 3. Category strip. Cell color classes `.cat--glps` through `.cat--other` set `color` to the matching accent token. Count text is `NN compounds`, padded to two digits, using `00` when the query has no total.
-4. Four featured plates: `SEMAGLUTIDE-5MG`, `EPITALON-10MG`, `TB500-10MG`, `IPAMORELIN-5MG`. `ProductListItemRender` receives `index` starting at 2.
+4. Four featured plates, `FEATURED_SKUS` in `Elune.tsx`: `TR10`, `ET10`, `TB10`, `IP5`. `ProductListItemRender` receives `index` starting at 2. A SKU the query did not return is skipped.
 5. Night band: crater SVG (`aria-hidden`), heading `From recent orders.`, three `<figure>` reviews, transparency sentence, purity caveat.
 
 Hero photograph URL is `/assets/plates/hero-photo.jpg`. Review URLs are `/assets/order/td-1.jpg`, `td-2.jpg`, `td-3.jpg`.
@@ -231,14 +231,14 @@ The hero `h1` is `Research peptides. Direct from the source. Uncompromising puri
 
 ## 10. Catalog plates and product page
 
-`ProductListItemRender.tsx` draws the plate: plate chip, SKU in the category accent taken from the product URL's first segment, vial cutaway SVG (`VialCutaway`, `role="img"`), name, price, Add to cart, and View when `product.url` is set. Add to cart is serialized so one in-flight cart mutation finishes before the next starts. The cutaway comment says the catalog ships without product photography.
+`ProductListItemRender.tsx` draws the plate. Head row: the `Plate NN` chip only when the surface passes an `index` — the homepage sequence does, browse grids do not — and the mono SKU on the right, coloured by the `accent` prop or, when that is absent, by the product URL's first segment. The category name is not printed in the head; the accent carries it. Below the head: the vial cutaway SVG (`VialCutaway`, `role="img"`), the name, a mono `form · size` line when either value is known, the price, Add to cart, and View when `product.url` is set. Add to cart is serialized so one in-flight cart mutation finishes before the next starts. The cutaway comment says the catalog ships without product photography.
 
 `/all` (`AllProducts.tsx`) sorts by name. `/new-releases` (`NewReleases.tsx`) sorts by descending `productId` and keeps six. Category routes use `CategoryProducts.tsx`. `CatalogueHeading.tsx` inserts a visually hidden `Catalogue` `h2` so the outline does not skip from the category `h1` to filter and plate `h3`s.
 
 Product page, top to bottom within the theme's own blocks:
 
-1. `ProductDescription.tsx` — heading `About this compound`. Omitted when the SKU has no literature record. All fourteen seeded SKUs have a summary. Citations render only when `literature` is a non-empty array. Epitalon and both CJC-1295 (No DAC) sizes have no citations.
-2. `ProductSpecs.tsx` — heading `Specification`, `<table>` with a visually hidden caption, `<th scope="row">`. Rows with no value are dropped. Purity is always `≥99%` in `font-mono`. The caveat under the table is `The purity value is a product specification, not a batch test result.`
+1. `ProductDescription.tsx` — heading `About this compound`. Omitted when the SKU has no literature record. 22 of the 84 catalog SKUs have a summary (`NARRATIVES` in `productLiterature.ts`). Citations render only when `literature` is a non-empty array. The Epitalon sizes and both CJC-1295 (No DAC) sizes have summaries and no citations.
+2. `ProductSpecs.tsx` — heading `Specification`, `<table>` with a visually hidden caption, `<th scope="row">`. Rows with no value are dropped. Purity is always `≥99%` in `font-mono`. The caveat under the table is `The purity value is a product specification, not a batch test result.` 22 of the 84 catalog SKUs have a record in `productSpecs.ts`; a SKU without one renders no `Specification` section at all.
 3. `RuoNotice.tsx` — mist panel, the fixed RUO sentence, and the in-vitro administration sentence.
 
 `categoryUrlKeyFromProductUrl` returns a key only when the first URL segment is one of the five `CATEGORY_URL_KEYS`. Anything else yields `null` and no category accent.
@@ -247,7 +247,7 @@ Product page, top to bottom within the theme's own blocks:
 
 ## 11. Checkout and confirmation
 
-Wallet and TXID panels use the control radius, not the card radius. Rails, copy behavior, and the null-address sentence are in [8-2-ui-compliance-payment-grok-unapproved.md](docs/design/8-2-ui-compliance-payment-grok-unapproved.md).
+Wallet and TXID panels use the control radius, not the card radius. Rails, copy behavior, and the null-address sentence are in [8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md).
 
 `CustomerInfo.tsx` removes the core green check disc. `ConfirmationStatus.tsx` prints the order's own status name, payment status name, and TXID. It does not add a second RUO line.
 
@@ -287,7 +287,7 @@ Authored SVG paths in the theme:
 | `Transaction ID (TXID)` | Shipping note and confirmation |
 | `Collected from completed orders and published unedited. Names shortened to first name and last initial.` | Night band |
 
-Landing ribbon lines 3–5 (`Batch tracking for each vial`, `Best in class factory direct pricing`, `Unbeatable delivery rate. Zero issues.`) are rendered as written in `COMMITMENTS`. They are not backed by a batch field, a price comparison, or a delivery measurement in this repository.
+Landing ribbon strings are rendered as written in `COMMITMENTS` (`Elune.tsx`); the five verbatim lines are in [8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md). Lines 3–5 now state repository facts rather than claims: `84 SKUs across 1mg–1500mg sizes` counts `scripts/catalog-data.json`, `Guest cart & checkout, no account required` matches the public cart routes and an email-only checkout, and `Five core research categories: GLPs, Bioregulators, Recovery, GH Releasing, Other` names `CATEGORY_URL_KEYS`. The retired strings — `Batch tracking for each vial`, `Best in class factory direct pricing`, `Unbeatable delivery rate. Zero issues.` — named a batch field, a price comparison, and a delivery measurement this repository does not have, and no longer render.
 
 *Source: [`themes/elune/src/pages/all/Announce.tsx`](themes/elune/src/pages/all/Announce.tsx), [`themes/elune/src/data/productSpecs.ts`](themes/elune/src/data/productSpecs.ts), [`themes/elune/src/pages/homepage/Elune.tsx`](themes/elune/src/pages/homepage/Elune.tsx), [`themes/elune/src/pages/checkout/CashOnDelivery.tsx`](themes/elune/src/pages/checkout/CashOnDelivery.tsx)*
 

@@ -19,7 +19,7 @@ import { getContextValue, setContextValue } from '@evershop/evershop/graphql/ser
     setContextValue(request, 'pageInfo', {
         ...getContextValue(request, 'pageInfo', {}),
         title: 'All Products',
-        description: 'Every research reference compound in the catalog, with its specification on record. For research use only.'
+        description: 'Research reference compounds in the catalog, with specifications on record. For research use only.'
     });
     next();
 });

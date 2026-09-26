@@ -38,7 +38,7 @@ Named volumes are required for `/app/media`, `/app/public`, `/app/.evershop`, an
 
 ### Deployment
 
-Single Compose file. Postgres is reachable only on the Compose network. The storefront is on loopback unless `BIND_HOST` is changed. Operational steps, backup, and the image upgrade note are in [docs/design/8-1-deployment-grok-unapproved.md](docs/design/8-1-deployment-grok-unapproved.md).
+Single Compose file. Postgres is reachable only on the Compose network. The storefront is on loopback unless `BIND_HOST` is changed. Operational steps, backup, and the image upgrade note are in [docs/design/8-1-deployment.md](docs/design/8-1-deployment.md).
 
 *Source: [`docker-compose.yml`](docker-compose.yml)*
 
@@ -64,7 +64,7 @@ Theme components are EverShop area overrides. Routes the theme cannot register a
 
 `system.theme` is committed, so the active theme does not depend on `evershop theme:active`.
 
-The design rules those components follow are in [DESIGN-grok-unapproved.md](DESIGN-grok-unapproved.md). Compliance copy and the payment panel are in [docs/design/8-2-ui-compliance-payment-grok-unapproved.md](docs/design/8-2-ui-compliance-payment-grok-unapproved.md).
+The design rules those components follow are in [DESIGN.md](DESIGN.md). Compliance copy and the payment panel are in [docs/design/8-2-ui-compliance-payment.md](docs/design/8-2-ui-compliance-payment.md).
 
 *Source: [`themes/elune/src/pages/all/shadcn.css`](themes/elune/src/pages/all/shadcn.css), [`config/default.json`](config/default.json)*
 
@@ -93,13 +93,13 @@ USDT is ERC-20. A TRON address fails the ERC-20 predicate and the rail renders u
 
 ### Catalog data path
 
-`scripts/catalog-data.json` is the commerce source: 5 categories, 14 products, prices 29.99–79.99, quantity 100. Three families (`bpc-157`, `tb-500`, `cjc-1295-no-dac`) carry `family` and `size` and are grouped into a native Size variant group. Each child stays its own SKU, price, and stock. Unpaired SKUs are not grouped.
+`scripts/catalog-data.json` is the commerce source: 5 categories, 84 products, prices 14–340 USD, quantity 100 throughout, and a positive milligram Size on every product. 29 families carry `family` and `size` and are grouped into native Size variant groups; those 29 families hold 70 of the rows (24 pairs, three trios, tirzepatide at six sizes, retatrutide at seven) and the other 14 SKUs are standalone and stay ungrouped. Each size stays its own SKU, price, and stock.
 
-Analytical fields are not in the JSON file. They live in `themes/elune/src/data/productSpecs.ts`, keyed by SKU. Narrative copy lives in `themes/elune/src/data/productLiterature.ts`.
+Analytical fields are not in the JSON file. They live in `themes/elune/src/data/productSpecs.ts`, keyed by SKU, with narrative copy in `themes/elune/src/data/productLiterature.ts` beside it. The two maps cover the same 22 of the 84 SKUs, across 9 compounds — every size of a compound shares that compound's one record — so a page for one of the other 62 SKUs (all blends included) renders no specification and no description section. Records hold no batch or lot field: purity is the single declaration `≥99%`, not a per-product measurement.
 
-The seeder authenticates with `POST /api/user/tokens`, writes through the REST API, and reads the catalog with `pg` (`DB_*`) because this image's product and category GraphQL filters do not honor `sku` / `url_key` and the product connection is capped at 20 rows. CMS pages are created once and then left alone.
+The seeder authenticates with `POST /api/user/tokens`, writes through the REST API, and reads the catalog with `pg` (`DB_*`) because this image's product and category GraphQL filters do not honor `sku` / `url_key`, the product connection is capped at 20 rows, and the category connection filters on `status`. A run that trips the admin API's 120 requests / 60 s limit waits out the advertised `retry-after` window and retries. A product slug that a not-yet-retired row still holds is re-keyed to `<url-key>-retired-<sku>` before the create, because `product_description.url_key` is unique regardless of `status`. CMS pages are created once and then left alone.
 
-Detail is in [docs/design/8-3-catalog-orders-grok-unapproved.md](docs/design/8-3-catalog-orders-grok-unapproved.md).
+Detail is in [docs/design/8-3-catalog-orders.md](docs/design/8-3-catalog-orders.md).
 
 *Source: [`scripts/catalog-data.json`](scripts/catalog-data.json), [`scripts/seed-catalog.mjs`](scripts/seed-catalog.mjs), [`themes/elune/src/data/productSpecs.ts`](themes/elune/src/data/productSpecs.ts)*
 

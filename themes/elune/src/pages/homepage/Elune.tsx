@@ -35,32 +35,37 @@ interface CategorySummary {
  * page owns the grid around it and nothing inside it.
  */
 
-/** Plate 01, the sheet the first viewport is built around. */
-const HERO_SKU = 'BPC157-5MG';
-
 /**
- * The four catalogue plates, in the order the landing prototype numbers them.
- * A SKU that is not in the live catalogue is dropped rather than filled in: the
- * row shows four cards when four products exist and fewer when they do not.
+ * Pins, in plate order — hero first, then the catalogue row. The page query
+ * asks for exactly these SKUs by name, so this list and the query's `value`
+ * below are edited together: the build extracts the query from this file's
+ * source text, which is why the query carries the SKUs as a literal instead of
+ * the array: a `${FEATURED_SKUS}` placeholder survives into the extracted query
+ * verbatim, where it matches no SKU — a silently empty result, not an error.
  */
-const FEATURED_SKUS = ['SEMAGLUTIDE-5MG', 'EPITALON-10MG', 'TB500-10MG', 'IPAMORELIN-5MG'];
+const HERO_SKU = 'BPC5';
+const FEATURED_SKUS = ['TR10', 'ET10', 'TB10', 'IP5'];
 
 /**
- * The ribbon's statements. This is the owner's copy from the approved landing
- * prototype, carried verbatim — it is the storefront's own account of how it
- * operates, not a description of code in this repository, and four of the five
- * carry a note where this repository cannot substantiate them.
+ * The ribbon's statements: five storefront facts. The first two are the store's
+ * own published shipping and payment copy; the last three are read straight off
+ * what this repository can show — the SKU/size inventory in
+ * `scripts/catalog-data.json`, the public cart and account-free checkout, and
+ * the fixed five-category list in `data/categories.ts`. Keep it that way: no
+ * unsupported batch tracking, no comparative price claim, and no zero-issue
+ * delivery rate — none of those has a field, a comparison or a measurement
+ * behind it. The first two are simply the store's own existing copy.
  */
 const COMMITMENTS = [
   'Tracked & discreet, flat rate shipping',
-  // No USDT network is recorded in this repository beyond the payment rail label.
+  // The rails the checkout wallets render; USDT settles on Ethereum (ERC-20).
   'Bitcoin, USDT (ERC-20), and Ethereum Accepted',
-  // No batch or lot field exists in scripts/catalog-data.json or productSpecs.ts.
-  'Batch tracking for each vial',
-  // A comparative superlative: no comparable published pricing exists here.
-  'Best in class factory direct pricing',
-  // An unbounded delivery claim: no delivery performance data exists here.
-  'Unbeatable delivery rate. Zero issues.'
+  // scripts/catalog-data.json: 84 rows, one SKU each, sized 1mg to 1500mg.
+  '84 SKUs across 1mg–1500mg sizes',
+  // Cart routes are public and checkout asks for an email, not an account.
+  'Guest cart & checkout, no account required',
+  // The five url_keys in data/categories.ts, in display order.
+  'Five core research categories: GLPs, Bioregulators, Recovery, GH Releasing, Other'
 ];
 
 /**
@@ -171,15 +176,14 @@ const Elune: React.FC<{
                 (the sans subset carries no U+2265, so the glyph needs the face
                 that has it) and the prose word "everyone", kept by the landing's
                 recorded v5 exception. `.lede .mono` holds both at the prose size.
-                The figure is the declaration carried on every product, not a
-                measurement — nothing here asserts that a batch was tested,
-                accepted or rejected. */}
+                The figure is a declaration, never a measurement of a batch. */}
             <p className="lede rise" style={rise(0.07)}>
-              Every compound has a <span className="mono">≥99%</span> purity or we reject the batch.
+              Where a compound has a specification on record, its{' '}
+              <span className="mono">≥99%</span> purity is a declaration, not a batch measurement.
               Quality is our primary focus — affordable bulk pricing for{' '}
-              <span className="mono">everyone</span>. Transparent order process. All info is posted in
-              the product pages, checkout needs no account, and every parcel ships tracked and
-              discreet.
+              <span className="mono">everyone</span>. Transparent order process. Product pages show
+              the specification record where one exists, checkout needs no account, and every parcel
+              ships tracked and discreet.
             </p>
             <div className="hero__actions rise" style={rise(0.14)}>
               <a className="btn" href="/all">
@@ -365,7 +369,9 @@ const Elune: React.FC<{
             last initial.
           </p>
           {/* The purity caveat renders with the ≥99% figure the hero sheet's record
-              carries. It is a specification for every product, not a test result. */}
+              carries. The figure is a specification declaration, not a test result,
+              and only the records in `data/productSpecs.ts` carry it — products
+              without a record render no figure and no record. */}
           <p className="proof__foot">
             The purity value is a product specification, not a batch test result.
           </p>
@@ -382,7 +388,7 @@ export const layout = {
 
 export const query = `
   query Query {
-    products {
+    products(filters: [{ key: "sku", operation: in, value: "BPC5,TR10,ET10,TB10,IP5" }]) {
       items {
         productId
         name

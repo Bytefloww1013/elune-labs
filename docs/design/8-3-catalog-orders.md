@@ -1,6 +1,6 @@
 # Catalog seed and order data path
 
-`scripts/seed-catalog.mjs` validates grouped parents in `scripts/catalog-data.json`, expands their variants into child SKU records, writes categories and children through the EverShop 2.2.1 REST API, indexes Size for every SKU, groups only multi-variant families for selection in SQL, and creates three CMS pages. `scripts/smoke-checkout.mjs` places one guest order and captures it.
+`scripts/seed-catalog.mjs` validates the catalogue rows in `scripts/catalog-data.json`, writes categories and products through the EverShop 2.2.1 REST API, indexes Size for every SKU, groups the compound families that carry more than one milligram size for selection in SQL, and creates three CMS pages. `scripts/smoke-checkout.mjs` places one guest order and captures it.
 
 Payment presentation is in [8-2-ui-compliance-payment-grok-unapproved.md](8-2-ui-compliance-payment-grok-unapproved.md).
 
@@ -35,7 +35,7 @@ Importing the module does not seed. The runner at the bottom compares `import.me
 `run()`:
 
 1. Read and parse `catalog-data.json` and `catalog-schema.json` concurrently from the module URL, so the files beside the script are the ones that load.
-2. `validateCatalog(data, schema)` validates the draft-07 shape, then cross-row rules: unique category keys and SKUs, valid product category references, at least two members and unique milligram sizes per family, and matching Size suffixes in names and SKUs. All validation completes before login or any other network access.
+2. `validateCatalog(data, schema)` validates the draft-07 shape, then cross-row rules: unique category keys and SKUs, valid product category references, at least two members and unique milligram sizes per family, and a name ending in the declared Size. SKUs are opaque catalogue codes and are not constrained to carry the Size. All validation completes before login or any other network access.
 3. `login()` → `POST /api/user/tokens` `{ email, password }` → `data.accessToken`.
 4. `applyStoreSettings()`.
 5. For each category, `upsertCategory`.
@@ -45,7 +45,7 @@ Importing the module does not seed. The runner at the bottom compares `import.me
 9. `assertSeed`.
 10. `applyCmsPages`.
 
-`apiFetch` sends `Authorization: Bearer <token>`. On HTTP 401 it calls `login()` once and retries that request once.
+`apiFetch` sends `Authorization: Bearer <token>`. On HTTP 401 it calls `login()` once and retries that request once. On HTTP 429 it waits `retry-after` (else `ratelimit-reset`, else 60 s) and retries up to ten times: 2.2.1 rate-limits the admin API at 120 requests per 60 s per IP (`ratelimit-policy: 120;w=60`), which a full catalog run exceeds.
 
 Failures print `SEED FAILURE: <message>` and set `process.exitCode = 1`. `closeDb()` runs in `finally`. Assertion failures print `SEED FAILURE - N issues` and one `✗` line per failure before throwing.
 
@@ -56,8 +56,8 @@ Failures print `SEED FAILURE: <message>` and set `process.exitCode = 1`. `closeD
 Comments in the seeder, matched by the code around them:
 
 - Category GraphQL filters on this image accept `name`, `status`, `parent`, and `ob`. A `url_key` filter is ignored. `findCategory` loads categories from SQL and matches `url_key` in process.
-- Product GraphQL filters, including `sku`, are ignored. A query for a missing SKU can return unrelated products.
-- `products { items }` returns at most 20 rows. The schema has no `page` or `limit` argument the seeder can use.
+- Product GraphQL filters are keyed and registered per key: `sku` (`like`, `in`) and `limit` work on both the storefront and the admin-authenticated endpoint, and an unregistered key such as `url_key` is silently ignored — the query then returns unrelated products, which is how an earlier note came to read that filters are ignored.
+- `products { items }` returns at most one storefront page of rows (20) unless a `limit` filter says otherwise: `filters: [{key: "limit", operation: eq, value: "100"}]` returned all 84 declared SKUs on both endpoints. The collection also registers `page`. `assertSeed` still resolves declared SKUs through the uncapped DB read, because the collection hides `status = 0` rows and the seeder needs the retired ones too.
 - Category collection queries hide `status = 0` rows. After prune, a GraphQL lookup would miss a retired `url_key` and the next create would collide on the unique key.
 
 `db()`, `dbProducts()`, and `dbCategories()` use `pg`. If that client fails, the script logs `db read unavailable` and falls back to GraphQL. Prune then skips. The fallback is only safe under the 20-row cap.
@@ -80,7 +80,7 @@ SQL for products joins `product` to `category_description` on `product.category_
 
 ### Product
 
-`upsertProduct({ name, sku, price, qty })` receives one expanded child, not a grouped parent:
+`upsertProduct({ name, sku, price, qty }, declaredSkus)` receives one expanded child, not a grouped parent:
 
 - Existing SKU: `PATCH /api/products/:uuid`
 
@@ -95,8 +95,8 @@ SQL for products joins `product` to `category_description` on `product.category_
 ```json
 {
   "name": "BPC-157 5mg",
-  "sku": "BPC157-5MG",
-  "price": 39.99,
+  "sku": "BPC5",
+  "price": 40,
   "qty": 100,
   "status": 1,
   "group_id": 1,
@@ -110,6 +110,8 @@ SQL for products joins `product` to `category_description` on `product.category_
 ```
 
 `url_key` is the name lowercased, non-alphanumerics collapsed to `-`, leading and trailing hyphens stripped. The seeder comment states that 2.2.1 `createProduct` does not generate `url_key` from the name and that the middleware rejects a body without it. `group_id: 1` and `package_id: 1` are the image's Default attribute group and Standard Box package, which the create path requires.
+
+Before the `POST`, `parkUrlKey(urlKey, declaredSkus)` reads `product_description.url_key` for a holder: `PRODUCT_URL_KEY_UNIQUE` is enforced regardless of `status`, so a row prune has not retired yet still owns the slug. An undeclared holder is re-keyed to `<url_key>-retired-<lowercased sku>` and prune retires it later in the same run. A declared holder throws — two declared names collide and the data file must change.
 
 The expanded child's `category` is not sent on create. `attachProduct` always `POST`s `/api/categories/:categoryUuid/products` with `{ "product_id": "<product uuid>" }`.
 
@@ -141,7 +143,7 @@ Live categories and products whose `url_key` or SKU is not declared by the expan
 | Key | Value written when empty |
 |---|---|
 | `storeName` | `Elune Labs` |
-| `storeDescription` | `Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.` |
+| `storeDescription` | `Research reference compounds supplied for laboratory work, with a specification record on the products that have one. For research use only.` |
 | `favicon` | `/assets/brand/favicons/favicon-512x512.png` |
 
 `applyCmsPages` looks up `cms_page_description.url_key` in SQL. If the page exists it logs `exists, left as-is` and does not PATCH. If it is missing it `POST`s `/api/pages` with `status: 1`, `name`, `url_key`, `meta_title`, and EditorJS `content`.
@@ -162,7 +164,7 @@ The header and footer link to these three paths. Payments also links to `/faqs`.
 
 `scripts/catalog-data.json` is the commerce list. `scripts/catalog-schema.json` defines its draft-07 shape: non-empty categories require non-empty `name` and `url_key`; non-empty products require non-empty `name`, `sku`, and `category`, a positive milligram `size` such as `5mg`, nonnegative numeric `price`, and nonnegative integer `qty`, with optional non-empty `family`; neither kind accepts additional fields. Specification text is not in these files. It is in `themes/elune/src/data/productSpecs.ts`.
 
-`scripts/catalog-data.example.json` shows real catalog rows: BPC-157 at `5mg` and `10mg` with distinct prices and shared `family`, plus single-size GHK-Cu `50mg` without `family`. It is an excerpt, not a replacement catalog: keep the other product and category rows when seeding, because `prune` retires omitted live products and categories.
+`scripts/catalog-data.example.json` shows real catalog rows: BPC-157 at `5mg` and `10mg` with distinct prices and a shared `family`, GHK-Cu `50mg` whose `100mg` sibling is not in the excerpt, and ARA-290 `10mg`, a single-size row with no `family`. It is an excerpt, not a replacement catalog: keep the other product and category rows when seeding, because `prune` retires omitted live products and categories.
 
 ### Categories
 
@@ -176,24 +178,17 @@ The header and footer link to these three paths. Payments also links to `/faqs`.
 
 ### Products
 
-All child quantities are 100. Prices are USD numbers, not strings. The table shows the 14 expanded child SKU records, not the 11 authored parents; each displayed name is exactly `${name} ${size}` from its parent and variant. `family` appears only on the six children of the three multi-variant parents.
+All child quantities are 100. Prices are USD numbers, not strings. The list is 84 rows: 70 of them belong to 29 multi-size `family` values (two or more milligram sizes of one compound) and 14 are single rows with no `family`. A row's `name` already carries its size (`BPC-157 5mg`), and `sku` is an opaque catalogue code (`BPC5`, `TR10`, `GHKS0`) — it is not derived from the name or the size, and the seeder does not check it against either.
 
-| Child name | SKU | Price | Category | Family | Size |
-|---|---|---|---|---|---|
-| Semaglutide 5mg | `SEMAGLUTIDE-5MG` | 54.99 | `glps` | | `5mg` |
-| Tirzepatide 10mg | `TIRZEPATIDE-10MG` | 74.99 | `glps` | | `10mg` |
-| Epitalon 10mg | `EPITALON-10MG` | 34.99 | `bioregulators` | | `10mg` |
-| Humanin 10mg | `HUMANIN-10MG` | 59.99 | `bioregulators` | | `10mg` |
-| BPC-157 5mg | `BPC157-5MG` | 39.99 | `recovery` | `bpc-157` | `5mg` |
-| BPC-157 10mg | `BPC157-10MG` | 59.99 | `recovery` | `bpc-157` | `10mg` |
-| TB-500 5mg | `TB500-5MG` | 49.99 | `recovery` | `tb-500` | `5mg` |
-| TB-500 10mg | `TB500-10MG` | 79.99 | `recovery` | `tb-500` | `10mg` |
-| Ipamorelin 5mg | `IPAMORELIN-5MG` | 42.99 | `gh-releasing` | | `5mg` |
-| CJC-1295 (No DAC) 5mg | `CJC1295-5MG` | 44.99 | `gh-releasing` | `cjc-1295-no-dac` | `5mg` |
-| CJC-1295 (No DAC) 10mg | `CJC1295-10MG` | 69.99 | `gh-releasing` | `cjc-1295-no-dac` | `10mg` |
-| Semax 10mg | `SEMAX-10MG` | 39.99 | `other` | | `10mg` |
-| Selank 10mg | `SELANK-10MG` | 39.99 | `other` | | `10mg` |
-| GHK-Cu 50mg | `GHKCU-50MG` | 29.99 | `other` | | `50mg` |
+Per-category row counts:
+
+| Category (`url_key`) | Rows |
+|---|---|
+| `glps` | 17 |
+| `bioregulators` | 17 |
+| `recovery` | 18 |
+| `gh-releasing` | 11 |
+| `other` | 21 |
 
 Neither parent nor variant has an `images` field. The create request still sends `images: []`.
 
@@ -205,7 +200,7 @@ An older three-category list (peptides, SARMs, nootropics, fifteen products) is 
 
 `scripts/smoke-checkout.mjs` is a guest REST checkout against the 2.2.1 handlers. It loads `.env` if present. It refuses to start unless `EVERSHOP_ALLOW_MUTATION=1` and both admin variables are set.
 
-Default SKU is `BPC157-10MG`. Override with `EVERSHOP_CHECKOUT_SKU`. The script does not read wallet addresses and does not require a rail to be configured. It pays with method `cod`.
+Default SKU is `BPC10`. Override with `EVERSHOP_CHECKOUT_SKU`. The script does not read wallet addresses and does not require a rail to be configured. It pays with method `cod`.
 
 ### Sequence
 

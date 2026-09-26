@@ -33,9 +33,6 @@ export function validateCatalog(data, schema) {
     if (!product.name.endsWith(` ${product.size}`)) {
       failures.push(`SKU '${product.sku}' name must end with '${product.size}'`);
     }
-    if (!product.sku.endsWith(`-${product.size.toUpperCase()}`)) {
-      failures.push(`SKU '${product.sku}' must end with '${product.size.toUpperCase()}'`);
-    }
     if (product.family) families.set(product.family, [...(families.get(product.family) ?? []), product]);
   }
   for (const [family, products] of families) {
@@ -83,7 +80,11 @@ export async function login() {
 }
 
 // Authed request. On 401: re-login once, retry the failed request once (8-3 §1).
-export async function apiFetch(path, options = {}, isRetry = false) {
+// 2.2.1 rate-limits the admin API at 120 requests / 60 s per IP (response
+// headers `ratelimit-limit: 120`, `ratelimit-policy: 120;w=60`), and a full
+// catalog run issues more than that, so a 429 waits out the advertised window
+// and retries instead of failing the run.
+export async function apiFetch(path, options = {}, isRetry = false, attempts = 0) {
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -94,7 +95,13 @@ export async function apiFetch(path, options = {}, isRetry = false) {
   });
   if (res.status === 401 && !isRetry) {
     await login();
-    return apiFetch(path, options, true);
+    return apiFetch(path, options, true, attempts);
+  }
+  if (res.status === 429 && attempts < 10) {
+    const seconds = Number(res.headers.get('retry-after') ?? res.headers.get('ratelimit-reset') ?? 60);
+    console.warn(`rate limited on ${path}: waiting ${seconds}s (attempt ${attempts + 1})`);
+    await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+    return apiFetch(path, options, isRetry, attempts + 1);
   }
   return res;
 }
@@ -244,10 +251,39 @@ async function findProduct(sku) {
   return (data.products?.items ?? []).find((p) => p.sku === sku) ?? null;
 }
 
+// 2.2.1 enforces product_description.url_key uniqueness at the DB level
+// (PRODUCT_URL_KEY_UNIQUE) regardless of status, so a retired row keeps its
+// key. A catalogue that re-declares a name re-derives the same slug and the
+// create would fail on a row prune has not retired yet. Park the holder's key
+// when the holder is not declared (prune retires it later in this same run); a
+// declared holder means two declared names collide and the data file is wrong.
+export async function parkUrlKey(urlKey, declaredSkus) {
+  const { rows } = await (await db()).query(
+    `select p.uuid, p.sku
+       from product_description d
+       join product p on p.product_id = d.product_description_product_id
+      where d.url_key = $1
+      limit 1`,
+    [urlKey]
+  );
+  const holder = rows[0];
+  if (!holder) return;
+  if (declaredSkus.has(holder.sku)) {
+    throw new Error(`url_key '${urlKey}' is held by declared SKU '${holder.sku}'`);
+  }
+  const parked = `${urlKey}-retired-${holder.sku.toLowerCase()}`;
+  await (await db()).query(
+    `update product_description set url_key = $2
+      where product_description_product_id = (select product_id from product where uuid = $1)`,
+    [holder.uuid, parked]
+  );
+  console.log(`url_key '${urlKey}': parked '${holder.sku}' as '${parked}'`);
+}
+
 // Query first, then create-or-update (8-3 §1): found -> PATCH so the data file
 // stays the single source of truth for price/qty; missing -> POST with explicit
 // NOT-NULL defaults (2.2.1 has no schema defaults, same as categories).
-export async function upsertProduct({ name, sku, price, qty }) {
+export async function upsertProduct({ name, sku, price, qty }, declaredSkus) {
   const existing = await findProduct(sku);
   if (existing) {
     const res = await apiFetch(`/api/products/${existing.uuid}`, {
@@ -259,6 +295,11 @@ export async function upsertProduct({ name, sku, price, qty }) {
     console.log(`product '${sku}': patched ${existing.uuid}`);
     return existing;
   }
+  // 2.2.1 createProduct does NOT auto-generate url_key from name (design 8-3
+  // §2 assumed it) — the middleware rejects the payload without it. Slug:
+  // lowered, non-alphanumerics -> dashes.
+  const urlKey = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  await parkUrlKey(urlKey, declaredSkus);
   const res = await apiFetch('/api/products', {
     method: 'POST',
     body: JSON.stringify({
@@ -276,10 +317,7 @@ export async function upsertProduct({ name, sku, price, qty }) {
       manage_stock: 1,
       stock_availability: 1,
       images: [],
-      // 2.2.1 createProduct does NOT auto-generate url_key from name (design 8-3
-      // §2 assumed it) — the middleware rejects the payload without it. Slug:
-      // lowered, non-alphanumerics -> dashes.
-      url_key: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+      url_key: urlKey
     })
   });
   const json = await res.json().catch(() => null);
@@ -520,16 +558,21 @@ export async function assertSeed(data) {
   for (const { url_key } of data.categories) {
     if (!(await findCategory(url_key))) failures.push(`category '${url_key}': not found`);
   }
-  // One read; sku matched client-side (filters ignored — see findProduct).
-  const result = await graphql(`query { products { items { sku category { urlKey } } } }`);
-  const bySku = new Map((result.products?.items ?? []).map((p) => [p.sku, p]));
+  // One read; the GraphQL product list caps at 20 rows (see §3 of design 8-3),
+  // so the uncapped DB read comes first and GraphQL is only the fallback.
+  const rows = await dbProducts();
+  const bySku = new Map(
+    rows
+      ? rows.map((row) => [row.sku, row.category])
+      : ((await graphql(`query { products { items { sku category { urlKey } } } }`)).products?.items ?? [])
+          .map((item) => [item.sku, item.category?.urlKey ?? null])
+  );
   for (const { sku, category } of data.products) {
-    const item = bySku.get(sku);
-    if (!item) {
+    if (!bySku.has(sku)) {
       failures.push(`SKU ${sku}: not found after create`);
       continue;
     }
-    const attached = item.category?.urlKey ?? 'none';
+    const attached = bySku.get(sku) ?? 'none';
     if (attached !== category) failures.push(`SKU ${sku}: expected category '${category}', got '${attached}'`);
   }
   // Prune guard: a live row the data file does not declare means prune silently
@@ -659,7 +702,7 @@ export async function assertSeed(data) {
 const STORE_SETTINGS = {
   storeName: 'Elune Labs',
   storeDescription:
-    'Research reference compounds with the specification on record for every product — form, storage and a purity declaration. For research use only.',
+    'Research reference compounds supplied for laboratory work, with a specification record on the products that have one. For research use only.',
   favicon: '/assets/brand/favicons/favicon-512x512.png'
 };
 
@@ -731,6 +774,12 @@ const heading = (text) => ({ type: 'header', data: { text, level: 2 } });
 // certification wording (there is no certificate of analysis in this project and
 // nothing may imply one), no dosing or administration guidance, no efficacy or
 // weight-loss framing, and no shipping promise a drop-shipper cannot honour.
+//
+// No claim here may assert a specification table or a batch/lot identifier on
+// every product. `catalog-data.json` carries commerce fields only — no batch, no
+// lot, no analytical value — and the theme's spec map
+// (themes/elune/src/data/productSpecs.ts) covers 22 of the 84 SKUs, so the other
+// 62 render no specification section at all. Copy below says so instead.
 const FAQ_BLOCKS = [
   para(
     'These answers cover what Elune Labs sells, what is documented about it, and how an order is placed and paid for. If something here is still unclear, the Contact page is the place to ask.'
@@ -739,17 +788,17 @@ const FAQ_BLOCKS = [
   para(
     'Research reference compounds — peptides and related materials supplied for laboratory work. Every product is a reference material: something to be studied and characterised, not consumed. Nothing on this store is a medicine, a supplement or a therapeutic, and nothing here is intended for human or veterinary use.'
   ),
-  heading('What is documented for every product?'),
+  heading('What is documented for a product?'),
   para(
-    'Each product carries a batch or lot identifier, its supplied form, its storage condition, and a purity declaration of <strong>≥99%</strong>. Where a compound has identity data — CAS registry number, molecular formula, molecular weight, sequence — that is listed too. All of it sits together in one specification table on the product page.'
+    'Where a compound has a specification record, its product page shows it in one table: supplied form, storage condition, the <strong>≥99%</strong> purity declaration, and any identity data on file — CAS registry number, molecular formula, molecular weight or sequence. A compound with no record renders no specification section at all, never one filled with placeholders. No batch or lot identifier is recorded for any product in this catalog, so none is shown.'
   ),
   heading('What does the ≥99% purity declaration mean?'),
   para(
-    'It is the specification we supply to, declared the same way on every product. It is <em>not</em> a measured figure and not a per-batch result, and it is deliberately not written as one. If a specification value is not sourced, it is left out of the record entirely rather than filled with a placeholder.'
+    'It is the specification we supply to, declared the same way on every product that carries a record. It is <em>not</em> a measured figure and not a per-batch result, and it is deliberately not written as one. If a specification value is not sourced, it is left out of the record entirely rather than filled with a placeholder.'
   ),
   heading('Do you publish certificates of analysis or test results?'),
   para(
-    'No. There is no certificate of analysis, chromatogram or accreditation document for any product in this catalog, so none is offered or linked anywhere on this site. What you can rely on today is the batch identity and the specification carried on each product page. Nothing on this site should be read as a testing result.'
+    'No. There is no certificate of analysis, chromatogram or accreditation document for any product in this catalog, so none is offered or linked anywhere on this site. What you can rely on today is the specification record shown on the product pages that carry one. Nothing on this site should be read as a testing result.'
   ),
   heading('How do I pay?'),
   para(
@@ -909,8 +958,9 @@ export async function run() {
     const upserted = await upsertCategory(category);
     categories[category.url_key] = { uuid: upserted?.uuid, url_key: category.url_key };
   }
+  const declaredSkus = new Set(data.products.map((product) => product.sku));
   for (const product of data.products) {
-    const upserted = await upsertProduct(product);
+    const upserted = await upsertProduct(product, declaredSkus);
     await attachProduct(categories[product.category], upserted);
   }
   await reconcileVariants(data);

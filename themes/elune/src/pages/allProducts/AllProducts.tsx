@@ -35,6 +35,15 @@ interface ProductListItemData {
  * known compound, so it reads better alphabetically, and the two pages then
  * each do one job. A `sort:` argument on the query would be silently ignored by
  * the resolver, which is worse than sorting here.
+ *
+ * The collection pages the storefront list at the configured page size unless a
+ * `limit` filter says otherwise, so this page asks for 100: without it a
+ * catalogue larger than one page rendered a truncated list under a heading that
+ * claims to be all of it.
+ *
+ * ponytail: `limit: "100"` is a ceiling, not pagination — a catalogue past 100
+ * compounds needs real paging (the collection supports `page`/`limit` filters)
+ * and a pager in this page.
  */
 const AllProducts: React.FC<{ products?: { total?: number; items?: ProductListItemData[] } }> = ({
   products
@@ -47,8 +56,8 @@ const AllProducts: React.FC<{ products?: { total?: number; items?: ProductListIt
       <h1 className="h2">All products</h1>
       <p className="lede mt-3">
         <span className="mono">{count}</span>{' '}
-        {count === 1 ? 'reference compound' : 'reference compounds'}, each with its full
-        specification on the product page.
+        {count === 1 ? 'reference compound' : 'reference compounds'}, listed alphabetically. Where a
+        compound has a specification on record, its product page shows it.
       </p>
 
       {count === 0 ? (
@@ -89,7 +98,7 @@ export const layout = {
 
 export const query = `
   query Query {
-    products {
+    products(filters: [{ key: "limit", operation: eq, value: "100" }]) {
       total
       items {
         productId

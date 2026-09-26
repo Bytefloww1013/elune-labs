@@ -171,16 +171,8 @@ export function ProductListItemRender({
     >
       <div className="flex items-center justify-between gap-3 px-1 pt-0.5 pb-2.5">
         {index ? <span className="chip">Plate {String(index).padStart(2, '0')}</span> : null}
-        <span className="ml-auto text-sm font-medium" style={{ color: accentColor }}>
-          {urlKey
-            ? ({
-                glps: 'GLPs',
-                bioregulators: 'Bioregulators',
-                recovery: 'Recovery',
-                'gh-releasing': 'GH Releasing',
-                other: 'Other'
-              } as const)[urlKey]
-            : null}
+        <span className="mono ml-auto" style={{ color: accentColor }}>
+          {product.sku}
         </span>
       </div>
 

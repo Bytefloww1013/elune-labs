@@ -1,8 +1,6 @@
 # Storefront theme, compliance, and crypto presentation
 
-The theme package is `themes/elune`. Wallet storage and validation are `extensions/elune-payments`. Visual tokens are specified in [DESIGN-grok-unapproved.md](../../DESIGN-grok-unapproved.md). This document is the behavior of the components.
-
-The empty file [docs/design/.mockups/8-2-ui-compliance-payment.md](.mockups/8-2-ui-compliance-payment.md) is not the implementation.
+The theme package is `themes/elune`. Wallet storage and validation are `extensions/elune-payments`. Visual tokens are specified in [DESIGN.md](../../DESIGN.md). This document is the behavior of the components.
 
 ## 1. How the theme is selected
 
@@ -32,7 +30,7 @@ That script is `swc ./src -d dist --copy-files --strip-leading-paths`. CSS files
 | Footer columns | `pages/all/FooterNav.tsx` | Catalogue, Information, Payment |
 | Footer base | `pages/all/RuoFooter.tsx` | The RUO sentence and `© 2026 Elune Labs · Prices in USD` |
 
-Shop is a `<details>` element. `useDismissableDetails` closes it on outside click and on Escape, and returns focus to the summary. The same helper is used by the phone menu. Categories are ordered by `CATEGORY_URL_KEYS` and dropped if the catalog query did not return that key. Counts render only when `products.total` is a number, padded to two digits.
+Shop is a `<details>` element. `useDismissableDetails` closes it on outside click and on Escape, and returns focus to the summary. The same helper is used by the phone menu. Categories are ordered by `CATEGORY_URL_KEYS` and dropped if the catalog query did not return that key. Cell counts print `NN compounds`, padded to two digits, with `00` when `products.total` is absent.
 
 Information-column links are FAQs, Shipping, and Contact us. Payments is omitted there because the Payment column lists Bitcoin, `USDT (ERC-20)`, and Ethereum. Every one of those hrefs is `/faqs`.
 
@@ -83,9 +81,9 @@ Exact sentence `For research use only. Not for human consumption.`:
 
 The product notice adds the label `Laboratory Research Notice (RUO)` and the sentence `This chemical compound is supplied strictly for in-vitro laboratory experimentation and analytical reference. Not for human, clinical, or veterinary administration.`
 
-The specification table in `ProductSpecs.tsx` always ends with `The purity value is a product specification, not a batch test result.` Purity cells use `PURITY_DECLARATION` (`≥99%`) and the mono face, including when a spec record exists, because the Manrope subset has no U+2265 glyph.
+The specification table in `ProductSpecs.tsx` always ends with `The purity value is a product specification, not a batch test result.` Purity cells use `PURITY_DECLARATION` (`≥99%`) and the mono face, including when a spec record exists, because the Manrope subset has no U+2265 glyph. 22 of the 84 catalog SKUs have a record in `productSpecs.ts`; a SKU without one renders no specification section.
 
-`ProductDescription.tsx` renders only when `getProductLiterature(sku)` returns a record. All fourteen catalog SKUs have a summary. The citation block, when present, is introduced with: the studies describe the compound, not this product, not the batch, and not an analysis of it, and no certificate of analysis is published. Epitalon and both CJC-1295 (No DAC) SKUs have summaries and no `literature` array, so they show the section without citations.
+`ProductDescription.tsx` renders only when `getProductLiterature(sku)` returns a record. 22 of the 84 catalog SKUs have a summary. The citation block, when present, is introduced with: the studies describe the compound, not this product, not the batch, and not an analysis of it, and no certificate of analysis is published. The Epitalon sizes and both CJC-1295 (No DAC) SKUs have summaries and no `literature` array, so they show the section without citations.
 
 The checkout-success panel does not repeat the RUO sentence. `ConfirmationStatus.tsx` relies on `RuoFooter` already being on the page.
 
@@ -114,19 +112,21 @@ Empty states: `/all` links to `/` with `Browse the categories`. `/new-releases` 
 `Elune.tsx` renders, under the shared chrome:
 
 1. Hero. `h1`: `Research peptides. Direct from the source. Uncompromising purity.` Lede includes mono `≥99%` and mono `everyone`. Actions: `Browse the catalogue` → `/all`, `How ordering works` → `/faqs`. Proof line uses `CATEGORY_URL_KEYS.length` (`5`).
-2. Plate 01 sheet when SKU `BPC157-5MG` is in the product query. Photo `/assets/plates/hero-photo.jpg` (file `themes/elune/public/assets/plates/hero-photo.jpg`), width/height attributes 1200×1591. Chip text `Plate 01` uses `chip--beam`. Spec rows are Purity, Form, Sequence, Storage, omitting empty values.
+2. Plate 01 sheet when SKU `BPC5` is in the product query. Photo `/assets/plates/hero-photo.jpg` (file `themes/elune/public/assets/plates/hero-photo.jpg`), width/height attributes 1200×1591. Head chip text `Plate 01` uses `chip--beam`; the foot chip is category · strength. Spec rows are Purity, Form, Sequence, Storage, omitting empty values.
 3. Ribbon, `role="region"` `aria-label="Storefront commitments"` `tabIndex={0}`. Five strings, duplicated, second list `aria-hidden`. Motion is in `homepage.scss` (64s drift, paused for reduced motion).
 4. Category strip. Heading `Quality compounds, across five core categories.` Each cell links to the category URL and prints the count as `NN compounds`.
-5. Four plates, SKUs `SEMAGLUTIDE-5MG`, `EPITALON-10MG`, `TB500-10MG`, `IPAMORELIN-5MG`, numbered from 2. A missing SKU is skipped.
+5. Four plates, SKUs `TR10`, `ET10`, `TB10`, `IP5`, numbered from 2. A missing SKU is skipped.
 6. Night band. Heading `From recent orders.` Three review figures with photos `/assets/order/td-1.jpg`, `td-2.jpg`, `td-3.jpg`. Foot lines: `Collected from completed orders and published unedited. Names shortened to first name and last initial.` and the purity caveat.
 
 Ribbon strings, verbatim:
 
 1. `Tracked & discreet, flat rate shipping`
 2. `Bitcoin, USDT (ERC-20), and Ethereum Accepted`
-3. `Batch tracking for each vial`
-4. `Best in class factory direct pricing`
-5. `Unbeatable delivery rate. Zero issues.`
+3. `84 SKUs across 1mg–1500mg sizes`
+4. `Guest cart & checkout, no account required`
+5. `Five core research categories: GLPs, Bioregulators, Recovery, GH Releasing, Other`
+
+Items 3–5 carry counts and facts from this repository rather than claims: `scripts/catalog-data.json` (84 rows, 84 unique SKUs, 1mg–1500mg), the account-free checkout, and the five `CATEGORY_URL_KEYS`. They replace `Batch tracking for each vial`, `Best in class factory direct pricing`, and `Unbeatable delivery rate. Zero issues.`, which named a batch field, a price comparison, and a delivery measurement the repository has never held.
 
 *Source: [`themes/elune/src/pages/homepage/Elune.tsx`](../../themes/elune/src/pages/homepage/Elune.tsx), [`themes/elune/src/pages/homepage/homepage.scss`](../../themes/elune/src/pages/homepage/homepage.scss)*
 

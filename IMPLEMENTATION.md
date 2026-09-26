@@ -1,6 +1,6 @@
 # Implementation: Elune Labs storefront
 
-What is in the tree, and how it is built. Behavior contracts are in [SPEC-grok-unapproved.md](SPEC-grok-unapproved.md). Operator commands are in [README-grok-unapproved.md](README-grok-unapproved.md).
+What is in the tree, and how it is built. Behavior contracts are in [SPEC.md](SPEC.md). Operator commands are in [README.md](README.md).
 
 ## Repository layout
 
@@ -14,7 +14,7 @@ What is in the tree, and how it is built. Behavior contracts are in [SPEC-grok-u
 | `extensions/elune-payments` | Wallet settings. `dist/` is loaded when `NODE_ENV=production` and is tracked. |
 | `extensions/elune-catalog` | Routes `/all` and `/new-releases`. `dist/` is tracked. |
 | `scripts/seed-catalog.mjs` | Validated catalog, Size index and variants, store settings, CMS pages. |
-| `scripts/catalog-data.json` | Five categories, fourteen products; every product declares a positive milligram Size. |
+| `scripts/catalog-data.json` | Five categories, 84 products; every product declares a positive milligram Size. 29 multi-size families hold 70 of the rows, the other 14 SKUs are standalone. |
 | `scripts/catalog-schema.json` | Draft-07 catalog shape, including positive `mg` Size syntax, validated before login. |
 | `scripts/smoke-checkout.mjs` | REST checkout, capture, and one headless add-to-cart check. |
 | `scripts/restart.sh` | `kill -TERM 1` in the app container, sleep 2, `docker compose start app`. No shebang. |
@@ -102,7 +102,7 @@ Token values are the `:root` block in `themes/elune/src/pages/all/shadcn.css`. C
 
 There is no `CategoryAccent.tsx`. Category color on the home strip is `.cat--<urlKey>` in `homepage.scss`. Plate identity color is chosen in `ProductListItemRender.tsx` from the first segment of the product URL via `categoryUrlKeyFromProductUrl`.
 
-Shared data modules: `src/data/categories.ts`, `siteLinks.ts`, `productSpecs.ts`, `productLiterature.ts`.
+Shared data modules: `src/data/categories.ts`, `siteLinks.ts`, `productSpecs.ts`, `productLiterature.ts`. The two record maps are keyed by SKU: 22 of the 84 SKUs, across 9 compounds, carry both a sourced specification record and a literature narrative, and the sizes of one compound share that compound's single record. The other 62 SKUs render no specification and no description section, never an empty table or heading. Blends carry no record, because no single molecule's record is true of a blend.
 
 Core-component overrides that keep upstream behavior and add an accessible name or a heading level: `PasswordField.tsx` (reveal button name; uses `lucide-react` `Eye` / `EyeClosed`), `Slider.tsx` (`getAriaLabel`), `DefaultPriceFilterRender.tsx` (group and thumb labels), `ShoppingCartEmpty.tsx` (heading level on `/cart`), `SearchProducts.tsx` (missing `h2` on search results), `CategoryProducts.tsx` (category grid), `DefaultVariantSelectorRender.tsx` (variant selector).
 
@@ -153,7 +153,11 @@ Direct execution is guarded by `import.meta.url === pathToFileURL(process.argv[1
 7. `assertSeed`
 8. `applyCmsPages`
 
-Database connection uses `DB_HOST` (default `localhost`), `DB_PORT` (default 5432), `DB_USER`, `DB_PASSWORD`, `DB_NAME`. Inside the app container those variables are set and `DB_HOST` is `database`. If `pg` cannot connect, category and product lookup falls back to a GraphQL scan that cannot see retired rows and cannot see products past the first 20.
+Database connection uses `DB_HOST` (default `localhost`), `DB_PORT` (default 5432), `DB_USER`, `DB_PASSWORD`, `DB_NAME`. Inside the app container those variables are set and `DB_HOST` is `database`. Category and product lookup reads the DB first, uncapped, because the GraphQL product connection stops at 20 rows and the category connection ignores a `url_key` filter (and drops retired rows). If `pg` cannot connect, the lookup falls back to a GraphQL scan that cannot see retired rows and cannot see products past the first 20.
+
+The admin API is rate limited at 120 requests / 60 s, and a full 84-product run issues more than that. An HTTP 429 waits out the advertised `retry-after` / `ratelimit-reset` window (`60` s when neither header is present) and retries, up to 10 attempts, instead of failing the run. A 401 logs in once and retries that request once.
+
+A create derives `url_key` from the name (lowercased, non-alphanumerics collapsed to `-`, ends stripped), because 2.2.1 `createProduct` does not generate one. `PRODUCT_URL_KEY_UNIQUE` is enforced regardless of `status`, so `parkUrlKey` reads `product_description.url_key` first and re-keys an undeclared holder to `<url-key>-retired-<lowercased sku>`; prune retires that holder later in the same run. A declared SKU holding the key means two declared names collide: the run throws.
 
 `reconcileVariants` inserts attribute code `size` if needed, requires `type = 'select'`, links it to attribute group 1, and gives every seeded product exactly the positive milligram Size index declared in the JSON file. Only products with `family` build or reuse a Size-only `variant_group`; standalone products retain a null `variant_group_id` and their Size index. Options and assertions are derived from the catalog rather than a hardcoded list. Size indexes are reconciled only for declared SKUs; undeclared products retain theirs. Empty Size groups are deleted, and option rows are never deleted because orders may reference them. Assertions require each declared option exactly once but allow unrelated legacy options.
 
@@ -183,7 +187,7 @@ Steps, in order, each printed `PASS` or `FAIL`:
 
 1. Storefront HTML `baseUrl` and cart API origin match `EVERSHOP_STOREFRONT_URL` (or `HOME_URL`, or the API base).
 2. Admin login.
-3. Select SKU (`EVERSHOP_CHECKOUT_SKU`, default `BPC157-10MG`).
+3. Select SKU (`EVERSHOP_CHECKOUT_SKU`, default `BPC10`).
 4. `POST /api/carts` with `items: [{ sku, qty: 1 }]`.
 5. `POST /api/cart/:id/items` with `{ sku, qty: 1 }`, then GraphQL confirms the line.
 6. Contacts `{ email: "test@example.com" }`.
@@ -198,7 +202,7 @@ Steps, in order, each printed `PASS` or `FAIL`:
 15. Capture of a nil UUID expects HTTP 400.
 16. Headless Chromium: only the clicked catalog card goes busy. Returns `{ skip: 'storefront is not loopback' }` otherwise.
 
-Known variant prices in the smoke match `catalog-data.json`: BPC-157 5/10 mg at 39.99/59.99, TB-500 5/10 mg at 49.99/79.99, CJC-1295 5/10 mg at 44.99/69.99.
+Known variant prices in the smoke match `catalog-data.json`: `BPC5`/`BPC10` at 40/70, `TB5`/`TB10` at 90/150, `CND5`/`CND10` at 90/140.
 
 *Source: [`scripts/smoke-checkout.mjs`](scripts/smoke-checkout.mjs), [`scripts/catalog-data.json`](scripts/catalog-data.json)*
 
